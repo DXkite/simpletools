@@ -3,10 +3,21 @@
         <title>Test dxui</title>
         <script src="../build/dxui.js"></script>
     </head>
-    <body>
-        <div id="moveable">  Moveable </div>
-    </body>
-    <script>
-        dxui.moveable(document.getElementById("moveable"));
-    </script>
+<body>
+    <h2>Test Of List</h2>
+    <div id="test1" data-tpl-init="{lists:['moveable','template']}">
+        <ol>
+            {each lists as name}
+            <li><a href="{name}.html">test of {name}</a> </li>
+            {/each}
+        </ol>
+    </div>
+</body>
+<script>    
+
+window.addEventListener('load', function () {
+   dxtpl.selftpl('#test1');
+});
+
+</script>
 </html>
