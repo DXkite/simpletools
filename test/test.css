@@ -1,0 +1,19 @@
+#moveable {
+    background: white;
+    box-shadow: 0 0 0.2em 0 #ccc;
+    padding: 3em;
+    cursor: move;
+}
+
+#moveable_body {
+    background: white;
+    box-shadow: 0 0 0.2em 0 #ccc;
+    padding: 1em;
+}
+
+#moveable_head {
+    background: #ddccaa;
+    box-shadow: 0 0 0.2em 0 #ccc;
+    padding: 3em;
+    cursor: move;
+}

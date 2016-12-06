@@ -1,0 +1,20 @@
+<html>
+
+<head>
+    <title>Test dxui</title>
+    <script src="../build/dxui.js"></script>
+    <link rel="stylesheet" href="test.css">
+</head>
+
+<body>
+    <div id="moveable"> Moveable </div>
+    <div id="moveable_body">
+        <div id="moveable_head">head</div>
+        <div>Moveable </div>
+    </div>
+</body>
+<script>
+    dxui.moveable(document.getElementById("moveable"));
+    dxui.moveable(document.getElementById("moveable_body"),document.getElementById("moveable_head"));
+</script>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Demo DxUI</title>
+    <script src="../../dxui.js"></script>
+    <script id="test_print" type="application/DxTPL">
+    { if name == 'DXkite'}
+    <h1>{name} {hello}</h1>
+    {else if name =='aoeiuv'}
+    <h1>Aoeiuv {hello}</h1>
+    {else}
+    <h1>{name} {hello}</h1>
+    {/if}
+    </script>
+</head>
+
+<body>
+    <div id="test1"> </div>
+    <div id="test2"> </div>
+</body>
+<script>    
+
+window.addEventListener('load', function () {
+    document.getElementById("test1").innerHTML = dxtpl.template('test_print').display({ hello: 'HelloWorld', name: 'TTHHR', values: ['hello', 'world'] });
+    document.getElementById("test2").innerHTML = dxtpl.template('test_print').display({ hello: 'HelloWorld???', name: 'Dxkite', values: ['hello', 'world'] });
+});
+
+</script>
+
+</html>

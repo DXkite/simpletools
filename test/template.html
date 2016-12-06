@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Demo DxUI</title>
+    <script src="../build/dxui.js"></script>
+
+</head>
+
+<body>
+    <h2>Test Of List</h2>
+    <div id="test1" data-tpl-init="{lists:['for','include','self','tmp','tpl','while']}">
+        <ol>
+            {each lists as name}
+            <li><a href="tpl/test_{name}.html">test of {name}</a> </li>
+            {/each}
+        </ol>
+    </div>
+</body>
+<script>    
+
+window.addEventListener('load', function () {
+   dxtpl.selftpl('#test1');
+});
+
+</script>
+
+</html>
