@@ -4,7 +4,7 @@ var dxui = dxui || {
 };
 /** DOM 辅助 */
 (function (dxui) {
-    var DxDOM=function(selecter, context){
+    var DxDOM = function (selecter, context) {
         return DxDOM.prototype.constructor(selecter, context);
     }
 
@@ -24,7 +24,6 @@ var dxui = dxui || {
 
 
     DxDOM.prototype.extend = function (methods) {
-        console.log(this);
         for (var name in methods) {
             this[name] = methods[name];
         }
@@ -33,13 +32,13 @@ var dxui = dxui || {
     DxDOM.prototype.constructor.prototype = DxDOM.prototype;
 
     DxDOM.prototype.extend({
-                createElement: function(tag, attr, css) {
+        createElement: function (tag, attr, css) {
             var element = document.createElement(tag);
             DxDOM(element).setAttr(attr).setCss(css);
             return element;
         },
-        setAttr: function(attrs) {
-            this.each(function() {
+        setAttr: function (attrs) {
+            this.each(function () {
                 if (attrs) {
                     for (var name in attrs) {
                         this.setAttribute(name, attrs[name]);
@@ -48,8 +47,8 @@ var dxui = dxui || {
             });
             return this;
         },
-        setCss: function(cssObj) {
-            this.each(function() {
+        setCss: function (cssObj) {
+            this.each(function () {
                 if (cssObj) {
                     for (var name in cssObj) {
                         this.style[css_prefix(name)] = cssObj[name];
@@ -58,14 +57,14 @@ var dxui = dxui || {
             });
             return this;
         },
-        addClass: function(add) {
-            this.each(function() {
+        addClass: function (add) {
+            this.each(function () {
                 this.class += ' ' + add;
             });
             return this;
         },
-        removeClass: function(remove) {
-            this.each(function() {
+        removeClass: function (remove) {
+            this.each(function () {
                 var reg = new RegExp('/\\s+?' + remove + '/');
                 this.class.replace(reg, '');
             });
@@ -245,7 +244,6 @@ var dxui = dxui || {
         _controller.addEventListener('touchstart', _move_layer);
         return _self;
     }
-    console.log(dxui);
 })(dxui);
 (function(dxui) {
     // 可独立的模板

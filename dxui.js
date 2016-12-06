@@ -13,7 +13,6 @@ var dxui = dxui || {
         for (var i = 0; i < this.length; i++) this[i] = this.elements[i];
         return this;
     }, DxDOM.prototype.extend = function(methods) {
-        console.log(this);
         for (var name in methods) this[name] = methods[name];
     }, DxDOM.prototype.constructor.prototype = DxDOM.prototype, DxDOM.prototype.extend({
         createElement: function(tag, attr, css) {
@@ -105,7 +104,7 @@ var dxui = dxui || {
         };
         return _controller.addEventListener("mousedown", _move_layer), _controller.addEventListener("touchstart", _move_layer), 
         _self;
-    }, console.log(dxui);
+    };
 }(dxui), function(dxui) {
     "use strict";
     function _string(code) {

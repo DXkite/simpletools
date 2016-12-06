@@ -64,5 +64,4 @@
         _controller.addEventListener('touchstart', _move_layer);
         return _self;
     }
-    console.log(dxui);
 })(dxui);

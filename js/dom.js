@@ -1,6 +1,6 @@
 /** DOM 辅助 */
 (function (dxui) {
-    var DxDOM=function(selecter, context){
+    var DxDOM = function (selecter, context) {
         return DxDOM.prototype.constructor(selecter, context);
     }
 
@@ -20,7 +20,6 @@
 
 
     DxDOM.prototype.extend = function (methods) {
-        console.log(this);
         for (var name in methods) {
             this[name] = methods[name];
         }
@@ -29,13 +28,13 @@
     DxDOM.prototype.constructor.prototype = DxDOM.prototype;
 
     DxDOM.prototype.extend({
-                createElement: function(tag, attr, css) {
+        createElement: function (tag, attr, css) {
             var element = document.createElement(tag);
             DxDOM(element).setAttr(attr).setCss(css);
             return element;
         },
-        setAttr: function(attrs) {
-            this.each(function() {
+        setAttr: function (attrs) {
+            this.each(function () {
                 if (attrs) {
                     for (var name in attrs) {
                         this.setAttribute(name, attrs[name]);
@@ -44,8 +43,8 @@
             });
             return this;
         },
-        setCss: function(cssObj) {
-            this.each(function() {
+        setCss: function (cssObj) {
+            this.each(function () {
                 if (cssObj) {
                     for (var name in cssObj) {
                         this.style[css_prefix(name)] = cssObj[name];
@@ -54,14 +53,14 @@
             });
             return this;
         },
-        addClass: function(add) {
-            this.each(function() {
+        addClass: function (add) {
+            this.each(function () {
                 this.class += ' ' + add;
             });
             return this;
         },
-        removeClass: function(remove) {
-            this.each(function() {
+        removeClass: function (remove) {
+            this.each(function () {
                 var reg = new RegExp('/\\s+?' + remove + '/');
                 this.class.replace(reg, '');
             });
