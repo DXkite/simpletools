@@ -27,7 +27,7 @@
         }
     };
 
-    DxDOM.prototype.constructor.prototype = DxDOM.methods;
+    DxDOM.methods.constructor.prototype = DxDOM.methods;
 
     DxDOM.methods.extend({
         createElement: function (tag, attr, css) {
