@@ -12,11 +12,13 @@
 </body>
 <script>
 var $= dxui.dom;
+$('div').each(function(){
+    // console.log(this);
+    $(this).on('click',function(){
 
-     $('div').each(function(){
-
-     });
-
+        console.log('click info: '+this.innerHTML);
+    });
+}).setCss({backgroundColor:'red'});
 </script>
 
 </html>

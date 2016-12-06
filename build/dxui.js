@@ -5,10 +5,12 @@ var dxui = dxui || {
 /** DOM 辅助 */
 (function (dxui) {
     var DxDOM = function (selecter, context) {
-        return DxDOM.prototype.constructor(selecter, context);
+        return new DxDOM.methods.constructor(selecter, context);
     }
 
-    DxDOM.prototype.constructor = function (selecter, context) {
+    DxDOM.methods = DxDOM.prototype;
+
+    DxDOM.methods.constructor = function (selecter, context) {
         if (typeof selecter === 'string') {
             this.elements = (context || document).querySelectorAll(selecter);
         } else {
@@ -23,15 +25,15 @@ var dxui = dxui || {
     };
 
 
-    DxDOM.prototype.extend = function (methods) {
+    DxDOM.methods.extend = function (methods) {
         for (var name in methods) {
             this[name] = methods[name];
         }
     };
 
-    DxDOM.prototype.constructor.prototype = DxDOM.prototype;
+    DxDOM.prototype.constructor.prototype = DxDOM.methods;
 
-    DxDOM.prototype.extend({
+    DxDOM.methods.extend({
         createElement: function (tag, attr, css) {
             var element = document.createElement(tag);
             DxDOM(element).setAttr(attr).setCss(css);
@@ -51,7 +53,7 @@ var dxui = dxui || {
             this.each(function () {
                 if (cssObj) {
                     for (var name in cssObj) {
-                        this.style[css_prefix(name)] = cssObj[name];
+                        this.style[dxui.cssfix(name)] = cssObj[name];
                     }
                 }
             });
@@ -84,7 +86,7 @@ var dxui = dxui || {
             return this;
         },
     });
-    DxDOM.methods = DxDOM.prototype;
+
     dxui.dom = DxDOM;
 })(dxui);
 (function (dxui) {

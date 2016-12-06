@@ -5,16 +5,16 @@ var dxui = dxui || {
 
 !function(dxui) {
     var DxDOM = function(selecter, context) {
-        return DxDOM.prototype.constructor(selecter, context);
+        return new DxDOM.methods.constructor(selecter, context);
     };
-    DxDOM.prototype.constructor = function(selecter, context) {
+    DxDOM.methods = DxDOM.prototype, DxDOM.methods.constructor = function(selecter, context) {
         "string" == typeof selecter ? this.elements = (context || document).querySelectorAll(selecter) : this.elements = [ selecter ], 
         this.context = context, this.length = this.elements.length;
         for (var i = 0; i < this.length; i++) this[i] = this.elements[i];
         return this;
-    }, DxDOM.prototype.extend = function(methods) {
+    }, DxDOM.methods.extend = function(methods) {
         for (var name in methods) this[name] = methods[name];
-    }, DxDOM.prototype.constructor.prototype = DxDOM.prototype, DxDOM.prototype.extend({
+    }, DxDOM.prototype.constructor.prototype = DxDOM.methods, DxDOM.methods.extend({
         createElement: function(tag, attr, css) {
             var element = document.createElement(tag);
             return DxDOM(element).setAttr(attr).setCss(css), element;
@@ -26,7 +26,7 @@ var dxui = dxui || {
         },
         setCss: function(cssObj) {
             return this.each(function() {
-                if (cssObj) for (var name in cssObj) this.style[css_prefix(name)] = cssObj[name];
+                if (cssObj) for (var name in cssObj) this.style[dxui.cssfix(name)] = cssObj[name];
             }), this;
         },
         addClass: function(add) {
@@ -49,7 +49,7 @@ var dxui = dxui || {
                 this.addEventListener(type, listener, useCaptrue);
             }), this;
         }
-    }), DxDOM.methods = DxDOM.prototype, dxui.dom = DxDOM;
+    }), dxui.dom = DxDOM;
 }(dxui), function(dxui) {
     "use strict";
     function add_css_prefix(name) {
