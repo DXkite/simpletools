@@ -4,7 +4,7 @@ module.exports = function (grunt) {
         pkg: grunt.file.readJSON('package.json'),
         concat: {
             dxproject: {
-                src: ['js/init.js','js/*.js'],
+                src: ['js/init.js','js/*.js','js/ui/*.js'],
                 dest: 'build/<%= pkg.name %>.js'
             },
             css: {

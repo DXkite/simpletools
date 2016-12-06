@@ -4,6 +4,54 @@ var dxui = dxui || {
 };
 
 !function(dxui) {
+    var DxDOM = function(selecter, context) {
+        return DxDOM.prototype.constructor(selecter, context);
+    };
+    DxDOM.prototype.constructor = function(selecter, context) {
+        "string" == typeof selecter ? this.elements = (context || document).querySelectorAll(selecter) : this.elements = [ selecter ], 
+        this.context = context, this.length = this.elements.length;
+        for (var i = 0; i < this.length; i++) this[i] = this.elements[i];
+        return this;
+    }, DxDOM.prototype.extend = function(methods) {
+        console.log(this);
+        for (var name in methods) this[name] = methods[name];
+    }, DxDOM.prototype.constructor.prototype = DxDOM.prototype, DxDOM.prototype.extend({
+        createElement: function(tag, attr, css) {
+            var element = document.createElement(tag);
+            return DxDOM(element).setAttr(attr).setCss(css), element;
+        },
+        setAttr: function(attrs) {
+            return this.each(function() {
+                if (attrs) for (var name in attrs) this.setAttribute(name, attrs[name]);
+            }), this;
+        },
+        setCss: function(cssObj) {
+            return this.each(function() {
+                if (cssObj) for (var name in cssObj) this.style[css_prefix(name)] = cssObj[name];
+            }), this;
+        },
+        addClass: function(add) {
+            return this.each(function() {
+                this.class += " " + add;
+            }), this;
+        },
+        removeClass: function(remove) {
+            return this.each(function() {
+                var reg = new RegExp("/\\s+?" + remove + "/");
+                this.class.replace(reg, "");
+            }), this;
+        },
+        each: function(callback) {
+            for (var i = 0; i < this.length; i++) callback.call(this[i], this[i], i);
+            return this;
+        },
+        on: function(type, listener, useCaptrue) {
+            return this.each(function() {
+                this.addEventListener(type, listener, useCaptrue);
+            }), this;
+        }
+    }), DxDOM.methods = DxDOM.prototype, dxui.dom = DxDOM;
+}(dxui), function(dxui) {
     "use strict";
     function add_css_prefix(name) {
         return name = name.trim(), name = "undefined" == typeof document.documentElement.style[name] ? dxui.css_perfix + name : name;
