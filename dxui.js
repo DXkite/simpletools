@@ -14,17 +14,17 @@ var dxui = dxui || {
         return this;
     }, DxDOM.methods.extend = function(methods) {
         for (var name in methods) this[name] = methods[name];
-    }, DxDOM.prototype.constructor.prototype = DxDOM.methods, DxDOM.methods.extend({
-        createElement: function(tag, attr, css) {
+    }, DxDOM.methods.constructor.prototype = DxDOM.methods, DxDOM.methods.extend({
+        element: function(tag, attr, css) {
             var element = document.createElement(tag);
-            return DxDOM(element).setAttr(attr).setCss(css), element;
+            return DxDOM(element).attr(attr).css(css), element;
         },
-        setAttr: function(attrs) {
+        attr: function(attrs) {
             return this.each(function() {
                 if (attrs) for (var name in attrs) this.setAttribute(name, attrs[name]);
             }), this;
         },
-        setCss: function(cssObj) {
+        css: function(cssObj) {
             return this.each(function() {
                 if (cssObj) for (var name in cssObj) this.style[dxui.cssfix(name)] = cssObj[name];
             }), this;

@@ -79,7 +79,7 @@
      * @param {string} name
      * @returns
      */
-    dxui.cssname = function css_name(name) {
+    dxui.cssname = function (name) {
         name = add_css_prefix(name);
         name = name.replace(/[A-Z]/, function (name) {
             return '-' + name.toLowerCase();

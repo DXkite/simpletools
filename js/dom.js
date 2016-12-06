@@ -30,12 +30,12 @@
     DxDOM.methods.constructor.prototype = DxDOM.methods;
 
     DxDOM.methods.extend({
-        createElement: function (tag, attr, css) {
+        element: function (tag, attr, css) {
             var element = document.createElement(tag);
-            DxDOM(element).setAttr(attr).setCss(css);
+            DxDOM(element).attr(attr).css(css);
             return element;
         },
-        setAttr: function (attrs) {
+        attr: function (attrs) {
             this.each(function () {
                 if (attrs) {
                     for (var name in attrs) {
@@ -45,7 +45,7 @@
             });
             return this;
         },
-        setCss: function (cssObj) {
+        css: function (cssObj) {
             this.each(function () {
                 if (cssObj) {
                     for (var name in cssObj) {

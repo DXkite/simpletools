@@ -31,15 +31,15 @@ var dxui = dxui || {
         }
     };
 
-    DxDOM.prototype.constructor.prototype = DxDOM.methods;
+    DxDOM.methods.constructor.prototype = DxDOM.methods;
 
     DxDOM.methods.extend({
-        createElement: function (tag, attr, css) {
+        element: function (tag, attr, css) {
             var element = document.createElement(tag);
-            DxDOM(element).setAttr(attr).setCss(css);
+            DxDOM(element).attr(attr).css(css);
             return element;
         },
-        setAttr: function (attrs) {
+        attr: function (attrs) {
             this.each(function () {
                 if (attrs) {
                     for (var name in attrs) {
@@ -49,7 +49,7 @@ var dxui = dxui || {
             });
             return this;
         },
-        setCss: function (cssObj) {
+        css: function (cssObj) {
             this.each(function () {
                 if (cssObj) {
                     for (var name in cssObj) {
@@ -170,7 +170,7 @@ var dxui = dxui || {
      * @param {string} name
      * @returns
      */
-    dxui.cssname = function css_name(name) {
+    dxui.cssname = function (name) {
         name = add_css_prefix(name);
         name = name.replace(/[A-Z]/, function (name) {
             return '-' + name.toLowerCase();
@@ -623,5 +623,5 @@ var dxui = dxui || {
 })(dxui);
 
 
-
+/** Toast 弹出提示 */
 /* HTML5 视频播放器 */
