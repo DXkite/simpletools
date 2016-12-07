@@ -5,20 +5,21 @@ var dxui = dxui || {
 
 !function(dxui) {
     var DxDOM = function(selecter, context) {
-        return new DxDOM.methods.constructor(selecter, context);
+        return new DxDOM.constructor(selecter, context);
     };
-    DxDOM.methods = DxDOM.prototype, DxDOM.methods.constructor = function(selecter, context) {
+    DxDOM.constructor = function(selecter, context) {
         "string" == typeof selecter ? this.elements = (context || document).querySelectorAll(selecter) : this.elements = [ selecter ], 
         this.context = context, this.length = this.elements.length;
         for (var i = 0; i < this.length; i++) this[i] = this.elements[i];
         return this;
-    }, DxDOM.methods.extend = function(methods) {
+    }, DxDOM.extend = function(methods) {
         for (var name in methods) this[name] = methods[name];
-    }, DxDOM.methods.constructor.prototype = DxDOM.methods, DxDOM.methods.extend({
+    }, DxDOM.extend({
         element: function(tag, attr, css) {
             var element = document.createElement(tag);
             return DxDOM(element).attr(attr).css(css), element;
-        },
+        }
+    }), DxDOM.constructor.prototype = {
         attr: function(attrs) {
             return this.each(function() {
                 if (attrs) for (var name in attrs) this.setAttribute(name, attrs[name]);
@@ -49,11 +50,9 @@ var dxui = dxui || {
                 this.addEventListener(type, listener, useCaptrue);
             }), this;
         }
-    }), DxDOM.methods.extend({
-        find: function(selecter) {
-            return new DxDOM.methods.constructor(selecter);
-        }
-    }), dxui.dom = DxDOM;
+    }, DxDOM.method = DxDOM.constructor.prototype, DxDOM.method.extend = function(methods) {
+        for (var name in methods) this[name] = methods[name];
+    }, dxui.dom = DxDOM;
 }(dxui), function(dxui) {
     "use strict";
     function add_css_prefix(name) {

@@ -11,14 +11,33 @@
     <div>hsdsdo</div>
 </body>
 <script>
-var $= dxui.dom;
-$('div').each(function(){
-    // console.log(this);
-    $(this).on('click',function(){
-
-        console.log('click info: '+this.innerHTML);
+    var $= dxui.dom;
+    $.method.extend({
+        hello:function(){
+            console.log('hello method!');
+            return this;
+        }
     });
-}).css({backgroundColor:'red'});
+    $.extend({
+        hello:function(){
+            console.log('hello static method!');
+            return this;
+        }
+    });
+
+    $('div').each(function(){
+        // console.log(this);
+        $(this).on('click',function(){
+
+            console.log('click info: '+this.innerHTML);
+        });
+    }).css({backgroundColor:'red'}).hello();
+
+
+    $.hello();
+    var $el=$.element('div',{id:'create'},{backgroundColor:'blue'});
+    $el.innerHTML='Hello';
+    document.body.appendChild($el);
 </script>
 
 </html>
