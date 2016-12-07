@@ -1,0 +1,18 @@
+<html>
+
+<head>
+    <title>Test dxui Editor</title>
+    <link rel="stylesheet" href="../../build/dxui.css">
+    <script src="../../build/dxui.js"></script>
+</head>
+
+<body>
+<div id="Toast">Click</div>
+</body>
+<script>
+    dxui.dom('#Toast').on('click',function(){
+        dxui.Toast('Hello!',3000).show();
+    });
+</script>
+
+</html>

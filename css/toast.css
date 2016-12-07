@@ -1,0 +1,10 @@
+.toast
+{
+    background-color: rgba(0, 0, 0, 0.7); 
+    color: white; 
+    display: inline-block; 
+    padding: 0.8em; 
+    cursor: pointer; 
+    opacity: 1; 
+    border: 0px; 
+}

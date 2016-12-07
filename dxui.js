@@ -1,4 +1,6 @@
 /*! dxui by dxkite 2016-12-07 */
+"use strict";
+
 var dxui = dxui || {
     version: "1.0.0"
 };
@@ -54,7 +56,6 @@ var dxui = dxui || {
         for (var name in methods) this[name] = methods[name];
     }, dxui.dom = DxDOM;
 }(dxui), function(dxui) {
-    "use strict";
     function add_css_prefix(name) {
         return name = name.trim(), name = "undefined" == typeof document.documentElement.style[name] ? dxui.css_perfix + name : name;
     }
@@ -109,7 +110,6 @@ var dxui = dxui || {
         _self;
     };
 }(dxui), function(dxui) {
-    "use strict";
     function _string(code) {
         return "'" + code.replace(/('|\\)/g, "\\$1").replace(/\r/g, "\\r").replace(/\n/g, "\\n") + "'";
     }
@@ -328,6 +328,41 @@ var dxui = dxui || {
             });
         }
     }, dxui.Editor = Editor;
+}(dxui), function(dxui) {
+    var TOAST_PARENT_ID = "Toast-Parent", TOAST_SHOW_ID = "Toast-Show", TOAST_SHOW_CLASS = "toast", TOAST_POP_LEVEL = 1e4, Toast = function(text, time) {
+        return new Toast.create(text, time);
+    };
+    Toast.Queue = new Array(), Toast.create = function(message, time) {
+        Toast.Parent = document.getElementById(TOAST_PARENT_ID), Toast.Parent || (Toast.Parent = document.createElement("div"), 
+        Toast.Parent.id = TOAST_PARENT_ID, document.body.appendChild(Toast.Parent)), Toast.Queue.push({
+            message: message,
+            timeout: time
+        });
+    }, Toast.create.prototype.show = function showNext() {
+        if (!document.getElementById(TOAST_SHOW_ID)) {
+            var show = Toast.Queue.shift(), toastdiv = dxui.dom.element("div", {
+                id: TOAST_SHOW_ID,
+                class: TOAST_SHOW_CLASS
+            });
+            toastdiv.innerHTML = show.message, Toast.Parent.appendChild(toastdiv);
+            var margin = window.innerWidth / 2 - toastdiv.scrollWidth / 2, bottom = window.innerHeight - 2 * toastdiv.scrollHeight;
+            toastdiv.style.marginLeft = margin + "px", toastdiv.style.top = bottom + "px";
+            var timeout = show.timeout || 2e3, close = function() {
+                dxui.dom(toastdiv).css({
+                    transition: "opacity 0.3s ease-out",
+                    opacity: 0
+                }), setTimeout(function() {
+                    Toast.Parent.removeChild(toastdiv), Toast.Queue.length && showNext();
+                }, 300);
+            };
+            dxui.dom(toastdiv).css({
+                position: "fixed",
+                opacity: 1,
+                "z-index": TOAST_POP_LEVEL,
+                transition: "opacity 0.1s ease-in"
+            }), setTimeout(close, timeout);
+        }
+    }, dxui.Toast = Toast;
 }(dxui), function(dxui) {
     function VideoPlayer(url, type) {}
     dxui.video_player = function(url, type) {
