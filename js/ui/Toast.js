@@ -27,7 +27,6 @@
         });
     };
 
-
     Toast.create.prototype.show = function showNext() {
         // 一个时刻只能显示一个Toast
         if (document.getElementById(TOAST_SHOW_ID)) return;
@@ -68,5 +67,6 @@
         });
         setTimeout(close, timeout);
     }
+    Toast.show = Toast.create.prototype.show;
     dxui.Toast = Toast;
 })(dxui);

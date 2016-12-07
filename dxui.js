@@ -362,7 +362,7 @@ var dxui = dxui || {
                 transition: "opacity 0.1s ease-in"
             }), setTimeout(close, timeout);
         }
-    }, dxui.Toast = Toast;
+    }, Toast.show = Toast.create.prototype.show, dxui.Toast = Toast;
 }(dxui), function(dxui) {
     function VideoPlayer(url, type) {}
     dxui.video_player = function(url, type) {

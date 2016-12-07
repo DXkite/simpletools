@@ -709,7 +709,6 @@ var dxui = dxui || {
         return new Toast.create(text, time);
     }
 
-
     // Toast队列
     Toast.Queue = new Array();
     // 构造函数
@@ -726,7 +725,6 @@ var dxui = dxui || {
             timeout: time
         });
     };
-
 
     Toast.create.prototype.show = function showNext() {
         // 一个时刻只能显示一个Toast
@@ -768,6 +766,7 @@ var dxui = dxui || {
         });
         setTimeout(close, timeout);
     }
+    Toast.show = Toast.create.prototype.show;
     dxui.Toast = Toast;
 })(dxui);
 /* HTML5 视频播放器 */
