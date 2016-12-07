@@ -1,4 +1,4 @@
-/*! dxui by dxkite 2016-12-06 */
+/*! dxui by dxkite 2016-12-07 */
 var dxui = dxui || {
     version: "1.0.0"
 };
@@ -48,6 +48,10 @@ var dxui = dxui || {
             return this.each(function() {
                 this.addEventListener(type, listener, useCaptrue);
             }), this;
+        }
+    }), DxDOM.methods.extend({
+        find: function(selecter) {
+            return new DxDOM.methods.constructor(selecter);
         }
     }), dxui.dom = DxDOM;
 }(dxui), function(dxui) {
@@ -284,4 +288,9 @@ var dxui = dxui || {
             }
         };
     }, dxtpl.template = template, dxtpl.selftpl = selftpl, window.dxtpl = dxtpl;
+}(dxui), function(dxui) {
+    function VideoPlayer(url, type) {}
+    dxui.video_player = function(url, type) {
+        return new VideoPlayer(url, type);
+    }, dxui.VideoPlayer = VideoPlayer;
 }(dxui);

@@ -84,9 +84,13 @@ var dxui = dxui || {
                 this.addEventListener(type, listener, useCaptrue);
             });
             return this;
-        },
+        }
     });
-
+    DxDOM.methods.extend({
+        find: function (selecter) {
+            return new DxDOM.methods.constructor(selecter);
+        }
+    });
     dxui.dom = DxDOM;
 })(dxui);
 (function (dxui) {
@@ -625,3 +629,16 @@ var dxui = dxui || {
 
 /** Toast 弹出提示 */
 /* HTML5 视频播放器 */
+// TODO
+(function(dxui){
+
+    function VideoPlayer(url,type) {
+
+    }
+    dxui.video_player=function(url,type){
+        return new VideoPlayer(url,type);
+    }
+
+    dxui.VideoPlayer=VideoPlayer;
+
+})(dxui);

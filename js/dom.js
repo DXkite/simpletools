@@ -1,8 +1,11 @@
 /** DOM 辅助 */
 (function (dxui) {
+
+
     var DxDOM = function (selecter, context) {
         return new DxDOM.methods.constructor(selecter, context);
     }
+
 
     DxDOM.methods = DxDOM.prototype;
 
@@ -26,6 +29,7 @@
             this[name] = methods[name];
         }
     };
+
 
     DxDOM.methods.constructor.prototype = DxDOM.methods;
 
@@ -80,8 +84,8 @@
                 this.addEventListener(type, listener, useCaptrue);
             });
             return this;
-        },
+        }
     });
-
+    
     dxui.dom = DxDOM;
 })(dxui);
