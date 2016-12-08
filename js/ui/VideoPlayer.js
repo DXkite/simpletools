@@ -1,7 +1,7 @@
 /* HTML5 视频播放器 */
 // TODO
 (function(dxui){
-
+    "use strict";
     function VideoPlayer(url,type) {
 
     }

@@ -1,5 +1,6 @@
 /** DOM 辅助 */
 (function (dxui) {
+    "use strict";
     var DxDOM = function (selecter, context) {
         return new DxDOM.constructor(selecter, context);
     }
@@ -31,8 +32,11 @@
             return element;
         }
     });
+    
+
     DxDOM.method = DxDOM.constructor.prototype;
     DxDOM.method.extend = DxDOM.extend;
+    // 属性方法
     DxDOM.method.extend({
         attr: function (attrs) {
             this.each(function () {
@@ -82,7 +86,5 @@
         }
     });
 
-    // DxDOM.method=DxDOM.constructor.prototype;
-    // DxDOM.method.extend=DxDOM.extend;
     dxui.dom = DxDOM;
 })(dxui);

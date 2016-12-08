@@ -1,4 +1,5 @@
 (function (dxui) {
+    "use strict";
     /**
      * 创建可移动层
      * 

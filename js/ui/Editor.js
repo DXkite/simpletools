@@ -1,4 +1,5 @@
 (function (dxui) {
+    "use strict";
     var $ = dxui.dom;
     var Editor = function (node) {
         this.m_node = node;
@@ -47,7 +48,7 @@
             this.m_node.appendChild(this.m_controls);
             this.m_node.appendChild(this.m_content);
             
-            
+
             var insertHTML = $.element('a', {
                 href: '#'
             }, {

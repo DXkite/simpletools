@@ -1,42 +1,4 @@
-/*! dxui.css by dxkite 2016-12-08 */
-.editor-content {
-    outline: none;
-    max-width: 100%;
-    width: 100%;
-    height: auto;
-    resize: both;
-    overflow: auto;
-    border: 1px solid #c2cacf;
-    border-radius: 0 0 0.3em 0.3em;
-    min-height: 15em;
-}
-
-.editor-controls a {
-    display: inline-block;
-    width: 2em;
-    height: 2em;
-    vertical-align: top;
-    line-height: 2.5em;
-    text-decoration: none;
-    text-align: center;
-    cursor: pointer;
-}
-
-.editor-controls {
-    display: block;
-    width: 100%;
-    border: 1px solid #c2cacf;
-    border-bottom: none;
-    border-radius: 0.3em 0.3em 0 0;
-    background: #ffffff;
-}
-.icon {
-   width: 1em; height: 1em;
-   vertical-align: -0.15em;
-   fill: currentColor;
-   overflow: hidden;
-}
-
+/** Markdown 样式　*/
 
 .markdown {
   color: #666;
@@ -230,14 +192,3 @@
   clear: both;
 }
 
-
-.toast
-{
-    background-color: rgba(0, 0, 0, 0.7); 
-    color: white; 
-    display: inline-block; 
-    padding: 0.8em; 
-    cursor: pointer; 
-    opacity: 1; 
-    border: 0px; 
-}
