@@ -1,4 +1,4 @@
-/*! dxui by dxkite 2016-12-07 */
+/*! dxui by dxkite 2016-12-08 */
 "use strict";
 
 var dxui = dxui || {
@@ -21,7 +21,8 @@ var dxui = dxui || {
             var element = document.createElement(tag);
             return DxDOM(element).attr(attr).css(css), element;
         }
-    }), DxDOM.constructor.prototype = {
+    }), DxDOM.method = DxDOM.constructor.prototype, DxDOM.method.extend = DxDOM.extend, 
+    DxDOM.method.extend({
         attr: function(attrs) {
             return this.each(function() {
                 if (attrs) for (var name in attrs) this.setAttribute(name, attrs[name]);
@@ -52,9 +53,7 @@ var dxui = dxui || {
                 this.addEventListener(type, listener, useCaptrue);
             }), this;
         }
-    }, DxDOM.method = DxDOM.constructor.prototype, DxDOM.method.extend = function(methods) {
-        for (var name in methods) this[name] = methods[name];
-    }, dxui.dom = DxDOM;
+    }), dxui.dom = DxDOM;
 }(dxui), function(dxui) {
     function add_css_prefix(name) {
         return name = name.trim(), name = "undefined" == typeof document.documentElement.style[name] ? dxui.css_perfix + name : name;

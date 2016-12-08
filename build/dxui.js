@@ -36,9 +36,10 @@ var dxui = dxui || {
             return element;
         }
     });
-
-    DxDOM.constructor.prototype = {
-         attr: function (attrs) {
+    DxDOM.method = DxDOM.constructor.prototype;
+    DxDOM.method.extend = DxDOM.extend;
+    DxDOM.method.extend({
+        attr: function (attrs) {
             this.each(function () {
                 if (attrs) {
                     for (var name in attrs) {
@@ -84,13 +85,10 @@ var dxui = dxui || {
             });
             return this;
         }
-    };
-    DxDOM.method=DxDOM.constructor.prototype;
-    DxDOM.method.extend=function (methods) {
-        for (var name in methods) {
-            this[name] = methods[name];
-        }
-    };
+    });
+
+    // DxDOM.method=DxDOM.constructor.prototype;
+    // DxDOM.method.extend=DxDOM.extend;
     dxui.dom = DxDOM;
 })(dxui);
 (function (dxui) {
