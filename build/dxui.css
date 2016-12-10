@@ -1,4 +1,4 @@
-/*! dxui.css by dxkite 2016-12-08 */
+/*! dxui.css by dxkite 2016-12-10 */
 .editor-content {
     outline: none;
     max-width: 100%;
@@ -30,13 +30,19 @@
     border-radius: 0.3em 0.3em 0 0;
     background: #ffffff;
 }
-.icon {
+.icon,.icon-1x,.icon-2x {
    width: 1em; height: 1em;
    vertical-align: -0.15em;
    fill: currentColor;
    overflow: hidden;
 }
-
+.icon-1x{
+    font-size: 1.5em;
+}
+.icon-2x{
+    font-size: 2em;
+}
+/** Markdown 样式　*/
 
 .markdown {
   color: #666;

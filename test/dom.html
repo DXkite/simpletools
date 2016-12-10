@@ -2,13 +2,20 @@
 
 <head>
     <title>Test dxui</title>
-        <link rel="stylesheet" href="../build/dxui.css">
+    <link rel="stylesheet" href="../build/dxui.css">
     <script src="../build/dxui.js"></script>
+    <script src="../build/dxui.icon.min.js"></script>
 </head>
 
 <body>
     <div>hello</div>
     <svg class="icon" aria-hidden="true">
+        <use xlink:href="#icon-close"></use>
+    </svg>
+    <svg class="icon-1x" aria-hidden="true">
+        <use xlink:href="#icon-close"></use>
+    </svg>
+    <svg class="icon-2x" aria-hidden="true">
         <use xlink:href="#icon-close"></use>
     </svg>
     <div>xxx</div>
