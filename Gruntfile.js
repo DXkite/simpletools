@@ -44,7 +44,7 @@ module.exports = function (grunt) {
                     mangle: false,
                 },
                 src: 'build/<%= pkg.name %>.js',
-                dest: 'build/<%= pkg.name %>.js'
+                dest: 'build/<%= pkg.name %>.beautiful.js'
             }
 
         },
