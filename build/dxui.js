@@ -355,9 +355,11 @@ var dxui = dxui || {
             timeout: time,
             style: style ? TOAST_DEFAULT_STYLE + '-' + style : TOAST_DEFAULT_STYLE,
         });
+        Toast.show();
     };
 
-    Toast.create.prototype.show = function showNext() {
+
+    Toast.show = function () {
         // 一个时刻只能显示一个Toast
         if (document.getElementById(TOAST_SHOW_ID)) return;
         var show = Toast.Queue.shift();
@@ -384,7 +386,7 @@ var dxui = dxui || {
             setTimeout(function () {
                 Toast.Parent.removeChild(toastdiv);
                 if (Toast.Queue.length) {
-                    showNext();
+                     Toast.show();
                 }
             }, 300);
         };
@@ -397,7 +399,6 @@ var dxui = dxui || {
         });
         setTimeout(close, timeout);
     }
-    Toast.show = Toast.create.prototype.show;
     dxui.Toast = Toast;
 })(dxui)
 ;!(function(window) {

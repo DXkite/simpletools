@@ -159,8 +159,8 @@ var dxui = dxui || {
             message: message,
             timeout: time,
             style: style ? TOAST_DEFAULT_STYLE + "-" + style : TOAST_DEFAULT_STYLE
-        });
-    }, Toast.create.prototype.show = function showNext() {
+        }), Toast.show();
+    }, Toast.show = function() {
         if (!document.getElementById(TOAST_SHOW_ID)) {
             var show = Toast.Queue.shift(), toastdiv = dxui.dom.element("div", {
                 id: TOAST_SHOW_ID,
@@ -174,7 +174,7 @@ var dxui = dxui || {
                     transition: "opacity 0.3s ease-out",
                     opacity: 0
                 }), setTimeout(function() {
-                    Toast.Parent.removeChild(toastdiv), Toast.Queue.length && showNext();
+                    Toast.Parent.removeChild(toastdiv), Toast.Queue.length && Toast.show();
                 }, 300);
             };
             dxui.dom(toastdiv).css({
@@ -184,7 +184,7 @@ var dxui = dxui || {
                 transition: "opacity 0.1s ease-in"
             }), setTimeout(close, timeout);
         }
-    }, Toast.show = Toast.create.prototype.show, dxui.Toast = Toast;
+    }, dxui.Toast = Toast;
 }(dxui), !function(window) {
     function _string(code) {
         return "'" + code.replace(/('|\\)/g, "\\$1").replace(/\r/g, "\\r").replace(/\n/g, "\\n") + "'";
