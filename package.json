@@ -9,6 +9,10 @@
   "keywords": [
     "dxkite"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/DXkite/dxui.git"
+  },
   "author": "dxkite",
   "license": "MIT",
   "dependencies": {
