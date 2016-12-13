@@ -1,10 +1,11 @@
+// 全局严格模式
+"use strict";
 // 初始化
 var dxui = dxui || {
     version: '1.0.0'
 };
 /** DOM 辅助 */
 (function (dxui) {
-    "use strict";
     var DxDOM = function (selecter, context) {
         return new DxDOM.constructor(selecter, context);
     }
@@ -93,7 +94,6 @@ var dxui = dxui || {
     dxui.dom = DxDOM;
 })(dxui);
 (function (dxui) {
-    "use strict";
     /* --------------- 全局函数 ------------------ */
     dxui.is_function = function (obj) {
         return Object.prototype.toString.call(obj) === '[object Function]';
@@ -184,7 +184,6 @@ var dxui = dxui || {
     window.dxui = dxui;
 })(dxui);
 (function (dxui) {
-    "use strict";
     /**
      * 创建可移动层
      * 
@@ -251,9 +250,8 @@ var dxui = dxui || {
         return _self;
     }
 })(dxui);
-(function(dxui) {
+(function(window) {
     // 可独立的模板
-    "use strict";
     var dxtpl = {};
     //  缓存查找节点可能会耗时较多 
     var defaults = {
@@ -417,7 +415,15 @@ var dxui = dxui || {
             callback.call(value[index], value[index], index);
         }
     }
-
+    var _objectCopy = function (arrays) {
+        var object = {};
+        for (var i = 0; i < arguments.length; i++) {
+            for (var index in arguments[i]) {
+                object[index] = arguments[i][index];
+            }
+        }
+        return object;
+    }
     var _include = function(id, value) {
         if (document.getElementById(id)) {
             try {
@@ -580,7 +586,7 @@ var dxui = dxui || {
                     reportError(selector + '[' + index + ']', null, 0, new Error('Unsupport json'));
                 }
             }
-            value=dxui.object_copy(value,valueset);
+            value=_objectCopy(value,valueset);
             var code = compile(source, parsers);
             node.innerHTML = render(selector, source, code, value);
         });
@@ -624,11 +630,10 @@ var dxui = dxui || {
     dxtpl.template = template;
     dxtpl.selftpl = selftpl;
     window.dxtpl=dxtpl;
-})(dxui);
+})(window);
 
 
 (function (dxui) {
-    "use strict";
     var $ = dxui.dom;
     var Editor = function (node) {
         this.m_node = node;
@@ -701,7 +706,6 @@ var dxui = dxui || {
 })(dxui);
 /** Toast 弹出提示 */
 (function (dxui) {
-    "use strict";
     // 常量
     var TOAST_PARENT_ID = 'Toast-Parent';
     var TOAST_SHOW_ID = 'Toast-Show';
@@ -775,7 +779,6 @@ var dxui = dxui || {
 /* HTML5 视频播放器 */
 // TODO
 (function(dxui){
-    "use strict";
     function VideoPlayer(url,type) {
 
     }
@@ -786,3 +789,13 @@ var dxui = dxui || {
     dxui.VideoPlayer=VideoPlayer;
 
 })(dxui);
+!(function (dxui) {
+    
+    var Window=function(title,content,config){
+        
+    }
+
+    Window.prototype={
+
+    };
+}(dxui));

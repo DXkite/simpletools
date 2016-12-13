@@ -1,5 +1,4 @@
 (function (dxui) {
-    "use strict";
     var $ = dxui.dom;
     var Editor = function (node) {
         this.m_node = node;

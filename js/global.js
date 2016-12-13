@@ -1,5 +1,4 @@
 (function (dxui) {
-    "use strict";
     /* --------------- 全局函数 ------------------ */
     dxui.is_function = function (obj) {
         return Object.prototype.toString.call(obj) === '[object Function]';

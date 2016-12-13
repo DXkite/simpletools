@@ -1,10 +1,11 @@
-/*! dxui by dxkite 2016-12-10 */
+/*! dxui by dxkite 2016-12-13 */
+"use strict";
+
 var dxui = dxui || {
     version: "1.0.0"
 };
 
 !function(dxui) {
-    "use strict";
     var DxDOM = function(selecter, context) {
         return new DxDOM.constructor(selecter, context);
     };
@@ -54,7 +55,6 @@ var dxui = dxui || {
         }
     }), dxui.dom = DxDOM;
 }(dxui), function(dxui) {
-    "use strict";
     function add_css_prefix(name) {
         return name = name.trim(), name = "undefined" == typeof document.documentElement.style[name] ? dxui.css_perfix + name : name;
     }
@@ -86,7 +86,6 @@ var dxui = dxui || {
         });
     }, dxui.cssfix = add_css_prefix, window.dxui = dxui;
 }(dxui), function(dxui) {
-    "use strict";
     dxui.moveable = function(layer, controller) {
         var _controller = controller || layer, _self = layer;
         _self.style.position = "fixed";
@@ -109,8 +108,7 @@ var dxui = dxui || {
         return _controller.addEventListener("mousedown", _move_layer), _controller.addEventListener("touchstart", _move_layer), 
         _self;
     };
-}(dxui), function(dxui) {
-    "use strict";
+}(dxui), function(window) {
     function _string(code) {
         return "'" + code.replace(/('|\\)/g, "\\$1").replace(/\r/g, "\\r").replace(/\n/g, "\\n") + "'";
     }
@@ -197,6 +195,9 @@ var dxui = dxui || {
         if (is_array(value)) _arrayEach(value, callback); else for (var index in value) callback.call(value[index], value[index], index);
     }, _arrayEach = function(value, callback) {
         for (var index = 0; index < value.length; ++index) callback.call(value[index], value[index], index);
+    }, _objectCopy = function(arrays) {
+        for (var object = {}, i = 0; i < arguments.length; i++) for (var index in arguments[i]) object[index] = arguments[i][index];
+        return object;
     }, _include = function(id, value) {
         if (!document.getElementById(id)) throw Error("No Template " + id);
         try {
@@ -267,7 +268,7 @@ var dxui = dxui || {
             } catch (e) {
                 reportError(selector + "[" + index + "]", null, 0, new Error("Unsupport json"));
             }
-            value = dxui.object_copy(value, valueset);
+            value = _objectCopy(value, valueset);
             var code = compile(source, parsers);
             node.innerHTML = render(selector, source, code, value);
         });
@@ -288,8 +289,7 @@ var dxui = dxui || {
             }
         };
     }, dxtpl.template = template, dxtpl.selftpl = selftpl, window.dxtpl = dxtpl;
-}(dxui), function(dxui) {
-    "use strict";
+}(window), function(dxui) {
     var $ = dxui.dom, Editor = function(node) {
         this.m_node = node;
         var self = this;
@@ -331,7 +331,6 @@ var dxui = dxui || {
         }
     }, dxui.Editor = Editor;
 }(dxui), function(dxui) {
-    "use strict";
     var TOAST_PARENT_ID = "Toast-Parent", TOAST_SHOW_ID = "Toast-Show", TOAST_SHOW_CLASS = "toast", TOAST_POP_LEVEL = 1e4, Toast = function(text, time) {
         return new Toast.create(text, time);
     };
@@ -367,9 +366,11 @@ var dxui = dxui || {
         }
     }, Toast.show = Toast.create.prototype.show, dxui.Toast = Toast;
 }(dxui), function(dxui) {
-    "use strict";
     function VideoPlayer(url, type) {}
     dxui.video_player = function(url, type) {
         return new VideoPlayer(url, type);
     }, dxui.VideoPlayer = VideoPlayer;
+}(dxui), !function(dxui) {
+    var Window = function(title, content, config) {};
+    Window.prototype = {};
 }(dxui);

@@ -30,10 +30,6 @@ module.exports = function (grunt) {
                 src: 'build/<%= pkg.name %>.js',
                 dest: 'build/<%= pkg.name %>.min.js'
             },
-            font: {
-                src: 'image/iconfont.js',
-                dest: 'build/<%= pkg.name %>.icon.min.js'
-            },
             beautify: {
                 options: {
                     banner: '/*! <%= pkg.name %> by <%= pkg.author %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',

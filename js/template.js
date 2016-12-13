@@ -1,6 +1,5 @@
-(function(dxui) {
+(function(window) {
     // 可独立的模板
-    "use strict";
     var dxtpl = {};
     //  缓存查找节点可能会耗时较多 
     var defaults = {
@@ -164,7 +163,15 @@
             callback.call(value[index], value[index], index);
         }
     }
-
+    var _objectCopy = function (arrays) {
+        var object = {};
+        for (var i = 0; i < arguments.length; i++) {
+            for (var index in arguments[i]) {
+                object[index] = arguments[i][index];
+            }
+        }
+        return object;
+    }
     var _include = function(id, value) {
         if (document.getElementById(id)) {
             try {
@@ -327,7 +334,7 @@
                     reportError(selector + '[' + index + ']', null, 0, new Error('Unsupport json'));
                 }
             }
-            value=dxui.object_copy(value,valueset);
+            value=_objectCopy(value,valueset);
             var code = compile(source, parsers);
             node.innerHTML = render(selector, source, code, value);
         });
@@ -371,5 +378,5 @@
     dxtpl.template = template;
     dxtpl.selftpl = selftpl;
     window.dxtpl=dxtpl;
-})(dxui);
+})(window);
 

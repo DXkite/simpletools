@@ -1,6 +1,5 @@
 /** DOM 辅助 */
 (function (dxui) {
-    "use strict";
     var DxDOM = function (selecter, context) {
         return new DxDOM.constructor(selecter, context);
     }

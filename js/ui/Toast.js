@@ -1,6 +1,5 @@
 /** Toast 弹出提示 */
 (function (dxui) {
-    "use strict";
     // 常量
     var TOAST_PARENT_ID = 'Toast-Parent';
     var TOAST_SHOW_ID = 'Toast-Show';
