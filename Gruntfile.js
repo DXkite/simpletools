@@ -4,21 +4,21 @@ module.exports = function (grunt) {
         pkg: grunt.file.readJSON('package.json'),
         concat: {
             dxproject: {
-                src: ['js/init.js','js/*.js','js/ui/*.js'],
+                src: ['src/init.js', 'src/*.js', 'src/modules/*.js'],
                 dest: 'build/<%= pkg.name %>.js'
             },
             css: {
                 options: {
                     banner: '/*! <%= pkg.name %>.css by <%= pkg.author %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
                 },
-                src: ['css/*.css'],
-                dest: 'build/<%= pkg.name %>.css'
+                src: ['src/css/*.css'],
+                dest: 'build/css/<%= pkg.name %>.css'
             }
         },
         cssmin: {
             mincss: {
                 files: {
-                    'build/<%= pkg.name %>.min.css': ['build/<%= pkg.name %>.css']
+                    'build/css/<%= pkg.name %>.min.css': ['build/css/<%= pkg.name %>.css']
                 },
             },
         },
@@ -40,12 +40,23 @@ module.exports = function (grunt) {
                 src: 'build/<%= pkg.name %>.js',
                 dest: '<%= pkg.name %>.js'
             }
-        }
+
+        },
+        copy: {
+            resource: {
+                expand: true,
+                cwd: 'src',
+                src: ['image/**'],
+                dest: 'build/',
+            },
+        },
     });
 
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-concat');
-    grunt.registerTask('default', ['concat', 'cssmin', 'uglify']);
+    grunt.loadNpmTasks('grunt-contrib-copy');
+
+    grunt.registerTask('default', ['concat', 'cssmin', 'uglify', 'copy']);
 
 };

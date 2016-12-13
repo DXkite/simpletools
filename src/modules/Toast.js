@@ -1,5 +1,5 @@
 /** Toast 弹出提示 */
-(function (dxui) {
+;!(function (dxui) {
     // 常量
     var TOAST_PARENT_ID = 'Toast-Parent';
     var TOAST_SHOW_ID = 'Toast-Show';
@@ -69,4 +69,4 @@
     }
     Toast.show = Toast.create.prototype.show;
     dxui.Toast = Toast;
-})(dxui);
+})(dxui)

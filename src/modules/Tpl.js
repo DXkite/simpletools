@@ -1,4 +1,4 @@
-(function(window) {
+;!(function(window) {
     // 可独立的模板
     var dxtpl = {};
     //  缓存查找节点可能会耗时较多 
@@ -378,5 +378,4 @@
     dxtpl.template = template;
     dxtpl.selftpl = selftpl;
     window.dxtpl=dxtpl;
-})(window);
-
+})(window)

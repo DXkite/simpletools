@@ -1,6 +1,6 @@
 /* HTML5 视频播放器 */
 // TODO
-(function(dxui){
+;!(function(dxui){
     function VideoPlayer(url,type) {
 
     }
@@ -10,4 +10,4 @@
 
     dxui.VideoPlayer=VideoPlayer;
 
-})(dxui);
+})(dxui)

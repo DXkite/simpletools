@@ -1,4 +1,4 @@
-(function (dxui) {
+;!(function (dxui) {
     var $ = dxui.dom;
     var Editor = function (node) {
         this.m_node = node;
@@ -68,4 +68,4 @@
 
 
     dxui.Editor = Editor;
-})(dxui);
+})(dxui)

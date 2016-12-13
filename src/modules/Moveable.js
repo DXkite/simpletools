@@ -1,4 +1,4 @@
-(function (dxui) {
+;!(function (dxui) {
     /**
      * 创建可移动层
      * 
@@ -64,4 +64,4 @@
         _controller.addEventListener('touchstart', _move_layer);
         return _self;
     }
-})(dxui);
+})(dxui)

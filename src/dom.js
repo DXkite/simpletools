@@ -1,5 +1,5 @@
 /** DOM 辅助 */
-(function (dxui) {
+;!(function (dxui) {
     var DxDOM = function (selecter, context) {
         return new DxDOM.constructor(selecter, context);
     }
@@ -86,4 +86,4 @@
     });
 
     dxui.dom = DxDOM;
-})(dxui);
+})(dxui)

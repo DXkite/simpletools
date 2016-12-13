@@ -1,4 +1,4 @@
-(function (dxui) {
+;!(function (dxui) {
     /* --------------- 全局函数 ------------------ */
     dxui.is_function = function (obj) {
         return Object.prototype.toString.call(obj) === '[object Function]';
@@ -87,4 +87,4 @@
     }
     dxui.cssfix = add_css_prefix;
     window.dxui = dxui;
-})(dxui);
+})(dxui)
