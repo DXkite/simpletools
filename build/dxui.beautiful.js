@@ -166,7 +166,7 @@ var dxui = dxui || {
                 id: TOAST_SHOW_ID,
                 class: show.style
             });
-            console.log(show, show.style), toastdiv.innerHTML = show.message, Toast.Parent.appendChild(toastdiv);
+            toastdiv.innerHTML = show.message, Toast.Parent.appendChild(toastdiv);
             var margin = window.innerWidth / 2 - toastdiv.scrollWidth / 2, bottom = window.innerHeight - 2 * toastdiv.scrollHeight;
             toastdiv.style.marginLeft = margin + "px", toastdiv.style.top = bottom + "px";
             var timeout = show.timeout || 2e3, close = function() {

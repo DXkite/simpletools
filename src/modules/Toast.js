@@ -38,7 +38,6 @@
             id: TOAST_SHOW_ID,
             class: show.style
         });
-        console.log(show, show.style);
         toastdiv.innerHTML = show.message;
         Toast.Parent.appendChild(toastdiv);
 
