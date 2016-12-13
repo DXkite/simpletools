@@ -489,7 +489,7 @@
     opacity: 1; 
     border: 0px; 
 }
-
+/* 扩展样式 主样式名-扩展样式名 */
 .toast-green
 {
     background-color: rgba(0, 255, 0, 0.7); 
