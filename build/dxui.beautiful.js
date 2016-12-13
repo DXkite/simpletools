@@ -150,22 +150,23 @@ var dxui = dxui || {
         _self;
     };
 }(dxui), !function(dxui) {
-    var TOAST_PARENT_ID = "Toast-Parent", TOAST_SHOW_ID = "Toast-Show", TOAST_SHOW_CLASS = "toast", TOAST_POP_LEVEL = 1e4, Toast = function(text, time) {
-        return new Toast.create(text, time);
+    var TOAST_PARENT_ID = "Toast-Parent", TOAST_SHOW_ID = "Toast-Show", TOAST_DEFAULT_STYLE = "toast", TOAST_POP_LEVEL = 1e4, Toast = function(text, time, style) {
+        return new Toast.create(text, time, style);
     };
-    Toast.Queue = new Array(), Toast.create = function(message, time) {
+    Toast.Queue = new Array(), Toast.create = function(message, time, style) {
         Toast.Parent = document.getElementById(TOAST_PARENT_ID), Toast.Parent || (Toast.Parent = document.createElement("div"), 
         Toast.Parent.id = TOAST_PARENT_ID, document.body.appendChild(Toast.Parent)), Toast.Queue.push({
             message: message,
-            timeout: time
+            timeout: time,
+            style: style ? TOAST_DEFAULT_STYLE + "-" + style : TOAST_DEFAULT_STYLE
         });
     }, Toast.create.prototype.show = function showNext() {
         if (!document.getElementById(TOAST_SHOW_ID)) {
             var show = Toast.Queue.shift(), toastdiv = dxui.dom.element("div", {
                 id: TOAST_SHOW_ID,
-                class: TOAST_SHOW_CLASS
+                class: show.style
             });
-            toastdiv.innerHTML = show.message, Toast.Parent.appendChild(toastdiv);
+            console.log(show, show.style), toastdiv.innerHTML = show.message, Toast.Parent.appendChild(toastdiv);
             var margin = window.innerWidth / 2 - toastdiv.scrollWidth / 2, bottom = window.innerHeight - 2 * toastdiv.scrollHeight;
             toastdiv.style.marginLeft = margin + "px", toastdiv.style.top = bottom + "px";
             var timeout = show.timeout || 2e3, close = function() {

@@ -1,3 +1,9 @@
+/**
+ * DxUI 芒刺项目衍生界面库
+ * Author: DXkite
+ * Git:  https://github.com/DXkite/dxui.git
+ * Lisence: MIT
+ */
 // 全局严格模式
 "use strict";
 // 初始化
@@ -321,22 +327,22 @@ var dxui = dxui || {
         return _self;
     }
 })(dxui)
-/** Toast 弹出提示 */
-;!(function (dxui) {
+/** Toast 弹出提示 */ ;
+!(function (dxui) {
     // 常量
     var TOAST_PARENT_ID = 'Toast-Parent';
     var TOAST_SHOW_ID = 'Toast-Show';
-    var TOAST_SHOW_CLASS = 'toast';
+    var TOAST_DEFAULT_STYLE = 'toast';
     var TOAST_POP_LEVEL = 10000;
 
-    var Toast = function (text, time) {
-        return new Toast.create(text, time);
+    var Toast = function (text, time, style) {
+        return new Toast.create(text, time, style);
     }
 
     // Toast队列
     Toast.Queue = new Array();
     // 构造函数
-    Toast.create = function (message, time) {
+    Toast.create = function (message, time, style) {
         Toast.Parent = document.getElementById(TOAST_PARENT_ID);
 
         if (!Toast.Parent) {
@@ -346,7 +352,8 @@ var dxui = dxui || {
         }
         Toast.Queue.push({
             message: message,
-            timeout: time
+            timeout: time,
+            style: style ? TOAST_DEFAULT_STYLE + '-' + style : TOAST_DEFAULT_STYLE,
         });
     };
 
@@ -356,9 +363,9 @@ var dxui = dxui || {
         var show = Toast.Queue.shift();
         var toastdiv = dxui.dom.element('div', {
             id: TOAST_SHOW_ID,
-            class: TOAST_SHOW_CLASS
+            class: show.style
         });
-
+        console.log(show, show.style);
         toastdiv.innerHTML = show.message;
         Toast.Parent.appendChild(toastdiv);
 

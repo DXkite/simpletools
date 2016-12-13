@@ -8,10 +8,14 @@
 
 <body>
 <div id="Toast">Click</div>
+<div id="Toast2">Click Style</div>
 </body>
 <script>
     dxui.dom('#Toast').on('click',function(){
-        dxui.Toast('Hello!',500).show();
+        dxui.Toast('Hello!',300).show();
+    });
+    dxui.dom('#Toast2').on('click',function(){
+        dxui.Toast('Hello!',300,'green').show();
     });
 </script>
 
