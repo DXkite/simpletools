@@ -43,11 +43,19 @@ module.exports = function (grunt) {
 
         },
         copy: {
-            resource: {
+            image: {
                 expand: true,
                 cwd: 'src',
                 src: ['image/**'],
                 dest: 'build/',
+                filter: 'isFile',
+            },
+            font: {
+                expand: true,
+                cwd: 'src',
+                src: ['font/**'],
+                dest: 'build/',
+                filter: 'isFile'
             },
         },
     });
