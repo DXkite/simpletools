@@ -7,8 +7,8 @@
     <h2>Test Of List</h2>
     <div id="test1" data-init="{lists:['moveable','template','dom','ui/index','tpl/index']}">
         <ol>
-            {each lists as name}
-            <li><a href="{name}.html">test of {name}</a> </li>
+            {each lists as index : name }
+            <li><a href="{name}.html">{index}:test of {name}</a> </li>
             {/each}
         </ol>
     </div>
