@@ -400,40 +400,24 @@ var dxui = dxui || {
     }
     dxui.Toast = Toast;
 })(dxui)
-;!(function(window) {
-    // 可独立的模板
-    var dxtpl = {};
+;
+!(function (window) {
+
     //  缓存查找节点可能会耗时较多 
-    var defaults = {
-        cache: true,    // 是否开启缓存
-        tags: ['{', '}'], //控制标签
+    var default_config = {
+        cache: true, // 是否开启缓存
+        tagstart: '{',
+        tagend: '}', //控制标签
         compress: true,
-        use_strict: true,
+        strict: true,
     };
+
     // 关键字
-    var keywords = 'if,else,each,include,while,for';
-    var keyword_preg = '^\\s*((?:\/)?(?:' + keywords.split(',').join('|') + '))(.*)';
+    var KEYWORD = 'if,else,each,include,while,for';
+    var KEYWORD_PREG = '^\\s*((?:\/)?(?:' + KEYWORD.split(',').join('|') + '))(.*)';
 
-    var tagstart = defaults.tags[0];
-    var tagend = defaults.tags[1];
-    var cache = defaults.cache;
-    var compress = defaults.compress;
-    var use_strict = defaults.use_strict;
-
-    dxtpl.config = function(config) {
-        cache = (typeof config.cache !== undefined) ? config.cache : defaults.cache;
-        compress = (typeof config.compress !== undefined) ? config.compress : defaults.compress;
-        if (config.tags && config.tags.length === 2) {
-            tagstart = config.tags[0];
-            tagend = config.tags[1]
-        }
-    }
-    
     // @artTemplate:https://github.com/aui/artTemplate
-    var is_new_engine = ''.trim;
-    var replaces = is_new_engine
-        ? ["$_tpl_=''", "$_tpl_+=", ";", "$_tpl_"]
-        : ["$_tpl_=[]", "$_tpl_.push(", ");", "$_tpl_.join('')"];
+    var ENGINE = ''.trim ? ["$_tpl_=''", "$_tpl_+=", ";", "$_tpl_"] : ["$_tpl_=[]", "$_tpl_.push(", ");", "$_tpl_.join('')"];
 
     var escape = {
         "<": "&#60;",
@@ -442,7 +426,19 @@ var dxui = dxui || {
         "'": "&#39;",
         "&": "&#38;"
     };
-    var statment_test = function(test, code) {
+
+
+    /*  --------------------  静态内部函数 protected ------------------------*/
+
+
+    /**
+     * 测试模板语句的可行性
+     * 
+     * @param {any} test
+     * @param {any} code
+     * @returns
+     */
+    function statmentTest(test, code) {
         try {
             new Function(test);
         } catch (e) {
@@ -451,116 +447,128 @@ var dxui = dxui || {
         return code;
     }
 
-    var parsers = {
-        html: function(html) {
-            // console.log('HTML:', html);
-            var out = '';
-            if (html.match(/(?!^)\n/)) {
-                _each(html.split('\n'), function(html) {
-                    if (html) {
-                        // 压缩多余空白与注释
-                        if (compress) {
-                            html = html.replace(/\s+/g, ' ').replace(/<!--.*?-->/g, '');
-                        }
-                        if (html) {
-                            out += replaces[1] + _string(html) + replaces[2];
-                            out += '\n';
-                        }
-                    }
-                });
-            } else if (html) {
-                out += replaces[1] + _string(html) + replaces[2];
-            }
-            return out;
-        },
-        code: function(code) {
-            var match;
-            // console.log(new RegExp(keyword_preg));
-            if (match = code.match(new RegExp(keyword_preg))) {
-                // console.log(code,':',match);
-                var command = match[1];
-                var param = match[2];
 
-                switch (command) {
-                    case 'include': // 编译时包含
-                        param = param.trim().split(' ');
-                        if (param.length === 1) {
-                            param.push("$_unit.value");
-                        }
-                        param = param.join(',');
-                        return replaces[1] + '$_unit._include(' + param + ')' + replaces[2];
-                    case 'if':
-                        return statment_test('if(' + param + '){}', 'if (' + param + ') {');
-                    case 'else':
-                        // console.log(param,param.match(/^\s*if\s+(.*)/));
-                        if (match = param.match(/^\s*if\s+(.*)/)) {
-                            return '} else if (' + match[1] + '){';
-                        }
-                        return '}else{';
-                    case '/if':
-                    case '/while':
-                    case '/for':
-                        return '}';
-                    case 'while':
-                        return statment_test('while(' + param + '){}', 'while (' + param + ') {');
-                    case 'for':
-                        return statment_test('for(' + param + '){}', 'for (' + param + ') {');
-                    case 'each':
-                        var match = param.match(/(\w+)\s+(?:(?:as(?:\s+(\w+)))?(?:(?:\s+=>)?\s+(\w+))?)?/);
-                        if (match) {
-                            var value = match[1];
-                            var each_param;
-                            if (match[2]) {
-                                if (match[3]) {
-                                    each_param = match[3] + ',' + match[2];
-                                }
-                                else {
-                                    each_param = match[2];
-                                }
-                            }
-                            else {
-                                each_param = 'value,index';
-                            }
-                            return '$_unit._each(' + value + ',function(' + each_param + '){';
-                        }
-                        return 'throw SyntaxError("Null Each Value");$_unit._each(null,function(){';
-                    case '/each':
-                        return '});';
+    /**
+     * 处理HTML部分
+     * 
+     * @param {any} html
+     * @param {any} compress 是否压缩
+     * @returns
+     */
+    function parserHTML(html, compress) {
+        // console.log('HTML:', html);
+        var out = '';
+        if (html.match(/(?!^)\n/)) {
+            _each(html.split('\n'), function (html) {
+                if (html) {
+                    // 压缩多余空白与注释
+                    if (compress) {
+                        html = html.replace(/\s+/g, ' ').replace(/<!--.*?-->/g, '');
+                    }
+                    if (html) {
+                        out += ENGINE[1] + _string(html) + ENGINE[2];
+                        out += '\n';
+                    }
                 }
+            });
+        } else if (html) {
+            out += ENGINE[1] + _string(html) + ENGINE[2];
+        }
+        return out;
+    }
+
+
+    /**
+     * 处理代码
+     * 
+     * @param {any} code
+     * @returns
+     */
+    function parserCode(code) {
+        var match;
+        // console.log(new RegExp(KEYWORD_PREG));
+        if (match = code.match(new RegExp(KEYWORD_PREG))) {
+            // console.log(code,':',match);
+            var command = match[1];
+            var param = match[2];
+
+            switch (command) {
+                case 'include': // 编译时包含
+                    param = param.trim().split(' ');
+                    if (param.length === 1) {
+                        param.push("$_unit.value");
+                    }
+                    param = param.join(',');
+                    return ENGINE[1] + '$_unit._include(' + param + ')' + ENGINE[2];
+                case 'if':
+                    return statmentTest('if(' + param + '){}', 'if (' + param + ') {');
+                case 'else':
+                    // console.log(param,param.match(/^\s*if\s+(.*)/));
+                    if (match = param.match(/^\s*if\s+(.*)/)) {
+                        return '} else if (' + match[1] + '){';
+                    }
+                    return '}else{';
+                case '/if':
+                case '/while':
+                case '/for':
+                    return '}';
+                case 'while':
+                    return statmentTest('while(' + param + '){}', 'while (' + param + ') {');
+                case 'for':
+                    return statmentTest('for(' + param + '){}', 'for (' + param + ') {');
+                case 'each':
+                    var match = param.match(/(\w+)\s+(?:(?:as(?:\s+(\w+)))?(?:(?:\s+:)?\s+(\w+))?)?/);
+                    if (match) {
+                        var value = match[1];
+                        var each_param;
+                        if (match[2]) {
+                            if (match[3]) {
+                                each_param = match[3] + ',' + match[2];
+                            } else {
+                                each_param = match[2];
+                            }
+                        } else {
+                            each_param = 'value,index';
+                        }
+                        return '$_unit._each(' + value + ',function(' + each_param + '){';
+                    }
+                    return 'throw SyntaxError("Null Each Value");$_unit._each(null,function(){';
+                case '/each':
+                    return '});';
             }
-            // 非转义
-            else if (match = code.match(/^!.*$/)) {
-                return replaces[1] + '$_unit._echo(' + match[1] + ')' + replaces[2];
-            }
-            // 转义输出
-            else {
-                return replaces[1] + '$_unit._escape(' + code + ')' + replaces[2];
-            }
+        }
+        // 非转义
+        else if (match = code.match(/^!.*$/)) {
+            return ENGINE[1] + '$_unit._echo(' + match[1] + ')' + ENGINE[2];
+        }
+        // 转义输出
+        else {
+            return ENGINE[1] + '$_unit._escape(' + code + ')' + ENGINE[2];
         }
     }
 
 
-    var escape_callback = function(s) {
-        return escape[s];
-    };
-    var _echo = function(value) {
+
+    var _echo = function (value) {
         return new String(value);
     }
-    var _escape = function(content) {
-        return _echo(content).replace(/&(?![\w#]+;)|[<>"']/g, escape_callback);
+
+    var _escape = function (content) {
+        return _echo(content).replace(/&(?![\w#]+;)|[<>"']/g, function (s) {
+            return escape[s];
+        });
     };
 
-    var _each = function(value, callback) {
+    var _each = function (value, callback) {
         if (is_array(value)) {
             _arrayEach(value, callback);
-        }
-        else {
+        } else {
             for (var index in value) {
                 callback.call(value[index], value[index], index);
             }
         }
     }
-    var _arrayEach = function(value, callback) {
+    var _arrayEach = function (value, callback) {
         for (var index = 0; index < value.length; ++index) {
             callback.call(value[index], value[index], index);
         }
@@ -574,23 +582,17 @@ var dxui = dxui || {
         }
         return object;
     }
-    var _include = function(id, value) {
-        if (document.getElementById(id)) {
-            try {
-                var tmp = new template(id, value);
-                if (tmp instanceof String) {
-                    return tmp;
-                }
-                return '[Error Template ' + id + ']';
-            } catch (e) {
-                throw e;
-            }
-        }
-        else
-            throw Error('No Template ' + id);
+
+    var _include = function (id, value) {
+        return new Template(id).render(value);
     }
 
-    // 字符串转义
+    /**
+     * 生成可显示字符串
+     * 
+     * @param {any} code
+     * @returns
+     */
     function _string(code) {
         return "'" + code
             // 单引号与反斜杠转义
@@ -599,11 +601,28 @@ var dxui = dxui || {
             .replace(/\n/g, '\\n') + "'";
     }
 
+
+    /**
+     * 判断是否是数组
+     * 
+     * @param {any} obj
+     * @returns
+     */
     function is_array(obj) {
         return Object.prototype.toString.call(obj) === '[object Array]';
     }
 
-    var reportError = function(name, content, line, e) {
+
+
+    /**
+     * 提示代码错误
+     * 
+     * @param {any} name
+     * @param {any} content
+     * @param {any} line
+     * @param {any} e
+     */
+    function reportError(name, content, line, e) {
         var name = name || 'anonymous';
         var report = 'DxTPL Error:';
         console.group(report);
@@ -617,41 +636,58 @@ var dxui = dxui || {
             for (var i = start; i < end; i++) {
                 if (i == line) {
                     console.log(i + '|%c' + codes[line - 1] + '\t\t%c->\t\t%c' + e.name + ':' + e.message, 'color:red;', 'color:green;', 'color:red;');
-                }
-                else {
+                } else {
                     console.log(i + '|' + codes[i - 1]);
                 }
             }
 
-        }
-        else {
+        } else {
             console.log(content);
             console.log('%c' + report + e.message + '\t\t@' + name + ':' + line, 'color:red;');
         }
         console.groupEnd(report);
     }
-    var compile = function(text, parsers) {
+
+
+
+    /**
+     * 编译模板
+     * 
+     * @param {any} text
+     * @param {any} config
+     * @returns
+     */
+    function compileTemplate(text, config) {
         var tpl = '';
         // console.log('code',text);
         text = text.replace(/^\n/, '');
         // console.log(tagstart);
-        _each(text.split(tagstart), function(value, index) {
+        _each(text.split(config.tagstart), function (value) {
             // console.log('split',value);
-            var split = value.split(tagend);
+            var split = value.split(config.tagend);
             if (split.length === 1) {
-                tpl += parsers.html(split[0]);
-            }
-            else {
-                tpl += parsers.code(split[0]);
-                tpl += parsers.html(split[1]);
+                tpl += parserHTML(split[0], config.compress);
+            } else {
+                tpl += parserCode(split[0]);
+                tpl += parserHTML(split[1]);
             }
         });
         return tpl;
     }
 
-    var link = function(source, value) {
+
+    /**
+     * 给模板压入变量
+     * 
+     * @param {any} source
+     * @param {any} value
+     * @param {any} strict
+     * @returns
+     */
+    function linkValue(source, value, strict) {
+        var use_strict = strict === undefined ? true : strict;
         var ext = [];
-        ext.push('var $_unit=this,' + replaces[0]);
+        ext.push('var $_unit=this,' + ENGINE[0]);
         for (var index in value) {
             ext.push(index + '=this.value.' + index);
         }
@@ -661,15 +697,64 @@ var dxui = dxui || {
         }
         link_str += ext.join(',');
         link_str += ';';
-        link_str += source + 'return new String(' + replaces[3] + ');';
+        link_str += source + 'return new String(' + ENGINE[3] + ');';
         return link_str;
     }
 
-    var render = function(name, source, compiled_code, value) {
+
+    function renderTpl(selector, glovalue) {
+        var nodes = document.querySelectorAll(selector);
+        // console.log(nodes);
+        _arrayEach(nodes, function (node, index) {
+            var source = node.innerHTML;
+            var value;
+            var config = default_config;
+
+            if (node.dataset.init) {
+                try {
+                    var json = new Function('return ' + node.dataset.init + ';');
+                    value = json();
+                } catch (e) {
+                    reportError(selector + '[' + index + ']', null, 0, new Error('Unsupport json'));
+                }
+            }
+            if (node.dataset.config) {
+                try {
+                    var json = new Function('return ' + node.dataset.config + ';');
+                    var conf = json();
+                    config = _objectCopy(config, conf);
+                } catch (e) {
+                    reportError(selector + '[' + index + ']', null, 0, new Error('Unsupport json'));
+                }
+            }
+
+            value = _objectCopy(value, glovalue);
+            var code = compileTemplate(source, config);
+            node.innerHTML = render(selector, source, code, value, config.strict);
+        });
+    };
+
+    /**
+     * 渲染模板代码
+     * 
+     * @param {any} name
+     * @param {any} source
+     * @param {any} compiled_code
+     * @param {any} value
+     * @returns
+     */
+    function render(name, source, compiled_code, value, strict) {
         // console.time('render ' + name);
-        var runcode = link(compiled_code, value);
+        var runcode = linkValue(compiled_code, value, strict);
         // console.log(runcode);
-        var caller = { _each: _each, _echo: _echo, _escape: _escape, _include: _include, value: value };
+        var caller = {
+            _each: _each,
+            _echo: _echo,
+            _escape: _escape,
+            _include: _include,
+            value: value
+        };
+
         var html;
         try {
             var render = new Function(runcode);
@@ -682,15 +767,13 @@ var dxui = dxui || {
             if (match) {
                 var line = match[1] - 1;
                 reportError(name, source, line, e);
-            }
-            else {
+            } else {
                 var name = name || 'anonymous';
                 // For Edge
                 var match = new String(e.stack).match(/Function code:(\d+):\d+/);
                 if (match) {
                     console.error('DxTPL:Compile Error@' + name + ' Line ' + match[1]);
-                }
-                else {
+                } else {
                     console.error('DxTPL:Compile Error@' + name);
                 }
             }
@@ -699,8 +782,8 @@ var dxui = dxui || {
         // console.timeEnd('render ' + name);
         return html;
     }
-    var template_Cache;
-    var get_cache = function(name) {
+
+    function getDOMcache(name, config) {
         // console.time('getcache:' + name);
         var cache_parent = document.getElementById('template_caches');
         if (!cache_parent) {
@@ -715,72 +798,92 @@ var dxui = dxui || {
         if (!tpl_cache) {
             tpl_cache = document.createElement('div');
             tpl_cache.id = cache_name;
-            tpl_cache.innerText = compile(document.getElementById(name).innerHTML, parsers);
+            tpl_cache.innerText = compileTemplate(document.getElementById(name).innerHTML, config || default_config);
             cache_parent.appendChild(tpl_cache);
         }
         // console.timeEnd('getcache:' + name);
         return tpl_cache.innerText;
     }
 
-    var selftpl = function(selector, valueset) {
-        var nodes = document.querySelectorAll(selector);
-        // console.log(nodes);
-        _arrayEach(nodes, function(node, index) {
-            var source = node.innerHTML;
-            var value;
-            if (node.dataset.tplInit) {
-                try {
-                    var json = new Function('return ' + node.dataset.tplInit + ';');
-                    value = json();
-                } catch (e) {
-                    reportError(selector + '[' + index + ']', null, 0, new Error('Unsupport json'));
-                }
-            }
-            value=_objectCopy(value,valueset);
-            var code = compile(source, parsers);
-            node.innerHTML = render(selector, source, code, value);
-        });
+
+    /* ----  编译DOM对象 ----*/
+    function compile(id, config) {
+        var tplId = id || config.id;
+        var anonymous = false;
+        if (typeof tplId !== 'string') throw Error('Unsupport Template ID');
+        var tpl = document.getElementById(tplId);
+        if (tpl) {
+            // 获取源码
+            config.source = tpl.innerHTML;
+        } else {
+            // 无法获取，将ID作为源码解析
+            config.source = tplId;
+            config.id = 'anonymous';
+            anonymous = true;
+        }
+        if (config.code) {
+            // 代码已经编译
+        } else if (config.cache && !anonymous) {
+            config.code = getDOMcache(tplId, config);
+        } else {
+            config.code = compileTemplate(config.source, config);
+        }
+        return config;
     }
-    var template = function(id, value) {
-        if (typeof id !== 'string') throw Error('Unsupport Template ID');
-        var tpl = document.getElementById(id);
-        var code;
-        var source = tpl.innerHTML;
-        // console.log(source);
-        if (cache) {
-            code = get_cache(id);
-        }
-        else {
-            code = compile(source, parsers);
-            // console.log('compiled:',code);
-        }
 
-        if (value) {
-            return render(id, source, code, value);
-        }
-        else {
-            return {
+    /* -----------------  外部函数 public ---------------------------*/
 
-                config: dxtpl.config,
-                display: function(value) {
-                    return render(id, source, code, value);
-                }
-            }
+    var Template = function (name, config) {
+        this.version='1.0.43';
+        var conf = default_config;
+        if (typeof name === 'string') {
+            // 适配对象
+            conf = _objectCopy(conf, config);
+            conf.id = name;
+        } else {
+            // 适配对象
+            conf = _objectCopy(conf, name);
         }
+        this.config(conf);
     }
 
 
-    dxtpl.compile = function(content) {
-        return {
-            display: function(value) {
-                return render(null, content,compile(content, parsers),value);
-            }
+    Template.prototype.config = function (config) {
+        for (var index in config) {
+            this[index] = config[index];
         }
+        return this;
     }
-    dxtpl.template = template;
-    dxtpl.selftpl = selftpl;
-    window.dxtpl=dxtpl;
-})(window)
+
+
+    Template.prototype.assign = function (name, value) {
+        this.value[name] = _objectCopy(this.value[name], value);
+        return this;
+    }
+
+    Template.prototype.value = function (value) {
+        this.value = _objectCopy(this.value, value);
+        return this;
+    }
+
+    Template.prototype.compile = function (id) {
+        var config = _objectCopy(this, compile(id, this));
+        return new Template(config);
+    }
+
+    Template.prototype.render = function (value) {
+        // 未编译
+        if (!(this.source && this.code)) {
+            var val = compile(this.id,this);
+            this.config(val);
+        }
+        return render(this.id, this.source, this.code, value, this.strict);
+    }
+
+    window.dxtpl = new Template();
+    window.Template = Template;
+    window.renderTpl = renderTpl;
+})(window);
 /* HTML5 视频播放器 */
 // TODO
 ;!(function(dxui){

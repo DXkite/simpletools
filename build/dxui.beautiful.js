@@ -1,4 +1,4 @@
-/*! dxui by dxkite 2016-12-13 */
+/*! dxui by dxkite 2016-12-15 */
 "use strict";
 
 var dxui = dxui || {
@@ -186,104 +186,67 @@ var dxui = dxui || {
         }
     }, dxui.Toast = Toast;
 }(dxui), !function(window) {
-    function _string(code) {
-        return "'" + code.replace(/('|\\)/g, "\\$1").replace(/\r/g, "\\r").replace(/\n/g, "\\n") + "'";
-    }
-    function is_array(obj) {
-        return "[object Array]" === Object.prototype.toString.call(obj);
-    }
-    var dxtpl = {}, defaults = {
-        cache: !0,
-        tags: [ "{", "}" ],
-        compress: !0,
-        use_strict: !0
-    }, keywords = "if,else,each,include,while,for", keyword_preg = "^\\s*((?:/)?(?:" + keywords.split(",").join("|") + "))(.*)", tagstart = defaults.tags[0], tagend = defaults.tags[1], cache = defaults.cache, compress = defaults.compress, use_strict = defaults.use_strict;
-    dxtpl.config = function(config) {
-        cache = void 0 !== typeof config.cache ? config.cache : defaults.cache, compress = void 0 !== typeof config.compress ? config.compress : defaults.compress, 
-        config.tags && 2 === config.tags.length && (tagstart = config.tags[0], tagend = config.tags[1]);
-    };
-    var is_new_engine = "".trim, replaces = is_new_engine ? [ "$_tpl_=''", "$_tpl_+=", ";", "$_tpl_" ] : [ "$_tpl_=[]", "$_tpl_.push(", ");", "$_tpl_.join('')" ], escape = {
-        "<": "&#60;",
-        ">": "&#62;",
-        '"': "&#34;",
-        "'": "&#39;",
-        "&": "&#38;"
-    }, statment_test = function(test, code) {
+    function statmentTest(test, code) {
         try {
             new Function(test);
         } catch (e) {
             return "throw " + e.name + "(" + _string(e.message) + ");{";
         }
         return code;
-    }, parsers = {
-        html: function(html) {
-            var out = "";
-            return html.match(/(?!^)\n/) ? _each(html.split("\n"), function(html) {
-                html && (compress && (html = html.replace(/\s+/g, " ").replace(/<!--.*?-->/g, "")), 
-                html && (out += replaces[1] + _string(html) + replaces[2], out += "\n"));
-            }) : html && (out += replaces[1] + _string(html) + replaces[2]), out;
-        },
-        code: function(code) {
-            var match;
-            if (!(match = code.match(new RegExp(keyword_preg)))) return (match = code.match(/^!.*$/)) ? replaces[1] + "$_unit._echo(" + match[1] + ")" + replaces[2] : replaces[1] + "$_unit._escape(" + code + ")" + replaces[2];
-            var command = match[1], param = match[2];
-            switch (command) {
-              case "include":
-                return param = param.trim().split(" "), 1 === param.length && param.push("$_unit.value"), 
-                param = param.join(","), replaces[1] + "$_unit._include(" + param + ")" + replaces[2];
+    }
+    function parserHTML(html, compress) {
+        var out = "";
+        return html.match(/(?!^)\n/) ? _each(html.split("\n"), function(html) {
+            html && (compress && (html = html.replace(/\s+/g, " ").replace(/<!--.*?-->/g, "")), 
+            html && (out += ENGINE[1] + _string(html) + ENGINE[2], out += "\n"));
+        }) : html && (out += ENGINE[1] + _string(html) + ENGINE[2]), out;
+    }
+    function parserCode(code) {
+        var match;
+        if (!(match = code.match(new RegExp(KEYWORD_PREG)))) return (match = code.match(/^!.*$/)) ? ENGINE[1] + "$_unit._echo(" + match[1] + ")" + ENGINE[2] : ENGINE[1] + "$_unit._escape(" + code + ")" + ENGINE[2];
+        var command = match[1], param = match[2];
+        switch (command) {
+          case "include":
+            return param = param.trim().split(" "), 1 === param.length && param.push("$_unit.value"), 
+            param = param.join(","), ENGINE[1] + "$_unit._include(" + param + ")" + ENGINE[2];
 
-              case "if":
-                return statment_test("if(" + param + "){}", "if (" + param + ") {");
+          case "if":
+            return statmentTest("if(" + param + "){}", "if (" + param + ") {");
 
-              case "else":
-                return (match = param.match(/^\s*if\s+(.*)/)) ? "} else if (" + match[1] + "){" : "}else{";
+          case "else":
+            return (match = param.match(/^\s*if\s+(.*)/)) ? "} else if (" + match[1] + "){" : "}else{";
 
-              case "/if":
-              case "/while":
-              case "/for":
-                return "}";
+          case "/if":
+          case "/while":
+          case "/for":
+            return "}";
 
-              case "while":
-                return statment_test("while(" + param + "){}", "while (" + param + ") {");
+          case "while":
+            return statmentTest("while(" + param + "){}", "while (" + param + ") {");
 
-              case "for":
-                return statment_test("for(" + param + "){}", "for (" + param + ") {");
+          case "for":
+            return statmentTest("for(" + param + "){}", "for (" + param + ") {");
 
-              case "each":
-                var match = param.match(/(\w+)\s+(?:(?:as(?:\s+(\w+)))?(?:(?:\s+=>)?\s+(\w+))?)?/);
-                if (match) {
-                    var each_param, value = match[1];
-                    return each_param = match[2] ? match[3] ? match[3] + "," + match[2] : match[2] : "value,index", 
-                    "$_unit._each(" + value + ",function(" + each_param + "){";
-                }
-                return 'throw SyntaxError("Null Each Value");$_unit._each(null,function(){';
-
-              case "/each":
-                return "});";
+          case "each":
+            var match = param.match(/(\w+)\s+(?:(?:as(?:\s+(\w+)))?(?:(?:\s+:)?\s+(\w+))?)?/);
+            if (match) {
+                var each_param, value = match[1];
+                return each_param = match[2] ? match[3] ? match[3] + "," + match[2] : match[2] : "value,index", 
+                "$_unit._each(" + value + ",function(" + each_param + "){";
             }
+            return 'throw SyntaxError("Null Each Value");$_unit._each(null,function(){';
+
+          case "/each":
+            return "});";
         }
-    }, escape_callback = function(s) {
-        return escape[s];
-    }, _echo = function(value) {
-        return new String(value);
-    }, _escape = function(content) {
-        return _echo(content).replace(/&(?![\w#]+;)|[<>"']/g, escape_callback);
-    }, _each = function(value, callback) {
-        if (is_array(value)) _arrayEach(value, callback); else for (var index in value) callback.call(value[index], value[index], index);
-    }, _arrayEach = function(value, callback) {
-        for (var index = 0; index < value.length; ++index) callback.call(value[index], value[index], index);
-    }, _objectCopy = function(arrays) {
-        for (var object = {}, i = 0; i < arguments.length; i++) for (var index in arguments[i]) object[index] = arguments[i][index];
-        return object;
-    }, _include = function(id, value) {
-        if (!document.getElementById(id)) throw Error("No Template " + id);
-        try {
-            var tmp = new template(id, value);
-            return tmp instanceof String ? tmp : "[Error Template " + id + "]";
-        } catch (e) {
-            throw e;
-        }
-    }, reportError = function(name, content, line, e) {
+    }
+    function _string(code) {
+        return "'" + code.replace(/('|\\)/g, "\\$1").replace(/\r/g, "\\r").replace(/\n/g, "\\n") + "'";
+    }
+    function is_array(obj) {
+        return "[object Array]" === Object.prototype.toString.call(obj);
+    }
+    function reportError(name, content, line, e) {
         var name = name || "anonymous", report = "DxTPL Error:";
         if (console.group(report), content) {
             var codes = content.replace(/^\n/, "").split("\n"), start = line - 5 > 0 ? line - 5 : 1, end = line + 5 > codes.length ? codes.length : line + 5;
@@ -291,22 +254,46 @@ var dxui = dxui || {
             for (var i = start; i < end; i++) i == line ? console.log(i + "|%c" + codes[line - 1] + "\t\t%c->\t\t%c" + e.name + ":" + e.message, "color:red;", "color:green;", "color:red;") : console.log(i + "|" + codes[i - 1]);
         } else console.log(content), console.log("%c" + report + e.message + "\t\t@" + name + ":" + line, "color:red;");
         console.groupEnd(report);
-    }, compile = function(text, parsers) {
+    }
+    function compileTemplate(text, config) {
         var tpl = "";
-        return text = text.replace(/^\n/, ""), _each(text.split(tagstart), function(value, index) {
-            var split = value.split(tagend);
-            1 === split.length ? tpl += parsers.html(split[0]) : (tpl += parsers.code(split[0]), 
-            tpl += parsers.html(split[1]));
+        return text = text.replace(/^\n/, ""), _each(text.split(config.tagstart), function(value) {
+            var split = value.split(config.tagend);
+            1 === split.length ? tpl += parserHTML(split[0], config.compress) : (tpl += parserCode(split[0]), 
+            tpl += parserHTML(split[1]));
         }), tpl;
-    }, link = function(source, value) {
-        var ext = [];
-        ext.push("var $_unit=this," + replaces[0]);
+    }
+    function linkValue(source, value, strict) {
+        var use_strict = void 0 === strict || strict, ext = [];
+        ext.push("var $_unit=this," + ENGINE[0]);
         for (var index in value) ext.push(index + "=this.value." + index);
         var link_str = "";
         return use_strict && (link_str = '"use strict";'), link_str += ext.join(","), link_str += ";", 
-        link_str += source + "return new String(" + replaces[3] + ");";
-    }, render = function(name, source, compiled_code, value) {
-        var html, runcode = link(compiled_code, value), caller = {
+        link_str += source + "return new String(" + ENGINE[3] + ");";
+    }
+    function renderTpl(selector, glovalue) {
+        var nodes = document.querySelectorAll(selector);
+        _arrayEach(nodes, function(node, index) {
+            var value, source = node.innerHTML, config = default_config;
+            if (node.dataset.init) try {
+                var json = new Function("return " + node.dataset.init + ";");
+                value = json();
+            } catch (e) {
+                reportError(selector + "[" + index + "]", null, 0, new Error("Unsupport json"));
+            }
+            if (node.dataset.config) try {
+                var json = new Function("return " + node.dataset.config + ";"), conf = json();
+                config = _objectCopy(config, conf);
+            } catch (e) {
+                reportError(selector + "[" + index + "]", null, 0, new Error("Unsupport json"));
+            }
+            value = _objectCopy(value, glovalue);
+            var code = compileTemplate(source, config);
+            node.innerHTML = render(selector, source, code, value, config.strict);
+        });
+    }
+    function render(name, source, compiled_code, value, strict) {
+        var html, runcode = linkValue(compiled_code, value, strict), caller = {
             _each: _each,
             _echo: _echo,
             _escape: _escape,
@@ -327,45 +314,74 @@ var dxui = dxui || {
             }
         }
         return html;
-    }, get_cache = function(name) {
+    }
+    function getDOMcache(name, config) {
         var cache_parent = document.getElementById("template_caches");
         cache_parent || (cache_parent = document.createElement("div"), cache_parent.id = "template_caches", 
         cache_parent.style.display = "none", document.body.appendChild(cache_parent));
         var cache_name = "template_cache_" + name, tpl_cache = document.getElementById("template_cache_" + name);
         return tpl_cache || (tpl_cache = document.createElement("div"), tpl_cache.id = cache_name, 
-        tpl_cache.innerText = compile(document.getElementById(name).innerHTML, parsers), 
+        tpl_cache.innerText = compileTemplate(document.getElementById(name).innerHTML, config || default_config), 
         cache_parent.appendChild(tpl_cache)), tpl_cache.innerText;
-    }, selftpl = function(selector, valueset) {
-        var nodes = document.querySelectorAll(selector);
-        _arrayEach(nodes, function(node, index) {
-            var value, source = node.innerHTML;
-            if (node.dataset.tplInit) try {
-                var json = new Function("return " + node.dataset.tplInit + ";");
-                value = json();
-            } catch (e) {
-                reportError(selector + "[" + index + "]", null, 0, new Error("Unsupport json"));
-            }
-            value = _objectCopy(value, valueset);
-            var code = compile(source, parsers);
-            node.innerHTML = render(selector, source, code, value);
+    }
+    function compile(id, config) {
+        var tplId = id || config.id, anonymous = !1;
+        if ("string" != typeof tplId) throw Error("Unsupport Template ID");
+        var tpl = document.getElementById(tplId);
+        return tpl ? config.source = tpl.innerHTML : (config.source = tplId, config.id = "anonymous", 
+        anonymous = !0), config.code || (config.cache && !anonymous ? config.code = getDOMcache(tplId, config) : config.code = compileTemplate(config.source, config)), 
+        config;
+    }
+    var default_config = {
+        cache: !0,
+        tagstart: "{",
+        tagend: "}",
+        compress: !0,
+        strict: !0
+    }, KEYWORD = "if,else,each,include,while,for", KEYWORD_PREG = "^\\s*((?:/)?(?:" + KEYWORD.split(",").join("|") + "))(.*)", ENGINE = "".trim ? [ "$_tpl_=''", "$_tpl_+=", ";", "$_tpl_" ] : [ "$_tpl_=[]", "$_tpl_.push(", ");", "$_tpl_.join('')" ], escape = {
+        "<": "&#60;",
+        ">": "&#62;",
+        '"': "&#34;",
+        "'": "&#39;",
+        "&": "&#38;"
+    }, _echo = function(value) {
+        return new String(value);
+    }, _escape = function(content) {
+        return _echo(content).replace(/&(?![\w#]+;)|[<>"']/g, function(s) {
+            return escape[s];
         });
-    }, template = function(id, value) {
-        if ("string" != typeof id) throw Error("Unsupport Template ID");
-        var code, tpl = document.getElementById(id), source = tpl.innerHTML;
-        return code = cache ? get_cache(id) : compile(source, parsers), value ? render(id, source, code, value) : {
-            config: dxtpl.config,
-            display: function(value) {
-                return render(id, source, code, value);
-            }
-        };
+    }, _each = function(value, callback) {
+        if (is_array(value)) _arrayEach(value, callback); else for (var index in value) callback.call(value[index], value[index], index);
+    }, _arrayEach = function(value, callback) {
+        for (var index = 0; index < value.length; ++index) callback.call(value[index], value[index], index);
+    }, _objectCopy = function(arrays) {
+        for (var object = {}, i = 0; i < arguments.length; i++) for (var index in arguments[i]) object[index] = arguments[i][index];
+        return object;
+    }, _include = function(id, value) {
+        return new Template(id).render(value);
+    }, Template = function(name, config) {
+        this.version = "1.0.43";
+        var conf = default_config;
+        "string" == typeof name ? (conf = _objectCopy(conf, config), conf.id = name) : conf = _objectCopy(conf, name), 
+        this.config(conf);
     };
-    dxtpl.compile = function(content) {
-        return {
-            display: function(value) {
-                return render(null, content, compile(content, parsers), value);
-            }
-        };
-    }, dxtpl.template = template, dxtpl.selftpl = selftpl, window.dxtpl = dxtpl;
+    Template.prototype.config = function(config) {
+        for (var index in config) this[index] = config[index];
+        return this;
+    }, Template.prototype.assign = function(name, value) {
+        return this.value[name] = _objectCopy(this.value[name], value), this;
+    }, Template.prototype.value = function(value) {
+        return this.value = _objectCopy(this.value, value), this;
+    }, Template.prototype.compile = function(id) {
+        var config = _objectCopy(this, compile(id, this));
+        return new Template(config);
+    }, Template.prototype.render = function(value) {
+        if (!this.source || !this.code) {
+            var val = compile(this.id, this);
+            this.config(val);
+        }
+        return render(this.id, this.source, this.code, value, this.strict);
+    }, window.dxtpl = new Template(), window.Template = Template, window.renderTpl = renderTpl;
 }(window), !function(dxui) {
     function VideoPlayer(url, type) {}
     dxui.video_player = function(url, type) {

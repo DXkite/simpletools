@@ -24,11 +24,11 @@
 
 window.addEventListener('load', function () {
     console.time('render');
-    var test1= new dxtpl.template('test_print');
-    document.getElementById("test1").innerHTML = test1.display({ x:0,max:1000 });
+    var test1= new Template('test_print');
+    document.getElementById("test1").innerHTML = test1.render({ x:0,max:1000 });
     console.timeEnd('render');
     console.time('render');
-    document.getElementById("test2").innerHTML = test1.display({ x:0,max:1000 });
+    document.getElementById("test2").innerHTML = test1.render({ x:0,max:1000 });
     console.timeEnd('render');
 });
 

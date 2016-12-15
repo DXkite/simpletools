@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
     <title>Demo DxUI</title>
-    <script src="../../build/dxui.js"></script>
+        <script src="../../build/dxui.js"></script>
     <script id="test_print" type="application/DxTPL">
     {for var x in values}
     <div> {x} - {values[x]} </div>
@@ -22,19 +22,24 @@
 <body>
     <div id="test1"> </div>
     <div id="test2"> </div>
+    <img src="debug.png" alt="Debug Error">
     <div id="test3"> </div>
-    <div id="test4"> </div>
 </body>
 <script>    
 
 window.addEventListener('load', function () {
     console.time('render');
-    var test1= new dxtpl.template('test_print');
-    document.getElementById("test1").innerHTML = test1.display({values: ['hello', 'world'] });
+    var test1= dxtpl.compile('test_print');
+
+    document.getElementById("test1").innerHTML = test1.render({values: ['hello', 'world'] });
     console.timeEnd('render');
     console.time('render');
-    var test2= new  dxtpl.template('test_for_2');
-    document.getElementById("test2").innerHTML = test2.display({});
+    var test2= dxtpl.compile('test_for_2');
+    document.getElementById("test2").innerHTML = test2.render();
+    console.timeEnd('render');
+    console.time('render');
+    var test3= new Template({id:'test_for_2',strict:false});
+    document.getElementById("test3").innerHTML = test3.render({values: ['hello', 'world'] });
     console.timeEnd('render');
 });
 
