@@ -1,23 +1,88 @@
-<html>  
-    <head>
-        <title>Test dxui</title>
-        <script src="../build/dxui.js"></script>
-    </head>
+<!DOCTYPE html> 
+<html>
+
+<head>
+    <title>Test dxui</title>
+    <meta charset="utf8">
+    <script src="../build/dxui.js"></script>
+        <link rel="stylesheet" href="test.css">
+    <link rel="stylesheet" href="../build/css/dxui.css">
+</head>
+
 <body>
-    <h2>Test Of List</h2>
-    <div id="test1" data-init="{lists:['moveable','template','dom','ui/index','tpl/index']}">
-        <ol>
-            {each lists as index : name }
-            <li><a href="{name}.html">{index}:test of {name}</a> </li>
-            {/each}
-        </ol>
+    <h2>DxUI Test</h2>
+    <div id="test1">
+        <nav>
+            <ul>
+                {each navbar as index:nav}
+                <li>
+                    <a href="{nav.url}">{nav.name}</a> {if nav.child }
+                    <ul>
+                        {each nav.child as index:item}
+                        <li><a href="{item.url}">{item.name}</a> </li>
+                        {/each}
+                    </ul>
+                    {/if}
+                </li>
+                {/each}
+            </ul>
+        </nav>
     </div>
 </body>
-<script>    
-
-window.addEventListener('load', function () {
-    renderTpl('#test1');
-});
-
+<script>
+    window.addEventListener('load', function () {
+        var navindex = {
+            navbar: [{
+                name: "模板测试",
+                url: 'tpl/index.html',
+                child: [{
+                    name: "each测试",
+                    url: 'tpl/test_each.html'
+                }, {
+                    name: "for测试",
+                    url: 'tpl/test_for.html'
+                }, {
+                    name: "if测试",
+                    url: 'tpl/test_if.html'
+                }, {
+                    name: "include测试",
+                    url: 'tpl/test_include.html'
+                }, {
+                    name: "self测试",
+                    url: 'tpl/test_self.html'
+                },{
+                    name: "tag测试",
+                    url: 'tpl/test_tag.html'
+                },{
+                    name: "temp测试",
+                    url: 'tpl/test_temp.html'
+                },{
+                    name: "while测试",
+                    url: 'tpl/test_while.html'
+                },]
+            }, {
+                url: 'ui/index.html',
+                name: "UI测试",
+                child: [{
+                    name: "编辑器",
+                    url: 'ui/editor.html'
+                }, {
+                    name: "导航栏",
+                    url: 'ui/navbar.html'
+                }, {
+                    name: "Toast",
+                    url: 'ui/toast.html'
+                }, ]
+            }, {
+                name: "移动层",
+                url: 'moveable.html',
+            }, {
+                url: 'dom.html',
+                name: "DOM操作",
+            }, ]
+        };
+        renderTpl('#test1', navindex);
+    });
 </script>
+
 </html>
