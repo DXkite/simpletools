@@ -85,106 +85,6 @@ var dxui = dxui || {
             return "-" + name.toLowerCase();
         });
     }, dxui.cssfix = add_css_prefix, window.dxui = dxui;
-}(dxui), !function(dxui) {
-    var $ = dxui.dom, Editor = function(node) {
-        this.m_node = node;
-        var self = this;
-        this.buildRichUI(), $(this.m_content).on("blur", function() {
-            self.m_selection = window.getSelection(), self.setRange(self.m_selection.getRangeAt(0));
-        });
-    };
-    Editor.prototype = {
-        getRange: function() {
-            if (this.m_range) return this.m_range;
-            var range = document.createRange(), node = null;
-            return this.m_content.firstChild ? node = this.m_content.firstChild : (node = $.element("p"), 
-            this.m_content.appendChild(node)), range.selectNode(node), range;
-        },
-        setRange: function(range) {
-            this.m_range = range.cloneRange();
-        },
-        insertNode: function(element) {
-            var range = this.getRange();
-            range.insertNode(element);
-        },
-        buildRichUI: function() {
-            var self = this;
-            this.m_controls = $.element("div", {
-                class: "editor-controls"
-            }), this.m_content = $.element("div", {
-                contenteditable: "true",
-                class: "editor-content"
-            }), this.m_node.appendChild(this.m_controls), this.m_node.appendChild(this.m_content);
-            var insertHTML = $.element("a", {
-                href: "#"
-            }, {
-                cursor: "pointer"
-            });
-            insertHTML.innerHTML = "Html", this.m_controls.appendChild(insertHTML), $(insertHTML).on("click", function() {
-                var value = prompt("url:"), newNode = $.element("div");
-                newNode.innerHTML = value, self.insertNode(newNode);
-            });
-        }
-    }, dxui.Editor = Editor;
-}(dxui), !function(dxui) {
-    dxui.moveable = function(layer, controller) {
-        var _controller = controller || layer, _self = layer;
-        _self.style.position = "fixed";
-        var _move_layer = function(event) {
-            event.preventDefault();
-            var eventMove = "mousemove", eventEnd = "mouseup";
-            event.touches && (event = event.touches[0], eventMove = "touchmove", eventEnd = "touchend");
-            var rect = _controller.getBoundingClientRect(), x = event.clientX - rect.left, y = event.clientY - rect.top, doc = document;
-            _self.setCapture ? _self.setCapture() : window.captureEvents && window.captureEvents(Event.MOUSEMOVE | Event.MOUSEUP);
-            var winmove = function(e) {
-                e.touches && (e = e.touches[0]);
-                var px = e.pageX || e.clientX + document.body.scrollLeft - document.body.clientLeft, py = e.pageY || e.clientY + document.body.scrollTop - document.body.clientTop, dx = px - x, dy = py - y;
-                _self.style.left = dx + "px", _self.style.top = dy + "px";
-            }, winend = function(e) {
-                _self.releaseCapture ? _self.releaseCapture() : window.releaseEvents && window.releaseEvents(Event.MOUSEMOVE | Event.MOUSEUP), 
-                doc.removeEventListener(eventMove, winmove), doc.removeEventListener(eventEnd, winend);
-            };
-            doc.addEventListener(eventMove, winmove), doc.addEventListener(eventEnd, winend);
-        };
-        return _controller.addEventListener("mousedown", _move_layer), _controller.addEventListener("touchstart", _move_layer), 
-        _self;
-    };
-}(dxui), !function(dxui) {
-    var TOAST_PARENT_ID = "Toast-Parent", TOAST_SHOW_ID = "Toast-Show", TOAST_DEFAULT_STYLE = "toast", TOAST_POP_LEVEL = 1e4, Toast = function(text, time, style) {
-        return new Toast.create(text, time, style);
-    };
-    Toast.Queue = new Array(), Toast.create = function(message, time, style) {
-        Toast.Parent = document.getElementById(TOAST_PARENT_ID), Toast.Parent || (Toast.Parent = document.createElement("div"), 
-        Toast.Parent.id = TOAST_PARENT_ID, document.body.appendChild(Toast.Parent)), Toast.Queue.push({
-            message: message,
-            timeout: time,
-            style: style ? TOAST_DEFAULT_STYLE + "-" + style : TOAST_DEFAULT_STYLE
-        }), Toast.show();
-    }, Toast.show = function() {
-        if (!document.getElementById(TOAST_SHOW_ID)) {
-            var show = Toast.Queue.shift(), toastdiv = dxui.dom.element("div", {
-                id: TOAST_SHOW_ID,
-                class: show.style
-            });
-            toastdiv.innerHTML = show.message, Toast.Parent.appendChild(toastdiv);
-            var margin = window.innerWidth / 2 - toastdiv.scrollWidth / 2, bottom = window.innerHeight - 2 * toastdiv.scrollHeight;
-            toastdiv.style.marginLeft = margin + "px", toastdiv.style.top = bottom + "px";
-            var timeout = show.timeout || 2e3, close = function() {
-                dxui.dom(toastdiv).css({
-                    transition: "opacity 0.3s ease-out",
-                    opacity: 0
-                }), setTimeout(function() {
-                    Toast.Parent.removeChild(toastdiv), Toast.Queue.length && Toast.show();
-                }, 300);
-            };
-            dxui.dom(toastdiv).css({
-                position: "fixed",
-                opacity: 1,
-                "z-index": TOAST_POP_LEVEL,
-                transition: "opacity 0.1s ease-in"
-            }), setTimeout(close, timeout);
-        }
-    }, dxui.Toast = Toast;
 }(dxui), !function(window) {
     function statmentTest(test, code) {
         try {
@@ -383,6 +283,106 @@ var dxui = dxui || {
         return render(this.id, this.source, this.code, value, this.strict);
     }, window.dxtpl = new Template(), window.Template = Template, window.renderTpl = renderTpl;
 }(window), !function(dxui) {
+    var $ = dxui.dom, Editor = function(node) {
+        this.m_node = node;
+        var self = this;
+        this.buildRichUI(), $(this.m_content).on("blur", function() {
+            self.m_selection = window.getSelection(), self.setRange(self.m_selection.getRangeAt(0));
+        });
+    };
+    Editor.prototype = {
+        getRange: function() {
+            if (this.m_range) return this.m_range;
+            var range = document.createRange(), node = null;
+            return this.m_content.firstChild ? node = this.m_content.firstChild : (node = $.element("p"), 
+            this.m_content.appendChild(node)), range.selectNode(node), range;
+        },
+        setRange: function(range) {
+            this.m_range = range.cloneRange();
+        },
+        insertNode: function(element) {
+            var range = this.getRange();
+            range.insertNode(element);
+        },
+        buildRichUI: function() {
+            var self = this;
+            this.m_controls = $.element("div", {
+                class: "editor-controls"
+            }), this.m_content = $.element("div", {
+                contenteditable: "true",
+                class: "editor-content"
+            }), this.m_node.appendChild(this.m_controls), this.m_node.appendChild(this.m_content);
+            var insertHTML = $.element("a", {
+                href: "#"
+            }, {
+                cursor: "pointer"
+            });
+            insertHTML.innerHTML = "Html", this.m_controls.appendChild(insertHTML), $(insertHTML).on("click", function() {
+                var value = prompt("url:"), newNode = $.element("div");
+                newNode.innerHTML = value, self.insertNode(newNode);
+            });
+        }
+    }, dxui.Editor = Editor;
+}(dxui), !function(dxui) {
+    dxui.moveable = function(layer, controller) {
+        var _controller = controller || layer, _self = layer;
+        _self.style.position = "fixed";
+        var _move_layer = function(event) {
+            event.preventDefault();
+            var eventMove = "mousemove", eventEnd = "mouseup";
+            event.touches && (event = event.touches[0], eventMove = "touchmove", eventEnd = "touchend");
+            var rect = _controller.getBoundingClientRect(), x = event.clientX - rect.left, y = event.clientY - rect.top, doc = document;
+            _self.setCapture ? _self.setCapture() : window.captureEvents && window.captureEvents(Event.MOUSEMOVE | Event.MOUSEUP);
+            var winmove = function(e) {
+                e.touches && (e = e.touches[0]);
+                var px = e.pageX || e.clientX + document.body.scrollLeft - document.body.clientLeft, py = e.pageY || e.clientY + document.body.scrollTop - document.body.clientTop, dx = px - x, dy = py - y;
+                _self.style.left = dx + "px", _self.style.top = dy + "px";
+            }, winend = function(e) {
+                _self.releaseCapture ? _self.releaseCapture() : window.releaseEvents && window.releaseEvents(Event.MOUSEMOVE | Event.MOUSEUP), 
+                doc.removeEventListener(eventMove, winmove), doc.removeEventListener(eventEnd, winend);
+            };
+            doc.addEventListener(eventMove, winmove), doc.addEventListener(eventEnd, winend);
+        };
+        return _controller.addEventListener("mousedown", _move_layer), _controller.addEventListener("touchstart", _move_layer), 
+        _self;
+    };
+}(dxui), !function(dxui) {
+    var TOAST_PARENT_ID = "Toast-Parent", TOAST_SHOW_ID = "Toast-Show", TOAST_DEFAULT_STYLE = "toast", TOAST_POP_LEVEL = 1e4, Toast = function(text, time, style) {
+        return new Toast.create(text, time, style);
+    };
+    Toast.Queue = new Array(), Toast.create = function(message, time, style) {
+        Toast.Parent = document.getElementById(TOAST_PARENT_ID), Toast.Parent || (Toast.Parent = document.createElement("div"), 
+        Toast.Parent.id = TOAST_PARENT_ID, document.body.appendChild(Toast.Parent)), Toast.Queue.push({
+            message: message,
+            timeout: time,
+            style: style ? TOAST_DEFAULT_STYLE + "-" + style : TOAST_DEFAULT_STYLE
+        }), Toast.show();
+    }, Toast.show = function() {
+        if (!document.getElementById(TOAST_SHOW_ID)) {
+            var show = Toast.Queue.shift(), toastdiv = dxui.dom.element("div", {
+                id: TOAST_SHOW_ID,
+                class: show.style
+            });
+            toastdiv.innerHTML = show.message, Toast.Parent.appendChild(toastdiv);
+            var margin = window.innerWidth / 2 - toastdiv.scrollWidth / 2, bottom = window.innerHeight - 2 * toastdiv.scrollHeight;
+            toastdiv.style.marginLeft = margin + "px", toastdiv.style.top = bottom + "px";
+            var timeout = show.timeout || 2e3, close = function() {
+                dxui.dom(toastdiv).css({
+                    transition: "opacity 0.3s ease-out",
+                    opacity: 0
+                }), setTimeout(function() {
+                    Toast.Parent.removeChild(toastdiv), Toast.Queue.length && Toast.show();
+                }, 300);
+            };
+            dxui.dom(toastdiv).css({
+                position: "fixed",
+                opacity: 1,
+                "z-index": TOAST_POP_LEVEL,
+                transition: "opacity 0.1s ease-in"
+            }), setTimeout(close, timeout);
+        }
+    }, dxui.Toast = Toast;
+}(dxui), !function(dxui) {
     function VideoPlayer(url, type) {}
     dxui.video_player = function(url, type) {
         return new VideoPlayer(url, type);

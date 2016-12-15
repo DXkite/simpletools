@@ -63,6 +63,8 @@ nav ul li ul li {
     padding: 0;
     float: none;
     border: none;
+    height: 0;
+    overflow: hidden;
 }
 
 nav ul li ul li a {
@@ -74,12 +76,15 @@ nav ul li:hover ul {
     opacity: 1;
     top: 2.7em;
 }
-
+nav ul li:hover ul li{
+    opacity: 1;
+    height: 2.5em;
+}
 nav ul li:hover ul li a {
     opacity: 1;
 }
 
 nav ul li:hover ul li:hover a {
-    color:#45B6F7;
+    color: #45B6F7;
     background-color: #fff;
 }
