@@ -1,0 +1,63 @@
+<html>
+
+<head>
+    <title>Test dxui</title>
+    <script src="../../build/dxui.js"></script>
+    <link rel="stylesheet" href="../../build/css/dxui.css">
+</head>
+
+<body>
+    <div id="test1">
+        <nav>
+            <ul>
+                {each navbar as name:nav}
+                <li>
+                    <a href="{nav.url}{name}">{name}</a> {if nav.child }
+                    <ul>
+                        {each nav.child as name:item}
+                        <li><a href="{item.url}{name}">{name}</a> </li>
+                        {/each}
+                    </ul>
+                    {/if}
+                </li>
+                {/each}
+            </ul>
+        </nav>
+    </div>
+</body>
+<script>    
+
+window.addEventListener('load', function () {
+    var navindex={navbar:{
+        "首页":{
+            url:'#',
+            child:{
+                "讨论区":{url:'#'},
+                "代码区":{url:'#'},
+                "在线测试":{url:'#'},
+                "资源区":{url:'#'},
+            }
+        },
+        "在线测试":{url:'#',
+            child:{
+                "试题集合":{url:'#'},
+                "提交历史":{url:'#'},
+                "个人记录":{url:'#'},
+            }
+        },
+        "关于":{url:'#',
+            child:{
+                "ATD工作室":{url:'#'},
+                "ASL实验室":{url:'#'},
+                "芒刺项目组":{url:'#'},
+                "成员介绍":{url:'#'},
+                "获取网站":{url:'#'},
+            }
+        },
+    }};
+   renderTpl('#test1',navindex);
+});
+
+</script>
+
+</html>

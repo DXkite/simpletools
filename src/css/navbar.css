@@ -1,0 +1,88 @@
+nav a,
+nav a :hover {
+    color: #fff;
+    text-decoration: none;
+}
+
+nav {
+    width: 100%;
+    background: #333;
+}
+
+nav ul {
+    display: table;
+    padding: 0;
+    margin: 0 auto;
+    width: 80%;
+}
+
+nav ul li {
+    float: left;
+    border-right: 1px solid #222;
+    position: relative;
+    list-style: none;
+    transition: all .5s .1s;
+}
+
+nav ul li:first-of-type {
+    border-left: none;
+}
+
+nav ul li:last-of-type {
+    border-right: none;
+}
+
+nav ul li a {
+    display: block;
+    padding: 0.8em 1em;
+}
+
+nav>ul>li:hover>a {
+    display: block;
+    padding: 0.8em 1em;
+}
+
+nav ul li ul {
+    transition: all .5s .1s;
+    display: block;
+    position: absolute;
+    padding: 0;
+    border: none;
+    left: 0;
+    top: 200%;
+    opacity: 0;
+    width: 200%;
+    background-color: #333;
+    border-top: 1px #222 solid;
+}
+
+nav ul li ul li {
+    height: 0;
+    padding: 0;
+    float: none;
+    border: none;
+    overflow: hidden;
+}
+
+nav ul li ul li a {
+    transition: all .5s .1s;
+    opacity: 0;
+}
+
+nav ul li:hover ul {
+    opacity: 1;
+    top: 2.7em;
+}
+
+nav ul li:hover ul li {
+    height: 2.5em;
+}
+
+nav ul li:hover ul li a {
+    text-indent: 0;
+    opacity: 1;
+}
+
+nav ul li:hover ul li:hover a {
+    background-color: #888;
+}

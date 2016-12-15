@@ -228,7 +228,7 @@ var dxui = dxui || {
             return statmentTest("for(" + param + "){}", "for (" + param + ") {");
 
           case "each":
-            var match = param.match(/(\w+)\s+(?:(?:as(?:\s+(\w+)))?(?:\s*:\s*(\w+))?)?/);
+            var match = param.match(/\s*(.+?)\s+(?:(?:as(?:\s+(\w+)))?(?:\s*:\s*(\w+))?)?/);
             if (match) {
                 var each_param, value = match[1];
                 return each_param = match[2] ? match[3] ? match[3] + "," + match[2] : match[2] : "value,index", 
