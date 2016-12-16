@@ -65,7 +65,7 @@ module.exports = function (grunt) {
             },
             test: {
                 expand: true,
-                cwd: 'build',
+                cwd: 'dxui',
                 src: '**',
                 dest: 'test/dxui/',
                 filter: 'isFile'
