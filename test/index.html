@@ -13,10 +13,10 @@
             <ul>
                 {each navbar as index:nav}
                 <li>
-                    <a href="{nav.url}{nav.name}{index}">{nav.name}</a> {if nav.child }
+                    <a href="{nav.url}">{nav.name}</a> {if nav.child }
                     <ul>
                         {each nav.child as index:item}
-                        <li><a href="{item.url}{item.name}{index}">{item.name}</a> </li>
+                        <li><a href="{item.url}">{item.name}</a> </li>
                         {/each}
                     </ul>
                     {/if}
