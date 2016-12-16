@@ -15,6 +15,13 @@ module.exports = function (grunt) {
                 dest: 'dxui/css/<%= pkg.name %>.css'
             }
         },
+        autoprefixer: {
+            dist: {
+                files: {
+                    'dxui/css/<%= pkg.name %>.css': 'dxui/css/<%= pkg.name %>.css'
+                }
+            }
+        },
         cssmin: {
             mincss: {
                 files: {
@@ -77,7 +84,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-copy');
-
-    grunt.registerTask('default', ['concat', 'cssmin', 'uglify', 'copy']);
+    grunt.loadNpmTasks('grunt-autoprefixer');
+    grunt.registerTask('default', ['concat','autoprefixer','cssmin', 'uglify', 'copy']);
 
 };
