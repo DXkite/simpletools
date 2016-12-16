@@ -18,14 +18,16 @@ module.exports = function (grunt) {
         autoprefixer: {
             dist: {
                 files: {
-                    'dxui/css/<%= pkg.name %>.css': 'dxui/css/<%= pkg.name %>.css'
+                    'dxui/css/<%= pkg.name %>.css': 'dxui/css/<%= pkg.name %>.css',
+                     // 测试用CSS
+                    'test/test.css': 'test/test.css',
                 }
             }
         },
         cssmin: {
             mincss: {
                 files: {
-                    'dxui/css/<%= pkg.name %>.min.css': ['dxui/css/<%= pkg.name %>.css']
+                    'dxui/css/<%= pkg.name %>.min.css': ['dxui/css/<%= pkg.name %>.css'],
                 },
             },
         },
@@ -85,6 +87,6 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-autoprefixer');
-    grunt.registerTask('default', ['concat','autoprefixer','cssmin', 'uglify', 'copy']);
+    grunt.registerTask('default', ['concat', 'autoprefixer', 'cssmin', 'uglify', 'copy']);
 
 };
