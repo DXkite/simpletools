@@ -5,20 +5,20 @@ module.exports = function (grunt) {
         concat: {
             dxproject: {
                 src: ['src/dxui.js', 'src/libs/*.js', 'src/modules/*.js'],
-                dest: 'build/<%= pkg.name %>.js'
+                dest: 'dxui/<%= pkg.name %>.js'
             },
             css: {
                 options: {
                     banner: '/*! <%= pkg.name %>.css by <%= pkg.author %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
                 },
                 src: ['src/css/*.css'],
-                dest: 'build/css/<%= pkg.name %>.css'
+                dest: 'dxui/css/<%= pkg.name %>.css'
             }
         },
         cssmin: {
             mincss: {
                 files: {
-                    'build/css/<%= pkg.name %>.min.css': ['build/css/<%= pkg.name %>.css']
+                    'dxui/css/<%= pkg.name %>.min.css': ['dxui/css/<%= pkg.name %>.css']
                 },
             },
         },
@@ -27,14 +27,14 @@ module.exports = function (grunt) {
                 banner: '/*! <%= pkg.name %> by <%= pkg.author %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
             },
             build: {
-                src: 'build/<%= pkg.name %>.js',
-                dest: 'build/<%= pkg.name %>.min.js'
+                src: 'dxui/<%= pkg.name %>.js',
+                dest: 'dxui/<%= pkg.name %>.min.js'
             },
             buildModules: {
                 expand: true,
                 cwd: 'src/modules',
                 src: '**/*.js',
-                dest: 'build/modules'
+                dest: 'dxui/modules'
             },
             beautify: {
                 options: {
@@ -43,8 +43,8 @@ module.exports = function (grunt) {
                     report: 'none',
                     mangle: false,
                 },
-                src: 'build/<%= pkg.name %>.js',
-                dest: 'build/<%= pkg.name %>.beautiful.js'
+                src: 'dxui/<%= pkg.name %>.js',
+                dest: 'dxui/<%= pkg.name %>.beautiful.js'
             }
 
         },
@@ -53,14 +53,14 @@ module.exports = function (grunt) {
                 expand: true,
                 cwd: 'src',
                 src: ['image/**'],
-                dest: 'build/',
+                dest: 'dxui/',
                 filter: 'isFile',
             },
             font: {
                 expand: true,
                 cwd: 'src',
                 src: ['font/**'],
-                dest: 'build/',
+                dest: 'dxui/',
                 filter: 'isFile'
             },
             test: {
