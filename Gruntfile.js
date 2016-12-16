@@ -63,6 +63,13 @@ module.exports = function (grunt) {
                 dest: 'build/',
                 filter: 'isFile'
             },
+            test: {
+                expand: true,
+                cwd: 'build',
+                src: '**',
+                dest: 'test/dxui/',
+                filter: 'isFile'
+            },
         },
     });
 
