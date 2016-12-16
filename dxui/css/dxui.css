@@ -455,7 +455,8 @@
 
 .markdown .anchor {
   opacity: 0;
-  transition: opacity 0.3s ease;
+  -webkit-transition: opacity 0.3s ease;
+          transition: opacity 0.3s ease;
   margin-left: 8px;
 }
 
@@ -498,7 +499,8 @@ nav>ul>li {
     border-right: 1px solid #eee;
     position: relative;
     list-style: none;
-    transition: all .3s .1s;
+    -webkit-transition: all .3s .1s;
+            transition: all .3s .1s;
 }
 
 nav>ul>li:first-of-type {
@@ -515,7 +517,8 @@ nav>ul>li a {
     text-decoration: none;
     padding: 0.8em 1em;
     text-overflow: ellipsis;
-    transition: .3s;
+    -webkit-transition: .3s;
+            transition: .3s;
 }
 
 nav>ul>li a:hover {
@@ -540,25 +543,54 @@ nav>ul>li>ul>li>a {
 
 nav>ul>li:hover>ul {
     display: block;
-    animation: show-sub .3s forwards;
+    -webkit-animation: show-sub .3s forwards;
+            animation: show-sub .3s forwards;
     width: 150%;
 }
 
 nav>ul>li:hover>ul>li>a {
     display: block;
     opacity: 0;
-    transform: translate(-10%, 0);
-    animation: show-item .3s .2s forwards;
+    -webkit-transform: translate(-10%, 0);
+            transform: translate(-10%, 0);
+    -webkit-animation: show-item .3s .2s forwards;
+            animation: show-item .3s .2s forwards;
+}
+
+@-webkit-keyframes show-sub {
+    from {
+        opacity: 0;
+        -webkit-transform: translate(0,-10%);
+                transform: translate(0,-10%);
+    }
+    to {
+        opacity: 1;
+        -webkit-transform: translate(0, 0);
+                transform: translate(0, 0);
+    }
 }
 
 @keyframes show-sub {
     from {
         opacity: 0;
-        transform: translate(0,-10%);
+        -webkit-transform: translate(0,-10%);
+                transform: translate(0,-10%);
     }
     to {
         opacity: 1;
-        transform: translate(0, 0);
+        -webkit-transform: translate(0, 0);
+                transform: translate(0, 0);
+    }
+}
+
+@-webkit-keyframes show-item {
+    from {
+        opacity: 0.5;
+    }
+    to {
+        opacity: 1;
+        -webkit-transform: translate(0, 0);
+                transform: translate(0, 0);
     }
 }
 
@@ -568,7 +600,8 @@ nav>ul>li:hover>ul>li>a {
     }
     to {
         opacity: 1;
-        transform: translate(0, 0);
+        -webkit-transform: translate(0, 0);
+                transform: translate(0, 0);
     }
 }
 .toast
