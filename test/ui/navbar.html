@@ -4,10 +4,7 @@
     <title>Test dxui</title>
     <script src="../../build/dxui.js"></script>
     <link rel="stylesheet" href="../../build/css/dxui.css">
-</head>
-
-<body>
-    <div id="test1">
+    <script id="navbar-tpl" type="application/dxtpl">
         <nav>
             <ul>
                 {each navbar as index:nav}
@@ -23,48 +20,69 @@
                 {/each}
             </ul>
         </nav>
+    </script>
+</head>
+
+<body>
+    <div id="navbar">
     </div>
-
 </body>
-<script>    
-
-window.addEventListener('load', function () {
-    var navindex={navbar:[{
-            name: "首页",
-            url:'#',
-            child:[
-                {name:"讨论区",url:'#'},
-                {name:"代码区",url:'#'},
-                {name:"在线测试",url:'#'},
-                {name:"资源区",url:'#'},
-            ]
-        },
-        {url:'#',
-        name:"在线测试",
-            child:[
-                {name:"试题集合",url:'#'},
-                {name:"提交历史",url:'#'},
-                {name:"个人记录",url:'#'},
-            ]
-        },
-        {
-            name:"ATD&ASL",
-            url:'#',
-            child:[
-                {name:"ATD工作室",url:'#'},
-                {name:"ASL实验室",url:'#'},
-                {name:"芒刺项目组",url:'#'},
-                {name:"获取网站源码获取网站源码",url:'#'},
-            ]
-        },
-        {
-            url:'#',
-            name:"关于",
-        },
-    ]};
-   renderTpl('#test1',navindex);
-});
-
+<script>
+    window.addEventListener('load', function () {
+        var navindex = {
+            navbar: [{
+                name: "首页",
+                url: '#',
+                child: [{
+                    name: "讨论区",
+                    url: '#'
+                }, {
+                    name: "代码区",
+                    url: '#'
+                }, {
+                    name: "在线测试",
+                    url: '#'
+                }, {
+                    name: "资源区",
+                    url: '#'
+                }, ]
+            }, {
+                url: '#',
+                name: "在线测试",
+                child: [{
+                    name: "试题集合",
+                    url: '#'
+                }, {
+                    name: "提交历史",
+                    url: '#'
+                }, {
+                    name: "个人记录",
+                    url: '#'
+                }, ]
+            }, {
+                name: "ATD&ASL",
+                url: '#',
+                child: [{
+                    name: "ATD工作室",
+                    url: '#'
+                }, {
+                    name: "ASL实验室",
+                    url: '#'
+                }, {
+                    name: "芒刺项目组",
+                    url: '#'
+                }, {
+                    name: "获取网站源码获取网站源码",
+                    url: '#'
+                }, ]
+            }, {
+                url: '#',
+                name: "关于",
+            }, ]
+        };
+        var tpl = new Template('navbar-tpl').render(navindex);
+        document.getElementById('navbar').innerHTML = tpl;
+    });
 </script>
 
 </html>

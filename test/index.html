@@ -7,19 +7,16 @@
     <script src="../build/dxui.js"></script>
     <link rel="stylesheet" href="test.css">
     <link rel="stylesheet" href="../build/css/dxui.css">
-</head>
 
-<body>
-    <h2 data-discription="for dxui">Test Demo</h2>
-    <div id="test1">
+    <script id="navbar-tpl" type="application/dxtpl">
         <nav>
             <ul>
                 {each navbar as index:nav}
                 <li>
-                    <a href="{nav.url}">{nav.name}</a> {if nav.child }
+                    <a href="{nav.url}{nav.name}{index}">{nav.name}</a> {if nav.child }
                     <ul>
                         {each nav.child as index:item}
-                        <li><a href="{item.url}">{item.name}</a> </li>
+                        <li><a href="{item.url}{item.name}{index}">{item.name}</a> </li>
                         {/each}
                     </ul>
                     {/if}
@@ -27,6 +24,12 @@
                 {/each}
             </ul>
         </nav>
+    </script>
+</head>
+
+<body>
+    <h2 data-discription="Powered By dxui" data-author="By 寒光">寒光博客</h2>
+    <div id="navbar">
     </div>
 </body>
 <script>
@@ -81,7 +84,8 @@
                 name: "DOM操作",
             }, ]
         };
-        renderTpl('#test1', navindex);
+        var tpl=new Template('navbar-tpl').render(navindex);
+        document.getElementById('navbar').innerHTML=tpl;
     });
 </script>
 
