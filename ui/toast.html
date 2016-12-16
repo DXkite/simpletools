@@ -1,0 +1,22 @@
+<html>
+
+<head>
+    <title>Test dxui Editor</title>
+    <link rel="stylesheet" href="../dxui/css/dxui.css">
+    <script src="../dxui/dxui.js"></script>
+</head>
+
+<body>
+<div id="Toast">Click</div>
+<div id="Toast2">Click Style</div>
+</body>
+<script>
+    dxui.dom('#Toast').on('click',function(){
+        dxui.Toast('Hello! My Style is default',1000);
+    });
+    dxui.dom('#Toast2').on('click',function(){
+        dxui.Toast('Hello! My Style is green',1000,'green');
+    });
+</script>
+
+</html>

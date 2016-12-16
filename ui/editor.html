@@ -1,0 +1,35 @@
+<html>
+
+<head>
+    <title>Test dxui Editor</title>
+    <link rel="stylesheet" href="../dxui/css/dxui.css">
+    <script src="../dxui/dxui.js"></script>
+</head>
+<style>
+.editor {
+    width: 30em;
+    padding: 0;
+    display: block;
+    margin: auto;
+}
+</style>
+<body>
+
+<div class="editor">
+    <div class="editor-controlls">
+        <ol>
+            <li data-tool="insertHTML">HTML</li>
+            <li>B</li>
+        </ol>
+    </div>
+    <div class="editor-content"> 
+
+    </div>
+</div>
+
+</body>
+<script>
+    new dxui.Editor(dxui.dom('.editor')[0]);
+</script>
+
+</html>
