@@ -22,22 +22,39 @@ h2 {
     font-size: 50px;
     padding: 0.5em 0.8em;
     margin: 0 auto;
-    text-shadow: 5px 5px 45px rgba(255,0,0,.5),
-    -5px -5px 15px rgba(0,255,0,.5),
-    5px -5px 25px rgba(0,0,255,.5),
-    -5px 5px 35px rgba(255,255,0,.5);
     width: 80%;
     position: relative;
+    animation: light 1s 1s infinite;
+    text-shadow: 5px 5px 45px rgba(255, 0, 0, .5);
 }
 
 h2::after {
     position: absolute;
     left: 20em;
     font-size: 0.3em;
-    content: attr(data-value);
+    content: attr(data-discription);
     bottom: 20%;
 }
 
 body {
-	font-family:"Trebuchet MS", Arial, "Helvetica-Normal", Helvetica, Verdana;
-} 
+    font-family: "Trebuchet MS", Arial, "Helvetica-Normal", Helvetica, Verdana;
+}
+
+
+@keyframes light {
+    0% {
+        text-shadow: 0 0 45px rgba(255, 0, 0, .5);
+    }
+    25% {
+        text-shadow: 0 0 15px rgba(0, 255, 0, .5);
+    }
+    50% {
+        text-shadow:0 0 25px rgba(0, 0, 255, .5);
+    }
+    75% {
+        text-shadow: 0 0 35px rgba(255, 255, 0, .5);
+    }
+    100% {
+       text-shadow: 0 0 45px rgba(255, 0, 0, .5);
+    }
+}

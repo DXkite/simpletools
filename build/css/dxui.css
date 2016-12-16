@@ -1,4 +1,4 @@
-/*! dxui.css by dxkite 2016-12-15 */
+/*! dxui.css by dxkite 2016-12-16 */
 .editor-content {
     outline: none;
     max-width: 100%;
@@ -479,12 +479,6 @@
 }
 
 
-nav a,
-nav a :hover {
-    color: #666;
-    text-decoration: none;
-}
-
 nav {
     width: 100%;
     background: #fff;
@@ -492,14 +486,14 @@ nav {
     border-bottom: 1px solid #eee;
 }
 
-nav ul {
+nav>ul {
     display: table;
     padding: 0;
     margin: 0 auto;
     width: 80%;
 }
 
-nav ul li {
+nav>ul>li {
     float: left;
     border-right: 1px solid #eee;
     position: relative;
@@ -507,67 +501,75 @@ nav ul li {
     transition: all .3s .1s;
 }
 
-nav ul li:first-of-type {
+nav>ul>li:first-of-type {
     border-left: none;
 }
 
-nav ul li:last-of-type {
+nav>ul>li:last-of-type {
     border-right: none;
 }
 
-nav ul li a {
+nav>ul>li a {
     display: block;
+    color: #666;
+    text-decoration: none;
     padding: 0.8em 1em;
+    text-overflow: ellipsis;
+    transition: .3s;
 }
 
-nav>ul>li:hover>a {
+nav>ul>li a:hover {
     display: block;
     padding: 0.8em 1em;
     background: #F6F6F6;
 }
 
-nav ul li ul {
-    transition: all .3s .1s;
-    display: block;
+nav>ul>li>ul {
+    display: none;
+    list-style: none;
     position: absolute;
     padding: 0;
-    left: 0;
-    top: 200%;
-    opacity: 0;
-    width: 150%;
-    background: #F6F6F6;
-    border: 1px solid #ddd;
-    border-top: none;
-}
-
-nav ul li ul li {
-    padding: 0;
-    float: none;
-    border: none;
-    height: 0;
+    background-color: #fff;
+    box-shadow: 0px 1px 1px 0px #ddd;
     overflow: hidden;
 }
 
-nav ul li ul li a {
-    transition: all .3s .1s;
+nav>ul>li>ul>li>a {
+    display: none;
+}
+
+nav>ul>li:hover>ul {
+    display: block;
+    animation: show-sub .3s forwards;
+    width: 150%;
+}
+
+nav>ul>li:hover>ul>li>a {
+    display: block;
     opacity: 0;
+    transform: translate(-10%, 0);
+    animation: show-item .3s .2s forwards;
 }
 
-nav ul li:hover ul {
-    opacity: 1;
-    top: 2.7em;
-}
-nav ul li:hover ul li{
-    opacity: 1;
-    height: 2.5em;
-}
-nav ul li:hover ul li a {
-    opacity: 1;
+@keyframes show-sub {
+    from {
+        opacity: 0;
+        transform: translate(0,-10%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(0, 0);
+    }
 }
 
-nav ul li:hover ul li:hover a {
-    color: #45B6F7;
-    background-color: #fff;
+@keyframes show-item {
+    from {
+        opacity: 0.5;
+    }
+    to {
+        opacity: 1;
+        transform: translate(0, 0);
+    }
 }
 .toast
 {
