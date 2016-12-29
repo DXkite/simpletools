@@ -1,4 +1,4 @@
-/*! dxui.css by dxkite 2016-12-16 */
+/*! dxui.css by dxkite 2016-12-29 */
 .editor-content {
     outline: none;
     max-width: 100%;
@@ -603,6 +603,13 @@ nav>ul>li:hover>ul>li>a {
         -webkit-transform: translate(0, 0);
                 transform: translate(0, 0);
     }
+}
+.panel {
+    margin-bottom: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
 }
 .toast
 {

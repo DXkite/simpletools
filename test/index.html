@@ -5,31 +5,48 @@
     <title>Test dxui</title>
     <meta charset="utf8">
     <script src="dxui/dxui.js"></script>
-    <link rel="stylesheet" href="test.css">
+    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="dxui/css/dxui.css">
-
-    <script id="navbar-tpl" type="application/dxtpl">
-        <nav>
-            <ul>
-                {each navbar as index:nav}
-                <li>
-                    <a href="{nav.url}">{nav.name}</a> {if nav.child }
-                    <ul>
-                        {each nav.child as index:item}
-                        <li><a href="{item.url}">{item.name}</a> </li>
-                        {/each}
-                    </ul>
-                    {/if}
-                </li>
-                {/each}
-            </ul>
-        </nav>
-    </script>
 </head>
 
 <body>
-    <h2 data-discription="Powered By dxui" data-author="By DXkite">Dxui Demo</h2>
-    <div id="navbar">
+    <div class="main-container">
+        <header>
+            <h2 data-discription="Powered By dxui" data-author="By DXkite">Dxui Demo</h2>
+            <div id="navbar">
+            </div>
+        </header>
+        <main>
+            <div class="panel search-panel">
+                <form action="#search" class="form">
+                    <div class="form-item">
+                        <input type="text" name="search">
+                        <button>搜索</button>
+                    </div>
+                    <div class="form-item">
+                        <input id="form_article" name="type" type="radio" value="article">
+                        <label for="form_article">文章</label>
+                    </div>
+                </form>
+            </div>
+        </main>
+        <div id="navbar-tpl" type="application/dxtpl" style="display: none">
+            <nav>
+                <ul>
+                    {each navbar as index:nav}
+                    <li>
+                        <a href="{nav.url}">{nav.name}</a> {if nav.child }
+                        <ul>
+                            {each nav.child as index:item}
+                            <li><a href="{item.url}">{item.name}</a> </li>
+                            {/each}
+                        </ul>
+                        {/if}
+                    </li>
+                    {/each}
+                </ul>
+            </nav>
+        </div>
     </div>
 </body>
 <script>
@@ -84,8 +101,8 @@
                 name: "DOM操作",
             }, ]
         };
-        var tpl=new Template('navbar-tpl').render(navindex);
-        document.getElementById('navbar').innerHTML=tpl;
+        var tpl = new Template('navbar-tpl').render(navindex);
+        document.getElementById('navbar').innerHTML = tpl;
     });
 </script>
 

@@ -13,6 +13,10 @@ module.exports = function (grunt) {
                 },
                 src: ['src/css/*.css'],
                 dest: 'dxui/css/<%= pkg.name %>.css'
+            },
+            theme:{
+                src: ['test/theme/*.css'],
+                dest: 'test/css/style.css'
             }
         },
         autoprefixer: {
@@ -20,7 +24,7 @@ module.exports = function (grunt) {
                 files: {
                     'dxui/css/<%= pkg.name %>.css': 'dxui/css/<%= pkg.name %>.css',
                      // 测试用CSS
-                    'test/test.css': 'test/test.css',
+                    'test/css/style.css': 'test/css/style.css',
                 }
             }
         },
@@ -28,6 +32,7 @@ module.exports = function (grunt) {
             mincss: {
                 files: {
                     'dxui/css/<%= pkg.name %>.min.css': ['dxui/css/<%= pkg.name %>.css'],
+                    'test/css/style.css': ['test/css/style.css'],
                 },
             },
         },
