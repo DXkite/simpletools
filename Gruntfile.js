@@ -2,6 +2,16 @@ module.exports = function (grunt) {
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
+        less: {
+            development: {
+                options: {
+                    paths: ['src/less'],
+                },
+                files: {
+                    'src/css/style.css':['src/less/*.less','src/less/module/*.less']
+                }
+            }
+        },
         concat: {
             dxproject: {
                 src: ['src/dxui.js', 'src/libs/*.js', 'src/modules/*.js'],
@@ -14,7 +24,7 @@ module.exports = function (grunt) {
                 src: ['src/css/*.css'],
                 dest: 'dxui/css/<%= pkg.name %>.css'
             },
-            theme:{
+            theme: {
                 src: ['test/theme/*.css'],
                 dest: 'test/css/style.css'
             }
@@ -23,7 +33,7 @@ module.exports = function (grunt) {
             dist: {
                 files: {
                     'dxui/css/<%= pkg.name %>.css': 'dxui/css/<%= pkg.name %>.css',
-                     // 测试用CSS
+                    // 测试用CSS
                     'test/css/style.css': 'test/css/style.css',
                 }
             }
@@ -91,7 +101,8 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-autoprefixer');
-    grunt.registerTask('default', ['concat', 'autoprefixer', 'cssmin', 'uglify', 'copy']);
+    grunt.registerTask('default', ['less', 'concat', 'autoprefixer', 'cssmin', 'uglify', 'copy']);
 
 };
