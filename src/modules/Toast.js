@@ -1,8 +1,8 @@
 /** Toast 弹出提示 */ ;
 !(function (dxui) {
     // 常量
-    var TOAST_PARENT_ID = 'Toast-Parent';
-    var TOAST_SHOW_ID = 'Toast-Show';
+    var TOAST_PARENT_ID = 'dxui-toast-parent';
+    var TOAST_SHOW_ID = 'dxui-toast-show';
     var TOAST_DEFAULT_STYLE = 'toast';
     var TOAST_POP_LEVEL = 10000;
 
