@@ -92,31 +92,31 @@ Dom.method.extend({
 
 module.exports = { Dom: Dom };
 
-},{"../util":5}],2:[function(require,module,exports){
+},{"../util":8}],2:[function(require,module,exports){
 'use strict';
 
-var _index = require('./template/index');
+var _Dom = require('./Dom');
 
-var _index2 = require('./dom/index');
+window.dxui = window.dxui || {}; // 简单Dom操作
 
-var _index3 = require('./toast/index');
+window.dxui.dom = _Dom.Dom;
 
-// 模板导入
-window.dxtpl = new _index.Template();
-window.Template = _index.Template;
-window.renderTpl = _index.renderTpl;
+},{"./Dom":1}],3:[function(require,module,exports){
+'use strict';
 
-window.dxui = { version: '1.0' };
+require('./template/index');
+
+require('./dom/index');
+
+require('./toast/index');
+
+// 导入HTML模板工具
 
 // 简单Dom操作
-
-window.dxui.dom = _index2.Dom;
-
+window.dxui.version = '1.0';
 // Toast 功能
 
-window.dxui.Toast = _index3.Toast;
-
-},{"./dom/index":1,"./template/index":3,"./toast/index":4}],3:[function(require,module,exports){
+},{"./dom/index":2,"./template/index":5,"./toast/index":7}],4:[function(require,module,exports){
 'use strict';
 
 //  缓存查找节点可能会耗时较多 
@@ -579,10 +579,20 @@ Template.prototype.render = function (value) {
 
 module.exports = { Template: Template, renderTpl: renderTpl };
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 'use strict';
 
-var _index = require('../dom/index');
+var _Template = require('./Template');
+
+// 模板导入
+window.dxtpl = new _Template.Template();
+window.Template = _Template.Template;
+window.renderTpl = _Template.renderTpl;
+
+},{"./Template":4}],6:[function(require,module,exports){
+'use strict';
+
+var _Dom = require('../dom/Dom');
 
 // 常量
 var TOAST_PARENT_ID = 'Toast-Parent';
@@ -617,7 +627,7 @@ Toast.show = function () {
     // 一个时刻只能显示一个Toast
     if (document.getElementById(TOAST_SHOW_ID)) return;
     var show = Toast.Queue.shift();
-    var toastdiv = _index.Dom.element('div', {
+    var toastdiv = _Dom.Dom.element('div', {
         id: TOAST_SHOW_ID,
         class: show.style
     });
@@ -631,7 +641,7 @@ Toast.show = function () {
     var timeout = show.timeout || 2000;
 
     var close = function close() {
-        (0, _index.Dom)(toastdiv).css({
+        (0, _Dom.Dom)(toastdiv).css({
             'transition': 'opacity 0.3s ease-out',
             opacity: 0
         });
@@ -644,7 +654,7 @@ Toast.show = function () {
         }, 300);
     };
 
-    (0, _index.Dom)(toastdiv).css({
+    (0, _Dom.Dom)(toastdiv).css({
         position: 'fixed',
         opacity: 1,
         'z-index': TOAST_POP_LEVEL,
@@ -655,7 +665,16 @@ Toast.show = function () {
 
 module.exports = { Toast: Toast };
 
-},{"../dom/index":1}],5:[function(require,module,exports){
+},{"../dom/Dom":1}],7:[function(require,module,exports){
+'use strict';
+
+var _Toast = require('./Toast');
+
+window.dxui = window.dxui || {}; // Toast 功能
+
+window.dxui.Toast = _Toast.Toast;
+
+},{"./Toast":6}],8:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -748,4 +767,4 @@ util.cssfix = add_css_prefix;
 
 module.exports = { util: util };
 
-},{}]},{},[2]);
+},{}]},{},[3]);

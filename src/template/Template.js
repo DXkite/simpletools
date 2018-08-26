@@ -1,131 +1,10 @@
-/*! simpletools by DXkite 2018-08-26 */
-(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
-'use strict';
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-var _util = require('../util');
-
-var Dom = function Dom(selecter, context) {
-    return new Dom.constructor(selecter, context);
-};
-
-Dom.constructor = function (selecter, context) {
-    if (typeof selecter === 'string') {
-        this.elements = (context || document).querySelectorAll(selecter);
-    } else {
-        this.elements = [selecter];
-    }
-    this.context = context;
-    this.length = this.elements.length;
-    for (var i = 0; i < this.length; i++) {
-        this[i] = this.elements[i];
-    }
-    return this;
-};
-
-Dom.extend = function (methods) {
-    for (var name in methods) {
-        this[name] = methods[name];
-    }
-};
-
-Dom.extend({
-    element: function element(tag, attr, css) {
-        var element = document.createElement(tag);
-        Dom(element).attr(attr).css(css);
-        return element;
-    }
-});
-
-Dom.method = Dom.constructor.prototype;
-Dom.method.extend = Dom.extend;
-// 属性方法
-Dom.method.extend({
-    attr: function attr(attrs) {
-        this.each(function () {
-            if (attrs) {
-                for (var name in attrs) {
-                    this.setAttribute(name, attrs[name]);
-                }
-            }
-        });
-        return this;
-    },
-    css: function css(cssObj) {
-        this.each(function () {
-            if (cssObj) {
-                for (var name in cssObj) {
-                    this.style[_util.util.cssfix(name)] = cssObj[name];
-                }
-            }
-        });
-        return this;
-    },
-    addClass: function addClass(add) {
-        this.each(function () {
-            this.class += ' ' + add;
-        });
-        return this;
-    },
-    removeClass: function removeClass(remove) {
-        this.each(function () {
-            var reg = new RegExp('/\\s+?' + remove + '/');
-            this.class.replace(reg, '');
-        });
-        return this;
-    },
-    each: function each(callback) {
-        for (var i = 0; i < this.length; i++) {
-            callback.call(this[i], this[i], i);
-        }
-        return this;
-    },
-    on: function on(type, listener, useCaptrue) {
-        var captrue = (typeof useCaptrue === 'undefined' ? 'undefined' : _typeof(useCaptrue)) === undefined ? true : useCaptrue;
-        this.each(function () {
-            this.addEventListener(type, listener, captrue);
-        });
-        return this;
-    }
-});
-
-module.exports = { Dom: Dom };
-
-},{"../util":8}],2:[function(require,module,exports){
-'use strict';
-
-var _Dom = require('./Dom');
-
-window.dxui = window.dxui || {}; // 简单Dom操作
-
-window.dxui.dom = _Dom.Dom;
-
-},{"./Dom":1}],3:[function(require,module,exports){
-'use strict';
-
-require('./template/index');
-
-require('./dom/index');
-
-require('./toast/index');
-
-// 导入HTML模板工具
-
-// 简单Dom操作
-window.dxui.version = '1.0';
-// Toast 功能
-
-},{"./dom/index":2,"./template/index":5,"./toast/index":7}],4:[function(require,module,exports){
-'use strict';
-
 //  缓存查找节点可能会耗时较多 
 var default_config = {
     cache: true, // 是否开启缓存
     tagstart: '{',
     tagend: '}', //控制标签
     compress: true,
-    strict: true
+    strict: true,
 };
 
 // 关键字
@@ -143,7 +22,9 @@ var escape = {
     "&": "&#38;"
 };
 
+
 /*  --------------------  静态内部函数 protected ------------------------*/
+
 
 /**
  * 测试模板语句的可行性
@@ -160,6 +41,7 @@ function statmentTest(test, code) {
     }
     return code;
 }
+
 
 /**
  * 处理HTML部分
@@ -190,6 +72,7 @@ function parserHTML(html, compress) {
     return out;
 }
 
+
 /**
  * 处理代码
  * 
@@ -205,8 +88,7 @@ function parserCode(code) {
         var param = match[2];
 
         switch (command) {
-            case 'include':
-                // 编译时包含
+            case 'include': // 编译时包含
                 param = param.trim().split(' ');
                 if (param.length === 1) {
                     param.push("$_unit.value");
@@ -252,25 +134,27 @@ function parserCode(code) {
     }
     // 非转义
     else if (match = code.match(/^!.*$/)) {
-            return ENGINE[1] + '$_unit._echo(' + match[1] + ')' + ENGINE[2];
-        }
-        // 转义输出
-        else {
-                return ENGINE[1] + '$_unit._escape(' + code + ')' + ENGINE[2];
-            }
+        return ENGINE[1] + '$_unit._echo(' + match[1] + ')' + ENGINE[2];
+    }
+    // 转义输出
+    else {
+        return ENGINE[1] + '$_unit._escape(' + code + ')' + ENGINE[2];
+    }
 }
 
-var _echo = function _echo(value) {
-    return new String(value);
-};
 
-var _escape = function _escape(content) {
+
+var _echo = function (value) {
+    return new String(value);
+}
+
+var _escape = function (content) {
     return _echo(content).replace(/&(?![\w#]+;)|[<>"']/g, function (s) {
         return escape[s];
     });
 };
 
-var _each = function _each(value, callback) {
+var _each = function (value, callback) {
     if (is_array(value)) {
         _arrayEach(value, callback);
     } else {
@@ -278,13 +162,13 @@ var _each = function _each(value, callback) {
             callback.call(value[index], value[index], index);
         }
     }
-};
-var _arrayEach = function _arrayEach(value, callback) {
+}
+var _arrayEach = function (value, callback) {
     for (var index = 0; index < value.length; ++index) {
         callback.call(value[index], value[index], index);
     }
-};
-var _objectCopy = function _objectCopy(arrays) {
+}
+var _objectCopy = function (arrays) {
     var object = {};
     for (var i = 0; i < arguments.length; i++) {
         for (var index in arguments[i]) {
@@ -292,11 +176,11 @@ var _objectCopy = function _objectCopy(arrays) {
         }
     }
     return object;
-};
+}
 
-var _include = function _include(id, value) {
+var _include = function (id, value) {
     return new Template(id).render(value);
-};
+}
 
 /**
  * 生成可显示字符串
@@ -306,9 +190,12 @@ var _include = function _include(id, value) {
  */
 function _string(code) {
     return "'" + code
-    // 单引号与反斜杠转义
-    .replace(/('|\\)/g, '\\$1').replace(/\r/g, '\\r').replace(/\n/g, '\\n') + "'";
+        // 单引号与反斜杠转义
+        .replace(/('|\\)/g, '\\$1')
+        .replace(/\r/g, '\\r')
+        .replace(/\n/g, '\\n') + "'";
 }
+
 
 /**
  * 判断是否是数组
@@ -319,6 +206,8 @@ function _string(code) {
 function is_array(obj) {
     return Object.prototype.toString.call(obj) === '[object Array]';
 }
+
+
 
 /**
  * 提示代码错误
@@ -346,12 +235,15 @@ function reportError(name, content, line, e) {
                 console.log(i + '|' + codes[i - 1]);
             }
         }
+
     } else {
         console.log(content);
         console.log('%c' + report + e.message + '\t\t@' + name + ':' + line, 'color:red;');
     }
     console.groupEnd(report);
 }
+
+
 
 /**
  * 编译模板
@@ -378,6 +270,7 @@ function compileTemplate(text, config) {
     return tpl;
 }
 
+
 /**
  * 给模板压入变量
  * 
@@ -402,6 +295,7 @@ function linkValue(source, value, strict) {
     link_str += source + 'return new String(' + ENGINE[3] + ');';
     return link_str;
 }
+
 
 function renderTpl(selector, glovalue) {
     var nodes = document.querySelectorAll(selector);
@@ -478,6 +372,7 @@ function render(name, source, compiled_code, value, strict) {
                 console.error('DxTPL:Compile Error@' + name);
             }
         }
+
     }
     // console.timeEnd('render ' + name);
     return html;
@@ -504,6 +399,7 @@ function getDOMcache(name, config) {
     // console.timeEnd('getcache:' + name);
     return tpl_cache.innerText;
 }
+
 
 /* ----  编译DOM对象 ----*/
 function compile(id, config) {
@@ -532,7 +428,7 @@ function compile(id, config) {
 
 /* -----------------  外部函数 public ---------------------------*/
 
-var Template = function Template(name, config) {
+var Template = function (name, config) {
     this.version = '1.0.43';
     var conf = default_config;
     if (typeof name === 'string') {
@@ -544,29 +440,31 @@ var Template = function Template(name, config) {
         conf = _objectCopy(conf, name);
     }
     this.config(conf);
-};
+}
+
 
 Template.prototype.config = function (config) {
     for (var index in config) {
         this[index] = config[index];
     }
     return this;
-};
+}
+
 
 Template.prototype.assign = function (name, value) {
     this.value[name] = _objectCopy(this.value[name], value);
     return this;
-};
+}
 
 Template.prototype.value = function (value) {
     this.value = _objectCopy(this.value, value);
     return this;
-};
+}
 
 Template.prototype.compile = function (id) {
     var config = _objectCopy(this, compile(id, this));
     return new Template(config);
-};
+}
 
 Template.prototype.render = function (value) {
     // 未编译
@@ -575,196 +473,6 @@ Template.prototype.render = function (value) {
         this.config(val);
     }
     return render(this.id, this.source, this.code, value, this.strict);
-};
-
-module.exports = { Template: Template, renderTpl: renderTpl };
-
-},{}],5:[function(require,module,exports){
-'use strict';
-
-var _Template = require('./Template');
-
-// 模板导入
-window.dxtpl = new _Template.Template();
-window.Template = _Template.Template;
-window.renderTpl = _Template.renderTpl;
-
-},{"./Template":4}],6:[function(require,module,exports){
-'use strict';
-
-var _Dom = require('../dom/Dom');
-
-// 常量
-var TOAST_PARENT_ID = 'Toast-Parent';
-var TOAST_SHOW_ID = 'Toast-Show';
-var TOAST_DEFAULT_STYLE = 'toast';
-var TOAST_POP_LEVEL = 10000;
-
-var Toast = function Toast(text, time, style) {
-    return new Toast.create(text, time, style);
-};
-
-// Toast队列
-Toast.Queue = new Array();
-// 构造函数
-Toast.create = function (message, time, style) {
-    Toast.Parent = document.getElementById(TOAST_PARENT_ID);
-
-    if (!Toast.Parent) {
-        Toast.Parent = document.createElement('div');
-        Toast.Parent.id = TOAST_PARENT_ID;
-        document.body.appendChild(Toast.Parent);
-    }
-    Toast.Queue.push({
-        message: message,
-        timeout: time,
-        style: style ? TOAST_DEFAULT_STYLE + '-' + style : TOAST_DEFAULT_STYLE
-    });
-    Toast.show();
-};
-
-Toast.show = function () {
-    // 一个时刻只能显示一个Toast
-    if (document.getElementById(TOAST_SHOW_ID)) return;
-    var show = Toast.Queue.shift();
-    var toastdiv = _Dom.Dom.element('div', {
-        id: TOAST_SHOW_ID,
-        class: show.style
-    });
-    toastdiv.innerHTML = show.message;
-    Toast.Parent.appendChild(toastdiv);
-
-    var margin = window.innerWidth / 2 - toastdiv.scrollWidth / 2;
-    var bottom = window.innerHeight - toastdiv.scrollHeight * 2;
-    toastdiv.style.marginLeft = margin + 'px';
-    toastdiv.style.top = bottom + 'px';
-    var timeout = show.timeout || 2000;
-
-    var close = function close() {
-        (0, _Dom.Dom)(toastdiv).css({
-            'transition': 'opacity 0.3s ease-out',
-            opacity: 0
-        });
-
-        setTimeout(function () {
-            Toast.Parent.removeChild(toastdiv);
-            if (Toast.Queue.length) {
-                Toast.show();
-            }
-        }, 300);
-    };
-
-    (0, _Dom.Dom)(toastdiv).css({
-        position: 'fixed',
-        opacity: 1,
-        'z-index': TOAST_POP_LEVEL,
-        transition: 'opacity 0.1s ease-in'
-    });
-    setTimeout(close, timeout);
-};
-
-module.exports = { Toast: Toast };
-
-},{"../dom/Dom":1}],7:[function(require,module,exports){
-'use strict';
-
-var _Toast = require('./Toast');
-
-window.dxui = window.dxui || {}; // Toast 功能
-
-window.dxui.Toast = _Toast.Toast;
-
-},{"./Toast":6}],8:[function(require,module,exports){
-'use strict';
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-/* --------------- 全局函数 ------------------ */
-var util = {};
-
-util.is_function = function (obj) {
-    return Object.prototype.toString.call(obj) === '[object Function]';
-};
-util.is_array = function (obj) {
-    return Object.prototype.toString.call(obj) === '[object Array]';
-};
-util.is_object = function (obj) {
-    return Object.prototype.toString.call(obj) === '[object Object]';
-};
-util.is_string = function (obj) {
-    return typeof obj === 'string';
-};
-util.get_root_path = function () {
-    var scripts = document.getElementsByTagName("script");
-    var _self_path = scripts[scripts.length - 1].getAttribute("src");
-    return _self_path.substring(0, _self_path.lastIndexOf("/"));
-};
-// 分发事件
-util.dipatch_event = function (obj, name, value, canBubbleArg, cancelAbleArg) {
-    var event = document.createEvent(str_cache[0]);
-    var canBubble = (typeof canBubbleArg === 'undefined' ? 'undefined' : _typeof(canBubbleArg)) === undefined ? true : canBubbleArg;
-    var cancelAbl = (typeof cancelAbleArg === 'undefined' ? 'undefined' : _typeof(cancelAbleArg)) === undefined ? true : cancelAbleArg;
-    event.initCustomEvent(name, canBubble, cancelAbl, value);
-    obj.dispatchEvent(event);
-    if (obj['on' + name] && is_function(obj['on' + name])) {
-        obj['on' + name].call(obj, event);
-    }
-    return event;
-};
-
-/**
- * 复制合并对象
- * 
- * @param {Object|string} arrays
- * @returns
- */
-util.object_copy = function (arrays) {
-    var object = {};
-    for (var i = 0; i < arguments.length; i++) {
-        for (var index in arguments[i]) {
-            object[index] = arguments[i][index];
-        }
-    }
-    return object;
-};
-
-// 前缀支持
-util.get_css_perfix = function () {
-    var styles = window.getComputedStyle(document.documentElement, '');
-    var core = (Array.prototype.slice.call(styles).join('').match(/-(moz|webkit|ms|)-/) || styles.OLink === '' && ['', 'o'])[1];
-    return '-' + core + '-';
-};
-
-util.css_perfix = util.get_css_perfix();
-
-/**
- * 添加CSS前缀（如果存在前缀）
- * 
- * @param {string} name
- * @returns 
- */
-function add_css_prefix(name) {
-    name = name.trim();
-    name = typeof document.documentElement.style[name] === 'undefined' ? util.css_perfix + name : name;
-    return name;
 }
 
-/**
- * 将驼峰式CSS转化成CSS文件用的CSS命名
- * 
- * @param {string} name
- * @returns
- */
-util.cssname = function (name) {
-    name = add_css_prefix(name);
-    name = name.replace(/[A-Z]/, function (name) {
-        return '-' + name.toLowerCase();
-    });
-    return name;
-};
-
-util.cssfix = add_css_prefix;
-
-module.exports = { util: util };
-
-},{}]},{},[3]);
+module.exports = { Template: Template, renderTpl: renderTpl }
