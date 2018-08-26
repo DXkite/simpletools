@@ -1,5 +1,5 @@
 module.exports = function (grunt) {
-
+    let simpleBanner = '/*! <%= pkg.name %> by <%= pkg.author %> <%= grunt.template.today("yyyy-mm-dd") %> */';
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         watch: {
@@ -9,22 +9,36 @@ module.exports = function (grunt) {
             },
             js: {
                 files: 'src/**/*.js',
-                tasks: ['concat:js', 'uglify']
+                tasks: ['babel', 'browserify', 'uglify','clean:tmp', 'copy:test']
             }
         },
-        concat: {
-            js: {
-                options: {
-                    banner: '/*! <%= pkg.name %>.js by <%= pkg.author %> <%= grunt.template.today("yyyy-mm-dd") %> */'
-                },
-                src: ['src/*/*.js'],
-                dest: 'dest/<%= pkg.name %>.js'
+        clean: {
+            dest: 'dest',
+            simple: 'test/simple',
+            tmp: 'src/.babel_tmp'
+        },
+        copy: {
+            files: {
+                expand: true,
+                cwd: 'src/assets',
+                src: '**',
+                dest: 'dest/assets',
+                filter: 'isFile'
             },
+            test: {
+                expand: true,
+                cwd: 'dest',
+                src: '**',
+                dest: 'test/simple',
+                filter: 'isFile'
+            },
+        },
+        concat: {
             css: {
                 options: {
-                    banner: '/*! <%= pkg.name %>.css by <%= pkg.author %> <%= grunt.template.today("yyyy-mm-dd") %> */'
+                    banner: simpleBanner
                 },
-                src: ['src/*/*.css'],
+                src: ['src/**/*.css'],
                 dest: 'dest/<%= pkg.name %>.css'
             }
         },
@@ -42,40 +56,40 @@ module.exports = function (grunt) {
                 },
             },
         },
-        uglify: {
+        babel: {
             options: {
-                banner: '/*! <%= pkg.name %> by <%= pkg.author %> <%= grunt.template.today("yyyy-mm-dd") %> */'
+                sourceMap: false,
+                presets: ['babel-preset-env']
             },
-            build: {
-                src: 'dest/<%= pkg.name %>.js',
-                dest: 'dest/<%= pkg.name %>.min.js'
-            },
-            beautify: {
-                options: {
-                    banner: '/*! <%= pkg.name %> by <%= pkg.author %> <%= grunt.template.today("yyyy-mm-dd") %> */',
-                    beautify: true,
-                    report: 'none',
-                    mangle: false,
-                },
-                src: 'dest/<%= pkg.name %>.js',
-                dest: 'dest/<%= pkg.name %>.beautiful.js'
+            dest: {
+                files: [{
+                    expand: true,
+                    cwd: 'src/',
+                    src: ['**/*.js'],
+                    dest: 'src/.babel_tmp'
+                }]
             }
         },
-        copy: {
-            test: {
-                expand: true,
-                cwd: 'src',
-                src: '*/**',
-                dest: 'dest/',
-                filter: 'isFile'
-            }, 
-            test: {
-                expand: true,
-                cwd:'dest',
-                src: '**',
-                dest: 'test/simple',
-                filter: 'isFile'
+        uglify: {
+            build: {
+                options: {
+                    mangle: true,
+                    comments: false,
+                    banner: simpleBanner,
+                    sourceMap: 'dest/<%= pkg.name %>.min.js.map',
+                },
+                src: 'dest/<%= pkg.name %>.js',
+                dest: 'dest/<%= pkg.name %>.min.js',
+            }
+        },
+        browserify: {
+            options: {
+                banner: simpleBanner,
             },
+            main: {
+                src: 'src/.babel_tmp/index.js',
+                dest: 'dest/<%= pkg.name %>.js'
+            }
         },
         browserSync: {
             dev: {
@@ -96,11 +110,16 @@ module.exports = function (grunt) {
     });
 
     grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-babel');
     grunt.loadNpmTasks('grunt-browser-sync');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-autoprefixer');
-    grunt.registerTask('default', ['browserSync', 'watch', 'concat', 'autoprefixer', 'cssmin', 'uglify', 'copy']);
+    grunt.loadNpmTasks('grunt-contrib-clean');
+    grunt.loadNpmTasks('grunt-browserify');
+
+    grunt.registerTask('default', ['clean', 'concat', 'autoprefixer', 'cssmin', 'babel', 'browserify', 'uglify' ,'clean:tmp', 'copy']);
+    grunt.registerTask('watcher', ['browserSync', 'watch']);
 };

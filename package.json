@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "a simple tools for front-end",
   "scripts": {
-    "build": "grunt concat autoprefixer cssmin uglify copy",
-    "watch": "grunt browserSync watch"
+    "build": "grunt default",
+    "watcher": "grunt watcher"
   },
   "keywords": [
     "front-end",
@@ -15,9 +15,14 @@
   "author": "DXkite",
   "license": "ISC",
   "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
     "grunt": "^1.0.3",
     "grunt-autoprefixer": "^3.0.4",
+    "grunt-babel": "^7.0.0",
     "grunt-browser-sync": "^2.2.0",
+    "grunt-browserify": "^5.3.0",
+    "grunt-contrib-clean": "^1.1.0",
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-copy": "^1.0.0",
     "grunt-contrib-cssmin": "^2.2.1",
