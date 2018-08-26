@@ -1,0 +1,40 @@
+/*
+Error: Invalid GBK character "\xE6"
+        on line 12 of dest/simpletools.css
+
+7:     cursor: pointer; 
+8:     opacity: 1; 
+9:     border: 0px; 
+10: }
+11: 
+12: /* 扩展样式 主样式名-扩展样式名 *\/
+13: .toast-green
+14: {
+15:     background-color: rgba(0, 255, 0, 0.7); 
+16:     color: white; 
+17:     display: inline-block; 
+
+Backtrace:
+dest/simpletools.css:12
+C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/sass-4.0.0.alpha.1/lib/sass/util.rb:1297:in `rescue in block in find_encoding_error'
+C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/sass-4.0.0.alpha.1/lib/sass/util.rb:1294:in `block in find_encoding_error'
+C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/sass-4.0.0.alpha.1/lib/sass/util.rb:1293:in `each'
+C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/sass-4.0.0.alpha.1/lib/sass/util.rb:1293:in `each_with_index'
+C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/sass-4.0.0.alpha.1/lib/sass/util.rb:1293:in `find_encoding_error'
+C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/sass-4.0.0.alpha.1/lib/sass/util.rb:902:in `check_sass_encoding'
+C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/sass-4.0.0.alpha.1/lib/sass/engine.rb:433:in `check_encoding!'
+C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/sass-4.0.0.alpha.1/lib/sass/engine.rb:389:in `_to_tree'
+C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/sass-4.0.0.alpha.1/lib/sass/engine.rb:378:in `_render_with_sourcemap'
+C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/sass-4.0.0.alpha.1/lib/sass/engine.rb:295:in `render_with_sourcemap'
+C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/sass-4.0.0.alpha.1/lib/sass/exec/sass_scss.rb:412:in `run'
+C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/sass-4.0.0.alpha.1/lib/sass/exec/sass_scss.rb:63:in `process_result'
+C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/sass-4.0.0.alpha.1/lib/sass/exec/base.rb:52:in `parse'
+C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/sass-4.0.0.alpha.1/lib/sass/exec/base.rb:19:in `parse!'
+C:/Ruby25-x64/lib/ruby/gems/2.5.0/gems/sass-4.0.0.alpha.1/bin/sass:13:in `<top (required)>'
+C:/Ruby25-x64/bin/sass:23:in `load'
+C:/Ruby25-x64/bin/sass:23:in `<main>'
+*/
+body:before {
+  white-space: pre;
+  font-family: monospace;
+  content: "Error: Invalid GBK character \"\xE6\"\A         on line 12 of dest/simpletools.css\A \A 7:     cursor: pointer; \A 8:     opacity: 1; \A 9:     border: 0px; \A 10: }\A 11: \A 12: /* 扩展样式 主样式名-扩展样式名 */\A 13: .toast-green\A 14: {\A 15:     background-color: rgba(0, 255, 0, 0.7); \A 16:     color: white; \A 17:     display: inline-block; "; }

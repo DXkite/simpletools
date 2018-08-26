@@ -1,20 +1,24 @@
 module.exports = function (grunt) {
-    let simpleBanner = '/*! <%= pkg.name %> by <%= pkg.author %> <%= grunt.template.today("yyyy-mm-dd") %> */';
+
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
+        meta:{
+            banner: '/*! <%= pkg.name %> by <%= pkg.author %> <%= grunt.template.today("yyyy-mm-dd") %> */',
+            sortName: 'simple',
+        },
         watch: {
             css: {
-                files: 'src/**/*.css',
-                tasks: ['concat:css', 'autoprefixer', 'cssmin', 'copy:test']
+                files: 'src/**/*.scss',
+                tasks: ['sass', 'autoprefixer', 'cssmin', 'copy:test']
             },
             js: {
                 files: 'src/**/*.js',
-                tasks: ['babel', 'browserify', 'uglify','clean:tmp', 'copy:test']
+                tasks: ['babel', 'browserify', 'uglify', 'clean:tmp', 'copy:test']
             }
         },
         clean: {
             dest: 'dest',
-            simple: 'test/simple',
+            simple: 'test/<%= meta.sortName %>',
             tmp: 'src/.babel_tmp'
         },
         copy: {
@@ -29,23 +33,24 @@ module.exports = function (grunt) {
                 expand: true,
                 cwd: 'dest',
                 src: '**',
-                dest: 'test/simple',
+                dest: 'test/<%= meta.sortName %>',
                 filter: 'isFile'
             },
-        },
-        concat: {
-            css: {
-                options: {
-                    banner: simpleBanner
-                },
-                src: ['src/**/*.css'],
-                dest: 'dest/<%= pkg.name %>.css'
-            }
         },
         autoprefixer: {
             dist: {
                 files: {
                     'dest/<%= pkg.name %>.css': 'dest/<%= pkg.name %>.css'
+                }
+            }
+        },
+        sass: {
+            options: {
+                sourcemap: true,
+            },
+            dist: {
+                files: {
+                    'dest/<%= pkg.name %>.css': 'src/index.scss'
                 }
             }
         },
@@ -75,7 +80,7 @@ module.exports = function (grunt) {
                 options: {
                     mangle: true,
                     comments: false,
-                    banner: simpleBanner,
+                    banner: '<%= meta.banner %>',
                     sourceMap: 'dest/<%= pkg.name %>.min.js.map',
                 },
                 src: 'dest/<%= pkg.name %>.js',
@@ -84,7 +89,7 @@ module.exports = function (grunt) {
         },
         browserify: {
             options: {
-                banner: simpleBanner,
+                banner: '<%= meta.banner %>',
             },
             main: {
                 src: 'src/.babel_tmp/index.js',
@@ -116,12 +121,13 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-browser-sync');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
-    grunt.loadNpmTasks('grunt-contrib-concat');
+    // grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-autoprefixer');
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-browserify');
+    grunt.loadNpmTasks('grunt-contrib-sass');
 
-    grunt.registerTask('default', ['clean', 'concat', 'autoprefixer', 'cssmin', 'babel', 'browserify', 'uglify' ,'clean:tmp', 'copy']);
+    grunt.registerTask('default', ['clean', 'sass', /*'concat', */ 'autoprefixer', 'cssmin', 'babel', 'browserify', 'uglify', 'clean:tmp', 'copy']);
     grunt.registerTask('watcher', ['browserSync', 'watch']);
 };

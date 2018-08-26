@@ -1,0 +1,29 @@
+@charset "UTF-8";
+// 设置盒子规则
+@import "./_breakpoint";
+@import "./_grid";
+*,
+::before,
+::after {
+    box-sizing: border-box;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.container {
+    @include make-container();
+    @include make-container-max-widths();
+}
+
+.container-fluid {
+    @include make-container();
+}
+
+.row {
+    @include make-row();
+}
+
+@include make-grid-columns();

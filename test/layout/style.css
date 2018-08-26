@@ -1,0 +1,12 @@
+.row>[class^=col-],.col {
+    padding: 1em;
+    background: #ccc;
+    border: solid #222 1px;
+}
+.row {
+    margin: 1em;
+}
+.box {
+    background: #ccc;
+    border: solid #222 1px;
+}
