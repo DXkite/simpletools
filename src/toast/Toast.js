@@ -17,8 +17,7 @@ Toast.create = function (message, time, style) {
     Toast.Parent = document.getElementById(TOAST_PARENT_ID);
 
     if (!Toast.Parent) {
-        Toast.Parent = document.createElement('div');
-        Toast.Parent.id = TOAST_PARENT_ID;
+        Toast.Parent = Dom.element('div', {id: TOAST_PARENT_ID}, { pointerEvents: 'none' });
         document.body.appendChild(Toast.Parent);
     }
     Toast.Queue.push({
@@ -48,7 +47,7 @@ Toast.show = function () {
     var timeout = show.timeout || 2000;
     var close = function () {
         Dom(toastdiv).css({
-            'transition': 'opacity 0.3s ease-out',
+            transition: 'opacity 0.3s ease-out',
             opacity: 0
         });
 
@@ -63,10 +62,11 @@ Toast.show = function () {
     Dom(toastdiv).css({
         position: 'fixed',
         opacity: 1,
-        'z-index': TOAST_POP_LEVEL,
+        zIndex: TOAST_POP_LEVEL,
+        pointerEvents: 'none',
         transition: 'opacity 0.1s ease-in'
     });
     setTimeout(close, timeout);
 }
 
-module.exports =  Toast;
+module.exports = Toast;
