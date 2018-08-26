@@ -2,8 +2,6 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 'use strict';
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 var _util = require('../util');
 
 var Dom = function Dom(selecter, context) {
@@ -31,12 +29,39 @@ Dom.extend = function (methods) {
 };
 
 Dom.extend({
-    element: function element(tag, attr, css) {
+    element: function element(tag, attr, css, childs) {
         var element = document.createElement(tag);
         Dom(element).attr(attr).css(css);
+        if (_util.util.is_array(childs)) {
+            for (var name in childs) {
+                element.appendChild(childs[name]);
+            }
+        } else if (childs instanceof Element) {
+            element.appendChild(childs);
+        } else if (childs !== undefined) {
+            element.innerHTML = childs;
+        }
         return element;
     }
 });
+
+function eventOn(element, type, callback, useCaptrue) {
+    var captrue = useCaptrue === undefined ? false : useCaptrue;
+    if ('addEventListener' in window) {
+        element.addEventListener(type, callback, captrue);
+    } else {
+        element.attachEvent('on' + type, callback);
+    }
+}
+
+function eventOff(element, type, callback, useCaptrue) {
+    var captrue = useCaptrue === undefined ? false : useCaptrue;
+    if ('removeEventListener' in window) {
+        element.removeEventListener(type, callback, captrue);
+    } else {
+        element.detachEvent('on' + type, callback);
+    }
+}
 
 Dom.method = Dom.constructor.prototype;
 Dom.method.extend = Dom.extend;
@@ -46,7 +71,15 @@ Dom.method.extend({
         this.each(function () {
             if (attrs) {
                 for (var name in attrs) {
-                    this.setAttribute(name, attrs[name]);
+                    if (/^on/.test(name)) {
+                        var type = name.replace(/^on(.+)$/, '$1');
+                        if (/[A-Z]/.test(type[0])) {
+                            type = type[0].toLowerCase() + type.substr(1);
+                        }
+                        eventOn(this, type, attrs[name]);
+                    } else {
+                        this.setAttribute(name, attrs[name]);
+                    }
                 }
             }
         });
@@ -82,9 +115,14 @@ Dom.method.extend({
         return this;
     },
     on: function on(type, listener, useCaptrue) {
-        var captrue = (typeof useCaptrue === 'undefined' ? 'undefined' : _typeof(useCaptrue)) === undefined ? true : useCaptrue;
         this.each(function () {
-            this.addEventListener(type, listener, captrue);
+            eventOn(this, type, listener, useCaptrue);
+        });
+        return this;
+    },
+    off: function off(type, listener, useCaptrue) {
+        this.each(function () {
+            eventOff(this, type, listener, useCaptrue);
         });
         return this;
     }

@@ -1,0 +1,49 @@
+<html>
+
+<head>
+    <title>Test dxui Toast</title>
+    <link rel="stylesheet" href="../simple/simpletools.min.css">
+    <script src="../simple/simpletools.min.js"></script>
+</head>
+
+<body>
+    <div id="dom"></div>
+
+</body>
+<script>
+    var n = dxui.dom.element;
+    document.querySelector('#dom').appendChild(
+        n('div',
+            {
+                id: 'dxkite',
+                onclick: () => {
+                    console.log('hello world');
+                }
+            },
+            {
+                color: 'red',
+                padding: '1em',
+                background: '#ccc',
+            },
+            [
+                n('div', {
+                    onclick: () => {
+                        console.log('hello world');
+                    }
+                }, {
+                    color: 'blue',
+                }, 'first child'),
+                n('div', {
+                    onclick: () => {
+                        console.log('hello world');
+                    }
+                }, 
+                {
+                    color: 'orange'
+                })
+            ]
+        )
+    );
+</script>
+
+</html>

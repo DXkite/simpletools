@@ -25,13 +25,39 @@ Dom.extend = function (methods) {
 };
 
 Dom.extend({
-    element: function (tag, attr, css) {
+    element: function (tag, attr, css, childs) {
         var element = document.createElement(tag);
         Dom(element).attr(attr).css(css);
+        if (util.is_array(childs)) {
+            for (var name in childs) {
+                element.appendChild(childs[name]);
+            }
+        } else if (childs instanceof Element) {
+            element.appendChild(childs);
+        } else if (childs !== undefined) {
+            element.innerHTML = childs;
+        }
         return element;
     }
 });
 
+function eventOn(element, type, callback, useCaptrue) {
+    var captrue = useCaptrue === undefined ? false : useCaptrue;
+    if ('addEventListener' in window) {
+        element.addEventListener(type, callback, captrue);
+    } else {
+        element.attachEvent('on' + type, callback)
+    }
+}
+
+function eventOff(element, type, callback, useCaptrue) {
+    var captrue = useCaptrue === undefined ? false : useCaptrue;
+    if ('removeEventListener' in window) {
+        element.removeEventListener(type, callback, captrue);
+    } else {
+        element.detachEvent('on' + type, callback)
+    }
+}
 
 Dom.method = Dom.constructor.prototype;
 Dom.method.extend = Dom.extend;
@@ -41,7 +67,15 @@ Dom.method.extend({
         this.each(function () {
             if (attrs) {
                 for (var name in attrs) {
-                    this.setAttribute(name, attrs[name]);
+                    if (/^on/.test(name)) {
+                        var type = name.replace(/^on(.+)$/, '$1');
+                        if (/[A-Z]/.test(type[0])) {
+                            type = type[0].toLowerCase() + type.substr(1);
+                        }
+                        eventOn(this, type, attrs[name]);
+                    } else {
+                        this.setAttribute(name, attrs[name]);
+                    }
                 }
             }
         });
@@ -77,9 +111,14 @@ Dom.method.extend({
         return this;
     },
     on: function (type, listener, useCaptrue) {
-        var captrue = typeof useCaptrue === undefined ? true : useCaptrue;
         this.each(function () {
-            this.addEventListener(type, listener, captrue);
+            eventOn(this, type, listener, useCaptrue);
+        });
+        return this;
+    },
+    off: function (type, listener, useCaptrue) {
+        this.each(function () {
+            eventOff(this, type, listener,useCaptrue);
         });
         return this;
     }
