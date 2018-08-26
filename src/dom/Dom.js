@@ -85,4 +85,4 @@ Dom.method.extend({
     }
 });
 
-module.exports = { Dom };
+module.exports = Dom;

@@ -1,4 +1,4 @@
-import { Dom } from '../dom/Dom'
+import Dom from '../dom/Dom'
 
 // 常量
 var TOAST_PARENT_ID = 'Toast-Parent';
@@ -40,13 +40,12 @@ Toast.show = function () {
     });
     toastdiv.innerHTML = show.message;
     Toast.Parent.appendChild(toastdiv);
-
-    var margin = window.innerWidth / 2 - toastdiv.scrollWidth / 2;
+    var width = Toast.Parent.scrollWidth || window.innerWidth;
+    var margin = width / 2 - toastdiv.scrollWidth / 2;
     var bottom = window.innerHeight - toastdiv.scrollHeight * 2;
     toastdiv.style.marginLeft = margin + 'px';
     toastdiv.style.top = bottom + 'px';
     var timeout = show.timeout || 2000;
-
     var close = function () {
         Dom(toastdiv).css({
             'transition': 'opacity 0.3s ease-out',
@@ -70,4 +69,4 @@ Toast.show = function () {
     setTimeout(close, timeout);
 }
 
-module.exports = { Toast }
+module.exports =  Toast;

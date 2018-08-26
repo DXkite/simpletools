@@ -90,16 +90,20 @@ Dom.method.extend({
     }
 });
 
-module.exports = { Dom: Dom };
+module.exports = Dom;
 
 },{"../util":8}],2:[function(require,module,exports){
 'use strict';
 
 var _Dom = require('./Dom');
 
+var _Dom2 = _interopRequireDefault(_Dom);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 window.dxui = window.dxui || {}; // 简单Dom操作
 
-window.dxui.dom = _Dom.Dom;
+window.dxui.dom = _Dom2.default;
 
 },{"./Dom":1}],3:[function(require,module,exports){
 'use strict';
@@ -594,6 +598,10 @@ window.renderTpl = _Template.renderTpl;
 
 var _Dom = require('../dom/Dom');
 
+var _Dom2 = _interopRequireDefault(_Dom);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 // 常量
 var TOAST_PARENT_ID = 'Toast-Parent';
 var TOAST_SHOW_ID = 'Toast-Show';
@@ -627,21 +635,20 @@ Toast.show = function () {
     // 一个时刻只能显示一个Toast
     if (document.getElementById(TOAST_SHOW_ID)) return;
     var show = Toast.Queue.shift();
-    var toastdiv = _Dom.Dom.element('div', {
+    var toastdiv = _Dom2.default.element('div', {
         id: TOAST_SHOW_ID,
         class: show.style
     });
     toastdiv.innerHTML = show.message;
     Toast.Parent.appendChild(toastdiv);
-
-    var margin = window.innerWidth / 2 - toastdiv.scrollWidth / 2;
+    var width = Toast.Parent.scrollWidth || window.innerWidth;
+    var margin = width / 2 - toastdiv.scrollWidth / 2;
     var bottom = window.innerHeight - toastdiv.scrollHeight * 2;
     toastdiv.style.marginLeft = margin + 'px';
     toastdiv.style.top = bottom + 'px';
     var timeout = show.timeout || 2000;
-
     var close = function close() {
-        (0, _Dom.Dom)(toastdiv).css({
+        (0, _Dom2.default)(toastdiv).css({
             'transition': 'opacity 0.3s ease-out',
             opacity: 0
         });
@@ -654,7 +661,7 @@ Toast.show = function () {
         }, 300);
     };
 
-    (0, _Dom.Dom)(toastdiv).css({
+    (0, _Dom2.default)(toastdiv).css({
         position: 'fixed',
         opacity: 1,
         'z-index': TOAST_POP_LEVEL,
@@ -663,16 +670,20 @@ Toast.show = function () {
     setTimeout(close, timeout);
 };
 
-module.exports = { Toast: Toast };
+module.exports = Toast;
 
 },{"../dom/Dom":1}],7:[function(require,module,exports){
 'use strict';
 
 var _Toast = require('./Toast');
 
+var _Toast2 = _interopRequireDefault(_Toast);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 window.dxui = window.dxui || {}; // Toast 功能
 
-window.dxui.Toast = _Toast.Toast;
+window.dxui.Toast = _Toast2.default;
 
 },{"./Toast":6}],8:[function(require,module,exports){
 'use strict';
