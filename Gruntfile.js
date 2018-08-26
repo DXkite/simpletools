@@ -5,7 +5,7 @@ module.exports = function (grunt) {
         watch: {
             css: {
                 files: 'src/**/*.css',
-                tasks: ['concat:css', 'autoprefixer', 'cssmin']
+                tasks: ['concat:css', 'autoprefixer', 'cssmin', 'copy:test']
             },
             js: {
                 files: 'src/**/*.js',
@@ -97,6 +97,8 @@ module.exports = function (grunt) {
                     src: [
                         'dest/**/*.css',
                         'dest/**/*.js',
+                        'test/**/*.js',
+                        'test/**/*.css',
                         'test/**/*.html'
                     ]
                 },

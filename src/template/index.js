@@ -1,5 +1,3 @@
-
-'use strict';
 //  缓存查找节点可能会耗时较多 
 var default_config = {
     cache: true, // 是否开启缓存

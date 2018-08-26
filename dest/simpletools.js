@@ -2,18 +2,124 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 'use strict';
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _util = require('../util');
+
+var Dom = function Dom(selecter, context) {
+    return new Dom.constructor(selecter, context);
+};
+
+Dom.constructor = function (selecter, context) {
+    if (typeof selecter === 'string') {
+        this.elements = (context || document).querySelectorAll(selecter);
+    } else {
+        this.elements = [selecter];
+    }
+    this.context = context;
+    this.length = this.elements.length;
+    for (var i = 0; i < this.length; i++) {
+        this[i] = this.elements[i];
+    }
+    return this;
+};
+
+Dom.extend = function (methods) {
+    for (var name in methods) {
+        this[name] = methods[name];
+    }
+};
+
+Dom.extend({
+    element: function element(tag, attr, css) {
+        var element = document.createElement(tag);
+        Dom(element).attr(attr).css(css);
+        return element;
+    }
+});
+
+Dom.method = Dom.constructor.prototype;
+Dom.method.extend = Dom.extend;
+// 属性方法
+Dom.method.extend({
+    attr: function attr(attrs) {
+        this.each(function () {
+            if (attrs) {
+                for (var name in attrs) {
+                    this.setAttribute(name, attrs[name]);
+                }
+            }
+        });
+        return this;
+    },
+    css: function css(cssObj) {
+        this.each(function () {
+            if (cssObj) {
+                for (var name in cssObj) {
+                    this.style[_util.util.cssfix(name)] = cssObj[name];
+                }
+            }
+        });
+        return this;
+    },
+    addClass: function addClass(add) {
+        this.each(function () {
+            this.class += ' ' + add;
+        });
+        return this;
+    },
+    removeClass: function removeClass(remove) {
+        this.each(function () {
+            var reg = new RegExp('/\\s+?' + remove + '/');
+            this.class.replace(reg, '');
+        });
+        return this;
+    },
+    each: function each(callback) {
+        for (var i = 0; i < this.length; i++) {
+            callback.call(this[i], this[i], i);
+        }
+        return this;
+    },
+    on: function on(type, listener, useCaptrue) {
+        var captrue = (typeof useCaptrue === 'undefined' ? 'undefined' : _typeof(useCaptrue)) === undefined ? true : useCaptrue;
+        this.each(function () {
+            this.addEventListener(type, listener, captrue);
+        });
+        return this;
+    }
+});
+
+module.exports = { Dom: Dom };
+
+},{"../util":5}],2:[function(require,module,exports){
+'use strict';
+
 var _index = require('./template/index');
+
+var _index2 = require('./dom/index');
+
+var _index3 = require('./toast/index');
 
 // 模板导入
 window.dxtpl = new _index.Template();
 window.Template = _index.Template;
 window.renderTpl = _index.renderTpl;
 
-},{"./template/index":2}],2:[function(require,module,exports){
+window.dxui = { version: '1.0' };
 
+// 简单Dom操作
+
+window.dxui.dom = _index2.Dom;
+
+// Toast 功能
+
+window.dxui.Toast = _index3.Toast;
+
+},{"./dom/index":1,"./template/index":3,"./toast/index":4}],3:[function(require,module,exports){
 'use strict';
-//  缓存查找节点可能会耗时较多 
 
+//  缓存查找节点可能会耗时较多 
 var default_config = {
     cache: true, // 是否开启缓存
     tagstart: '{',
@@ -473,4 +579,173 @@ Template.prototype.render = function (value) {
 
 module.exports = { Template: Template, renderTpl: renderTpl };
 
-},{}]},{},[1]);
+},{}],4:[function(require,module,exports){
+'use strict';
+
+var _index = require('../dom/index');
+
+// 常量
+var TOAST_PARENT_ID = 'Toast-Parent';
+var TOAST_SHOW_ID = 'Toast-Show';
+var TOAST_DEFAULT_STYLE = 'toast';
+var TOAST_POP_LEVEL = 10000;
+
+var Toast = function Toast(text, time, style) {
+    return new Toast.create(text, time, style);
+};
+
+// Toast队列
+Toast.Queue = new Array();
+// 构造函数
+Toast.create = function (message, time, style) {
+    Toast.Parent = document.getElementById(TOAST_PARENT_ID);
+
+    if (!Toast.Parent) {
+        Toast.Parent = document.createElement('div');
+        Toast.Parent.id = TOAST_PARENT_ID;
+        document.body.appendChild(Toast.Parent);
+    }
+    Toast.Queue.push({
+        message: message,
+        timeout: time,
+        style: style ? TOAST_DEFAULT_STYLE + '-' + style : TOAST_DEFAULT_STYLE
+    });
+    Toast.show();
+};
+
+Toast.show = function () {
+    // 一个时刻只能显示一个Toast
+    if (document.getElementById(TOAST_SHOW_ID)) return;
+    var show = Toast.Queue.shift();
+    var toastdiv = _index.Dom.element('div', {
+        id: TOAST_SHOW_ID,
+        class: show.style
+    });
+    toastdiv.innerHTML = show.message;
+    Toast.Parent.appendChild(toastdiv);
+
+    var margin = window.innerWidth / 2 - toastdiv.scrollWidth / 2;
+    var bottom = window.innerHeight - toastdiv.scrollHeight * 2;
+    toastdiv.style.marginLeft = margin + 'px';
+    toastdiv.style.top = bottom + 'px';
+    var timeout = show.timeout || 2000;
+
+    var close = function close() {
+        (0, _index.Dom)(toastdiv).css({
+            'transition': 'opacity 0.3s ease-out',
+            opacity: 0
+        });
+
+        setTimeout(function () {
+            Toast.Parent.removeChild(toastdiv);
+            if (Toast.Queue.length) {
+                Toast.show();
+            }
+        }, 300);
+    };
+
+    (0, _index.Dom)(toastdiv).css({
+        position: 'fixed',
+        opacity: 1,
+        'z-index': TOAST_POP_LEVEL,
+        transition: 'opacity 0.1s ease-in'
+    });
+    setTimeout(close, timeout);
+};
+
+module.exports = { Toast: Toast };
+
+},{"../dom/index":1}],5:[function(require,module,exports){
+'use strict';
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+/* --------------- 全局函数 ------------------ */
+var util = {};
+
+util.is_function = function (obj) {
+    return Object.prototype.toString.call(obj) === '[object Function]';
+};
+util.is_array = function (obj) {
+    return Object.prototype.toString.call(obj) === '[object Array]';
+};
+util.is_object = function (obj) {
+    return Object.prototype.toString.call(obj) === '[object Object]';
+};
+util.is_string = function (obj) {
+    return typeof obj === 'string';
+};
+util.get_root_path = function () {
+    var scripts = document.getElementsByTagName("script");
+    var _self_path = scripts[scripts.length - 1].getAttribute("src");
+    return _self_path.substring(0, _self_path.lastIndexOf("/"));
+};
+// 分发事件
+util.dipatch_event = function (obj, name, value, canBubbleArg, cancelAbleArg) {
+    var event = document.createEvent(str_cache[0]);
+    var canBubble = (typeof canBubbleArg === 'undefined' ? 'undefined' : _typeof(canBubbleArg)) === undefined ? true : canBubbleArg;
+    var cancelAbl = (typeof cancelAbleArg === 'undefined' ? 'undefined' : _typeof(cancelAbleArg)) === undefined ? true : cancelAbleArg;
+    event.initCustomEvent(name, canBubble, cancelAbl, value);
+    obj.dispatchEvent(event);
+    if (obj['on' + name] && is_function(obj['on' + name])) {
+        obj['on' + name].call(obj, event);
+    }
+    return event;
+};
+
+/**
+ * 复制合并对象
+ * 
+ * @param {Object|string} arrays
+ * @returns
+ */
+util.object_copy = function (arrays) {
+    var object = {};
+    for (var i = 0; i < arguments.length; i++) {
+        for (var index in arguments[i]) {
+            object[index] = arguments[i][index];
+        }
+    }
+    return object;
+};
+
+// 前缀支持
+util.get_css_perfix = function () {
+    var styles = window.getComputedStyle(document.documentElement, '');
+    var core = (Array.prototype.slice.call(styles).join('').match(/-(moz|webkit|ms|)-/) || styles.OLink === '' && ['', 'o'])[1];
+    return '-' + core + '-';
+};
+
+util.css_perfix = util.get_css_perfix();
+
+/**
+ * 添加CSS前缀（如果存在前缀）
+ * 
+ * @param {string} name
+ * @returns 
+ */
+function add_css_prefix(name) {
+    name = name.trim();
+    name = typeof document.documentElement.style[name] === 'undefined' ? util.css_perfix + name : name;
+    return name;
+}
+
+/**
+ * 将驼峰式CSS转化成CSS文件用的CSS命名
+ * 
+ * @param {string} name
+ * @returns
+ */
+util.cssname = function (name) {
+    name = add_css_prefix(name);
+    name = name.replace(/[A-Z]/, function (name) {
+        return '-' + name.toLowerCase();
+    });
+    return name;
+};
+
+util.cssfix = add_css_prefix;
+
+module.exports = { util: util };
+
+},{}]},{},[2]);
