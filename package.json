@@ -1,0 +1,29 @@
+{
+  "name": "simpletools",
+  "version": "1.0.0",
+  "description": "a simple tools for front-end",
+  "scripts": {
+    "build": "grunt concat autoprefixer cssmin uglify copy",
+    "watch": "grunt browserSync watch"
+  },
+  "keywords": [
+    "front-end",
+    "layout",
+    "css3",
+    "html5"
+  ],
+  "author": "DXkite",
+  "license": "ISC",
+  "devDependencies": {
+    "grunt": "^1.0.3",
+    "grunt-autoprefixer": "^3.0.4",
+    "grunt-browser-sync": "^2.2.0",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-cssmin": "^2.2.1",
+    "grunt-contrib-uglify": "^3.4.0",
+    "grunt-contrib-watch": "^1.1.0",
+    "grunt-webpack": "^3.1.2",
+    "webpack": "^4.17.1"
+  }
+}
