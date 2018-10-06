@@ -525,7 +525,7 @@ var RedoCommandComponent = function (_Component) {
     }, {
         key: 'view',
         get: function get() {
-            return '<div title="' + this.name + '"> Redo</div>';
+            return '<i class="iconfont se-icon-' + this.name + '"></i>';
         }
     }]);
 
@@ -577,7 +577,7 @@ var UndoCommandComponent = function (_Component) {
     }, {
         key: 'view',
         get: function get() {
-            return '<div title="' + this.name + '">Undo</div>';
+            return '<i class="iconfont se-icon-' + this.name + '"></i>';
         }
     }]);
 
@@ -629,7 +629,7 @@ var CenterLayoutComponent = function (_RangeComponent) {
     }, {
         key: 'view',
         get: function get() {
-            return '<div title="' + this.name + '">Center</div>';
+            return '<i class="iconfont se-icon-align-' + this.name + '"></i>';
         }
     }]);
 
@@ -681,7 +681,7 @@ var LeftLayoutComponent = function (_RangeComponent) {
     }, {
         key: 'view',
         get: function get() {
-            return '<div title="' + this.name + '">Left</div>';
+            return '<i class="iconfont se-icon-align-' + this.name + '"></i>';
         }
     }]);
 
@@ -733,7 +733,7 @@ var RightLayoutComponent = function (_RangeComponent) {
     }, {
         key: 'view',
         get: function get() {
-            return '<div title="' + this.name + '">Right</div>';
+            return '<i class="iconfont se-icon-align-' + this.name + '"></i>';
         }
     }]);
 
@@ -785,7 +785,7 @@ var BoldStyleComponent = function (_RangeComponent) {
     }, {
         key: 'view',
         get: function get() {
-            return '<div title="' + this.name + '">Bold</div>';
+            return '<i class="iconfont se-icon-' + this.name + '"></i>';
         }
     }]);
 
@@ -837,7 +837,7 @@ var ItalicStyleComponent = function (_RangeComponent) {
     }, {
         key: 'view',
         get: function get() {
-            return '<div title="' + this.name + '">Italic</div>';
+            return '<i class="iconfont se-icon-' + this.name + '"></i>';
         }
     }]);
 
@@ -889,7 +889,7 @@ var UnderlineStyleComponent = function (_RangeComponent) {
     }, {
         key: 'view',
         get: function get() {
-            return '<div title="' + this.name + '">Underline</div>';
+            return '<i class="iconfont se-icon-' + this.name + '"></i>';
         }
     }]);
 

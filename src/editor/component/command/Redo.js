@@ -6,7 +6,7 @@ class RedoCommandComponent extends Component {
     }
 
     get view() {
-        return '<div title="' + this.name + '"> Redo</div>';
+        return '<i class="iconfont se-icon-'+this.name+'"></i>';
     }
 
     onClick(event) {

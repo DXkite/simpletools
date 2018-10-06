@@ -7,7 +7,7 @@ class CenterLayoutComponent extends RangeComponent {
     }
 
     get view() {
-        return '<div title="' + this.name + '">Center</div>';
+        return '<i class="iconfont se-icon-align-'+this.name+'"></i>';
     }
 
     onRangeAction(event, range) {

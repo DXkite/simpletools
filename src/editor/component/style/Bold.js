@@ -7,7 +7,7 @@ class BoldStyleComponent extends RangeComponent {
     }
 
     get view() {
-        return '<div title="' + this.name + '">Bold</div>';
+        return '<i class="iconfont se-icon-'+this.name+'"></i>';
     }
 
     onRangeAction(event, range) {

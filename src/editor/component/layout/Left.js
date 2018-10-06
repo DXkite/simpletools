@@ -7,7 +7,7 @@ class LeftLayoutComponent extends RangeComponent {
     }
 
     get view() {
-        return '<div title="' + this.name + '">Left</div>';
+        return '<i class="iconfont se-icon-align-'+this.name+'"></i>';
     }
 
     onRangeAction(event, range) {

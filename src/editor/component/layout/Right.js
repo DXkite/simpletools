@@ -7,7 +7,7 @@ class RightLayoutComponent extends RangeComponent {
     }
 
     get view() {
-        return '<div title="' + this.name + '">Right</div>';
+        return '<i class="iconfont se-icon-align-'+this.name+'"></i>';
     }
 
     onRangeAction(event, range) {

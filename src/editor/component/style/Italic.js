@@ -9,7 +9,7 @@ class ItalicStyleComponent extends RangeComponent {
     }
 
     get view() {
-        return '<div title="' + this.name + '">Italic</div>';
+        return '<i class="iconfont se-icon-'+this.name+'"></i>';
     }
 
     onRangeAction(event, range) {

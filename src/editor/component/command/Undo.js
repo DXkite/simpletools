@@ -6,7 +6,7 @@ class UndoCommandComponent extends Component {
     }
 
     get view() {
-        return '<div title="' + this.name + '">Undo</div>';
+        return '<i class="iconfont se-icon-'+this.name+'"></i>';
     }
 
     onClick(event) {
