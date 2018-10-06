@@ -285,10 +285,10 @@ function onContentChange(content) {
 function createEditorView(editor) {
     var element = editor.element;
     editor.toolbar = n('div', {
-        class: 'se-toolbar'
+        class: 'snow-toolbar'
     });
     editor.content = n('div', {
-        class: 'se-content',
+        class: 'snow-content',
         contenteditable: 'true',
         onfocus: function onfocus() {
             onStatuChange.call(editor);
@@ -525,7 +525,7 @@ var RedoCommandComponent = function (_Component) {
     }, {
         key: 'view',
         get: function get() {
-            return '<i class="iconfont se-icon-' + this.name + '"></i>';
+            return '<i class="iconfont snow-icon-' + this.name + '"></i>';
         }
     }]);
 
@@ -577,7 +577,7 @@ var UndoCommandComponent = function (_Component) {
     }, {
         key: 'view',
         get: function get() {
-            return '<i class="iconfont se-icon-' + this.name + '"></i>';
+            return '<i class="iconfont snow-icon-' + this.name + '"></i>';
         }
     }]);
 
@@ -629,7 +629,7 @@ var CenterLayoutComponent = function (_RangeComponent) {
     }, {
         key: 'view',
         get: function get() {
-            return '<i class="iconfont se-icon-align-' + this.name + '"></i>';
+            return '<i class="iconfont snow-icon-align-' + this.name + '"></i>';
         }
     }]);
 
@@ -681,7 +681,7 @@ var LeftLayoutComponent = function (_RangeComponent) {
     }, {
         key: 'view',
         get: function get() {
-            return '<i class="iconfont se-icon-align-' + this.name + '"></i>';
+            return '<i class="iconfont snow-icon-align-' + this.name + '"></i>';
         }
     }]);
 
@@ -733,7 +733,7 @@ var RightLayoutComponent = function (_RangeComponent) {
     }, {
         key: 'view',
         get: function get() {
-            return '<i class="iconfont se-icon-align-' + this.name + '"></i>';
+            return '<i class="iconfont snow-icon-align-' + this.name + '"></i>';
         }
     }]);
 
@@ -785,7 +785,7 @@ var BoldStyleComponent = function (_RangeComponent) {
     }, {
         key: 'view',
         get: function get() {
-            return '<i class="iconfont se-icon-' + this.name + '"></i>';
+            return '<i class="iconfont snow-icon-' + this.name + '"></i>';
         }
     }]);
 
@@ -837,7 +837,7 @@ var ItalicStyleComponent = function (_RangeComponent) {
     }, {
         key: 'view',
         get: function get() {
-            return '<i class="iconfont se-icon-' + this.name + '"></i>';
+            return '<i class="iconfont snow-icon-' + this.name + '"></i>';
         }
     }]);
 
@@ -889,7 +889,7 @@ var UnderlineStyleComponent = function (_RangeComponent) {
     }, {
         key: 'view',
         get: function get() {
-            return '<i class="iconfont se-icon-' + this.name + '"></i>';
+            return '<i class="iconfont snow-icon-' + this.name + '"></i>';
         }
     }]);
 
@@ -952,8 +952,8 @@ _SnowEditor2.default.registerComponent(_Italic2.default);
 _SnowEditor2.default.registerComponent(_Underline2.default);
 
 _SnowEditor2.default.registerComponent(_Right2.default);
-_SnowEditor2.default.registerComponent(_Left2.default);
 _SnowEditor2.default.registerComponent(_Center2.default);
+_SnowEditor2.default.registerComponent(_Left2.default);
 
 _SnowEditor2.default.registerComponent(_Undo2.default);
 _SnowEditor2.default.registerComponent(_Redo2.default);

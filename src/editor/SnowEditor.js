@@ -16,10 +16,10 @@ function onContentChange(content) {
 function createEditorView(editor) {
     let element = editor.element;
     editor.toolbar = n('div', {
-        class: 'se-toolbar'
+        class: 'snow-toolbar'
     });
     editor.content = n('div', {
-        class: 'se-content',
+        class: 'snow-content',
         contenteditable: 'true',
         onfocus: function () {
             onStatuChange.call(editor);

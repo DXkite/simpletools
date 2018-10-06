@@ -1,4 +1,4 @@
-.se-toolbar {
+.snow-toolbar {
   background-color: #e9ecef;
   display: -ms-flexbox;
   display: flex;
@@ -10,7 +10,7 @@
   -ms-flex-wrap: wrap;
       flex-wrap: wrap; }
 
-.se-content {
+.snow-content {
   border: 1px solid #6c757d;
   padding: .2em; }
 
@@ -35,59 +35,62 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale; }
 
-.se-icon-attachment:before {
+.snow-icon-attachment:before {
   content: "\e6cf"; }
 
-.se-icon-align-left:before {
+.snow-icon-close:before {
+  content: "\e60a"; }
+
+.snow-icon-align-left:before {
   content: "\eb69"; }
 
-.se-icon-align-center:before {
+.snow-icon-align-center:before {
   content: "\eb6a"; }
 
-.se-icon-align-right:before {
+.snow-icon-align-right:before {
   content: "\eb6c"; }
 
-.se-icon-bold:before {
+.snow-icon-bold:before {
   content: "\eb79"; }
 
-.se-icon-code:before {
+.snow-icon-code:before {
   content: "\eb99"; }
 
-.se-icon-exit-fullscreen:before {
+.snow-icon-exit-fullscreen:before {
   content: "\ebb1"; }
 
-.se-icon-font:before {
+.snow-icon-font:before {
   content: "\ebbd"; }
 
-.se-icon-font-size:before {
+.snow-icon-font-size:before {
   content: "\ebbe"; }
 
-.se-icon-fullscreen:before {
+.snow-icon-fullscreen:before {
   content: "\ebbf"; }
 
-.se-icon-heading:before {
+.snow-icon-heading:before {
   content: "\ebc5"; }
 
-.se-icon-image:before {
+.snow-icon-image:before {
   content: "\ebcd"; }
 
-.se-icon-italic:before {
+.snow-icon-italic:before {
   content: "\ebd3"; }
 
-.se-icon-link:before {
+.snow-icon-link:before {
   content: "\ebdf"; }
 
-.se-icon-table:before {
+.snow-icon-table:before {
   content: "\ecb5"; }
 
-.se-icon-underline:before {
+.snow-icon-underline:before {
   content: "\ecc3"; }
 
-.se-icon-undo:before {
+.snow-icon-undo:before {
   content: "\ecc4"; }
 
-.se-icon-emotion:before {
+.snow-icon-emotion:before {
   content: "\ecc5"; }
 
-.se-icon-redo:before {
+.snow-icon-redo:before {
   content: "\ecc6"; }

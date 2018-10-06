@@ -22,8 +22,8 @@ SnowEditor.registerComponent(ItalicStyleComponent);
 SnowEditor.registerComponent(UnderlineStyleComponent);
 
 SnowEditor.registerComponent(RightLayoutComponent);
-SnowEditor.registerComponent(LeftLayoutComponent);
 SnowEditor.registerComponent(CenterLayoutComponent);
+SnowEditor.registerComponent(LeftLayoutComponent);
 
 SnowEditor.registerComponent(UndoCommandComponent);
 SnowEditor.registerComponent(RedoCommandComponent);
