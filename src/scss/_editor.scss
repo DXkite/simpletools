@@ -1,0 +1,20 @@
+.se-toolbar {
+    background-color: $toolbar-color;
+    display: flex;
+    align-content: center;
+    border: 1px solid $border-color;
+    border-bottom: none;
+    padding: 0 .2em;
+    flex-wrap: wrap;
+}
+
+.se-content {
+    border: 1px solid $border-color;
+    padding: .2em;
+}
+
+.snow-tool-item {
+    cursor: pointer;
+    user-select: none;
+    padding: .2em .3em;
+}

@@ -1,0 +1,4 @@
+node_modules/**
+src/.babel_tmp/**
+package-lock.json
+.sass-cache
