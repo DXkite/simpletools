@@ -15,7 +15,7 @@
   word-break: break-all;
   outline: none; }
 
-.snow-tool-item {
+.snow-tool-item, .snow-tool-emotions-item {
   cursor: pointer;
   -webkit-user-select: none;
      -moz-user-select: none;
@@ -25,10 +25,17 @@
   background-color: #dee2e6;
   transition: .1s; }
 
-.snow-tool-item:hover,
-.snow-tool-item.active {
+.snow-tool-item:hover, .snow-tool-emotions-item:hover,
+.snow-tool-item.active,
+.active.snow-tool-emotions-item,
+.snow-tool-item.disable,
+.disable.snow-tool-emotions-item {
   background-color: #6c757d;
   color: #ced4da; }
+
+.snow-tool-item.disable, .disable.snow-tool-emotions-item {
+  opacity: 0.8;
+  pointer-events: none; }
 
 @font-face {
   font-family: "iconfont";

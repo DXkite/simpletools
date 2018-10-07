@@ -1,5 +1,17 @@
 /*! snow-editor by dxkite 2018-10-07 */
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var config = {
+    popLayerLevel: 99999
+};
+
+exports.default = config;
+
+},{}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -159,7 +171,74 @@ DomElement.method.extend({
 
 exports.default = DomElement;
 
-},{"../util/fixCssPrefix":2,"../util/isArray":3}],2:[function(require,module,exports){
+},{"../util/fixCssPrefix":4,"../util/isArray":5}],3:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _config = require('../config');
+
+var _config2 = _interopRequireDefault(_config);
+
+var _DomElement = require('../dom/DomElement');
+
+var _DomElement2 = _interopRequireDefault(_DomElement);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var defaultZIndexLevel = _config2.default.popLayerLevel || 99999;
+var n = _DomElement2.default.element;
+
+var layerCounter = 0;
+
+function getParentBox() {}
+
+/**
+ * 自动弹出层
+ * 检测内容的大小，选择下拉弹出或者浮动弹窗
+ */
+
+var PopLayer = function () {
+    function PopLayer(element, parent) {
+        _classCallCheck(this, PopLayer);
+
+        this.$parent = parent | window;
+        this.id = layerCounter++;
+        this.$element = n('div', { id: 'pop-layer-' + this.id }, {
+            display: 'block',
+            position: 'fixed',
+            zIndex: defaultZIndexLevel
+        }, element);
+    }
+
+    _createClass(PopLayer, [{
+        key: 'show',
+        value: function show() {
+            if (document.getElementById(this.id)) {
+                (0, _DomElement2.default)(this.$element).css({ 'display': 'block' });
+            } else {
+                document.getElementsByTagName('body')[0].appendChild(this.$element);
+            }
+        }
+    }, {
+        key: 'hide',
+        value: function hide() {
+            (0, _DomElement2.default)(this.$element).css({ 'display': 'none' });
+        }
+    }]);
+
+    return PopLayer;
+}();
+
+exports.default = PopLayer;
+
+},{"../config":1,"../dom/DomElement":2}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -182,7 +261,7 @@ function fixCssPrefix(name) {
     return name;
 }
 
-},{}],3:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -197,7 +276,7 @@ function isArray(obj) {
   return obj instanceof Array;
 }
 
-},{}],4:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -216,19 +295,15 @@ var config = {
     // 撤销与重做
     'undo', 'redo'],
     emotions: [{
-        name: '默认',
+        name: 'Emoji',
         type: 'text',
         content: '😀 😃 😄 😁 😆 😅 😂 😊 😇 🙂 🙃 😉 😓 😪 😴 🙄 🤔 😬 🤐'.split(/\s/)
-    }, {
-        name: '颜文字',
-        type: 'text',
-        content: []
     }]
 };
 
 exports.default = config;
 
-},{}],5:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -334,8 +409,7 @@ var commands = {
 };
 
 function _exec(name, value) {
-    console.log('_exec', name);
-
+    // console.log('_exec', name);
     if (commands[name]) {
         commands[name].apply(this, value);
     } else {
@@ -477,7 +551,7 @@ var SnowEditor = function () {
 
 exports.default = SnowEditor;
 
-},{"../component/dom/DomElement":1}],6:[function(require,module,exports){
+},{"../component/dom/DomElement":2}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -526,7 +600,7 @@ var Component = function () {
 
 exports.default = Component;
 
-},{}],7:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -583,7 +657,7 @@ var RangeComponent = function (_Component) {
 
 exports.default = RangeComponent;
 
-},{"./Component":6}],8:[function(require,module,exports){
+},{"./Component":8}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -635,7 +709,7 @@ var RedoCommandComponent = function (_Component) {
 
 exports.default = RedoCommandComponent;
 
-},{"../Component":6}],9:[function(require,module,exports){
+},{"../Component":8}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -687,7 +761,7 @@ var UndoCommandComponent = function (_Component) {
 
 exports.default = UndoCommandComponent;
 
-},{"../Component":6}],10:[function(require,module,exports){
+},{"../Component":8}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -750,7 +824,7 @@ var CenterLayoutComponent = function (_RangeComponent) {
 
 exports.default = CenterLayoutComponent;
 
-},{"../Range":7}],11:[function(require,module,exports){
+},{"../Range":9}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -813,7 +887,7 @@ var LeftLayoutComponent = function (_RangeComponent) {
 
 exports.default = LeftLayoutComponent;
 
-},{"../Range":7}],12:[function(require,module,exports){
+},{"../Range":9}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -876,7 +950,7 @@ var RightLayoutComponent = function (_RangeComponent) {
 
 exports.default = RightLayoutComponent;
 
-},{"../Range":7}],13:[function(require,module,exports){
+},{"../Range":9}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -939,7 +1013,7 @@ var BoldStyleComponent = function (_RangeComponent) {
 
 exports.default = BoldStyleComponent;
 
-},{"../Range":7}],14:[function(require,module,exports){
+},{"../Range":9}],16:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1002,7 +1076,7 @@ var ItalicStyleComponent = function (_RangeComponent) {
 
 exports.default = ItalicStyleComponent;
 
-},{"../Range":7}],15:[function(require,module,exports){
+},{"../Range":9}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1065,7 +1139,7 @@ var UnderlineStyleComponent = function (_RangeComponent) {
 
 exports.default = UnderlineStyleComponent;
 
-},{"../Range":7}],16:[function(require,module,exports){
+},{"../Range":9}],18:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1077,6 +1151,18 @@ var _createClass = function () { function defineProperties(target, props) { for 
 var _Range = require('../Range');
 
 var _Range2 = _interopRequireDefault(_Range);
+
+var _PopLayer = require('../../../component/poplayer/PopLayer');
+
+var _PopLayer2 = _interopRequireDefault(_PopLayer);
+
+var _DomElement = require('../../../component/dom/DomElement');
+
+var _DomElement2 = _interopRequireDefault(_DomElement);
+
+var _Text = require('./emotion/Text');
+
+var _Text2 = _interopRequireDefault(_Text);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1092,13 +1178,48 @@ var EmotionComponent = function (_RangeComponent) {
     function EmotionComponent(editor) {
         _classCallCheck(this, EmotionComponent);
 
-        return _possibleConstructorReturn(this, (EmotionComponent.__proto__ || Object.getPrototypeOf(EmotionComponent)).call(this, editor));
+        var _this = _possibleConstructorReturn(this, (EmotionComponent.__proto__ || Object.getPrototypeOf(EmotionComponent)).call(this, editor));
+
+        var childs = new Array();
+        _this.editor.config.emotions.forEach(function (element) {
+            var emotion = null;
+            if (element.type === 'text') {
+                emotion = new _Text2.default(element);
+            } else {
+                emotion = new SplitEmotions(element);
+            }
+            if (emotion) {
+                emotion.content.forEach(function (emotionObj) {
+                    var item = _DomElement2.default.element('span', {
+                        class: 'snow-tool-emotions-item',
+                        title: emotionObj.title,
+                        onclick: function onclick() {
+                            editor.exec('insertHTML', emotionObj.html);
+                        }
+                    }, {}, emotionObj.view);
+                    childs.push(item);
+                });
+            }
+        });
+        _this.layer = new _PopLayer2.default(_DomElement2.default.element('div', {}, {}, childs));
+        return _this;
     }
 
     _createClass(EmotionComponent, [{
+        key: 'onStatusChange',
+        value: function onStatusChange() {
+            if (this.editor.range) {
+                this._active = true;
+                this.editor.$(this.node).removeClass('disable');
+            } else {
+                this._active = false;
+                this.editor.$(this.node).addClass('disable');
+            }
+        }
+    }, {
         key: 'onRangeAction',
         value: function onRangeAction(range, event) {
-            this.editor.exec('insertHTML', '<span>😀</span>');
+            this.layer.show();
         }
     }, {
         key: 'name',
@@ -1117,7 +1238,66 @@ var EmotionComponent = function (_RangeComponent) {
 
 exports.default = EmotionComponent;
 
-},{"../Range":7}],17:[function(require,module,exports){
+},{"../../../component/dom/DomElement":2,"../../../component/poplayer/PopLayer":3,"../Range":9,"./emotion/Text":20}],19:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var EmotionObj = function EmotionObj(title, html, view) {
+    _classCallCheck(this, EmotionObj);
+
+    this.html = html;
+    this.view = view;
+    this.title = title;
+};
+
+exports.default = EmotionObj;
+
+},{}],20:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _Object = require('./Object');
+
+var _Object2 = _interopRequireDefault(_Object);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var TextEmotions = function () {
+    function TextEmotions(data) {
+        _classCallCheck(this, TextEmotions);
+
+        var content = new Array();
+        data.content.forEach(function (element) {
+            content.push(new _Object2.default(element, element, element));
+        });
+        this._content = content;
+    }
+
+    _createClass(TextEmotions, [{
+        key: 'content',
+        get: function get() {
+            return this._content;
+        }
+    }]);
+
+    return TextEmotions;
+}();
+
+exports.default = TextEmotions;
+
+},{"./Object":19}],21:[function(require,module,exports){
 'use strict';
 
 var _config = require('./config');
@@ -1183,4 +1363,4 @@ _SnowEditor2.default.registerComponent(_Redo2.default);
 
 _SnowEditor2.default.registerComponent(_Emotion2.default);
 
-},{"./config":4,"./editor/SnowEditor":5,"./editor/component/command/Redo":8,"./editor/component/command/Undo":9,"./editor/component/layout/Center":10,"./editor/component/layout/Left":11,"./editor/component/layout/Right":12,"./editor/component/style/Bold":13,"./editor/component/style/Italic":14,"./editor/component/style/Underline":15,"./editor/component/tool/Emotion":16}]},{},[17]);
+},{"./config":6,"./editor/SnowEditor":7,"./editor/component/command/Redo":10,"./editor/component/command/Undo":11,"./editor/component/layout/Center":12,"./editor/component/layout/Left":13,"./editor/component/layout/Right":14,"./editor/component/style/Bold":15,"./editor/component/style/Italic":16,"./editor/component/style/Underline":17,"./editor/component/tool/Emotion":18}]},{},[21]);

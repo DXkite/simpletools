@@ -18,15 +18,10 @@ const config = {
     ],
     emotions: [
         {
-            name: '默认',
+            name: 'Emoji',
             type: 'text',
             content: '😀 😃 😄 😁 😆 😅 😂 😊 😇 🙂 🙃 😉 😓 😪 😴 🙄 🤔 😬 🤐'.split(/\s/),
-        },
-        {
-            name: '颜文字',
-            type: 'text',
-            content: [],
-        },
+        }
     ]
 }
 

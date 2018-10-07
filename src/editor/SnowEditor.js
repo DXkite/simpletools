@@ -91,8 +91,7 @@ const commands = {
 
 
 function _exec(name, value) {
-    console.log('_exec', name);
-
+    // console.log('_exec', name);
     if (commands[name]) {
         commands[name].apply(this, value);
     } else {

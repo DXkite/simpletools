@@ -17,19 +17,25 @@ function getParentBox() {
 class PopLayer {
 
     constructor(element, parent) {
-        this.$element = n('div', {}, {
-            position: 'fixed',
-            zIndex : defaultZIndexLevel,
-        }, element);
         this.$parent = parent | window;
-        
+        this.id = layerCounter++;
+        this.$element = n('div', {id: 'pop-layer-' + this.id}, {
+            display: 'block',
+            position: 'fixed',
+            zIndex: defaultZIndexLevel,
+        }, element);
     }
 
     show() {
+        if (document.getElementById(this.id)) {
+            $(this.$element).css({ 'display': 'block' });
+        } else {
+            document.getElementsByTagName('body')[0].appendChild(this.$element);
+        }
     }
-    
-    hide() {
 
+    hide() {
+        $(this.$element).css({ 'display': 'none' });
     }
 }
 

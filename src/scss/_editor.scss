@@ -23,7 +23,13 @@
 }
 
 .snow-tool-item:hover,
-.snow-tool-item.active {
+.snow-tool-item.active,
+.snow-tool-item.disable {
     background-color: $toolbar-color-dark;
     color: $toolbar-color-light;
+}
+
+.snow-tool-item.disable {
+    opacity: 0.8;
+    pointer-events: none;
 }
