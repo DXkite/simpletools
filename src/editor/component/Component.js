@@ -6,11 +6,11 @@ class Component {
     }
 
     onClick(event) {
-        console.log('onActiveEvent:', event);
+        // console.log('onActiveEvent:', event);
     }
 
     onStatusChange() {
-        console.log('onStatusChange:'+this.name);
+        // console.log('onStatusChange:'+this.name);
     }
 
     get name() {
@@ -22,6 +22,10 @@ class Component {
     }
     set node(ele) {
         this.element = ele;
+    }
+
+    get node() {
+        return this.element;
     }
 }
 

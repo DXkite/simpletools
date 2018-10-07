@@ -292,10 +292,6 @@ var _Dom = require('../component/dom/Dom');
 
 var _Dom2 = _interopRequireDefault(_Dom);
 
-var _History = require('./component/History');
-
-var _History2 = _interopRequireDefault(_History);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -316,10 +312,10 @@ function onStateChange() {
 
 function createEditorView(editor) {
     var element = editor.element;
-    editor.toolbar = n('div', {
+    editor.$toolbar = n('div', {
         class: 'snow-toolbar'
     });
-    editor.content = n('div', {
+    editor.$content = n('div', {
         class: 'snow-content',
         contenteditable: 'true',
         onfocus: function onfocus() {
@@ -331,7 +327,7 @@ function createEditorView(editor) {
             editor.fire('click');
         },
         onkeyup: function onkeyup() {
-            editor.fire('contentChange', editor.content.innerHTML);
+            editor.fire('contentChange', editor.content, editor.range);
         },
         onblur: function onblur() {
             onStateChange.call(editor);
@@ -341,8 +337,8 @@ function createEditorView(editor) {
         'min-height': editor.config['height']
     }, element.innerHTML);
     element.innerText = '';
-    element.appendChild(editor.toolbar);
-    element.appendChild(editor.content);
+    element.appendChild(editor.$toolbar);
+    element.appendChild(editor.$content);
 }
 
 function createToolBar(editor) {
@@ -371,9 +367,29 @@ function createToolBar(editor) {
                 }, {}, comp.view);
                 comp.node = node;
                 editor.components.set(comp.name, comp);
-                editor.toolbar.appendChild(node);
             }
         });
+        toolbar.forEach(function (name) {
+            var comp = editor.components.get(name);
+            editor.$toolbar.appendChild(comp.node);
+        });
+    }
+}
+
+var commands = {
+    clear: function clear(range) {
+        range.deleteContents();
+        return true;
+    }
+};
+
+function _exec(name, value) {
+    console.log('_exec', name);
+
+    if (commands[name]) {
+        commands[name].apply(this, value);
+    } else {
+        document.execCommand(name, null, value[0]);
     }
 }
 
@@ -383,19 +399,12 @@ var SnowEditor = function () {
 
         this.config = Object.assign(config, defaultConfig);
         this.element = document.querySelector(config.target);
-        this.history = new _History2.default(this);
         this.listener = {};
-        this.on('contentChange', this.history.onContentChange);
         createEditorView(this);
         createToolBar(this);
     }
 
     _createClass(SnowEditor, [{
-        key: 'getContent',
-        value: function getContent() {
-            return this.content.innerHTML;
-        }
-    }, {
         key: 'on',
         value: function on(name, callback) {
             var listener = this.listener[name] || new Array();
@@ -430,20 +439,50 @@ var SnowEditor = function () {
         }
     }, {
         key: 'exec',
-        value: function exec(name, value) {
-            document.execCommand(name, false, value);
+        value: function exec(name) {
+            for (var _len2 = arguments.length, value = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+                value[_key2 - 1] = arguments[_key2];
+            }
+
+            _exec.call(this, name, value);
+        }
+    }, {
+        key: 'name',
+        get: function get() {
+            return this.config.target;
+        }
+    }, {
+        key: 'content',
+        get: function get() {
+            return this.$content.innerHTML;
+        },
+        set: function set(html) {
+            this.$content.innerHTML = html;
         }
     }, {
         key: 'selectionText',
         get: function get() {
-            var val = this.getRange();
+            var val = this.range;
             return val ? val.toString() : null;
         }
     }, {
         key: 'selectionElement',
         get: function get() {
-            var val = this.getRange();
+            var val = this.range;
             return val ? val.commonAncestorContainer : null;
+        }
+    }, {
+        key: 'selectionIsEmpty',
+        get: function get() {
+            var range = this.range;
+            if (range && range.startContainer) {
+                if (range.startContainer === range.endContainer) {
+                    if (range.startOffset === range.endOffset) {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
     }, {
         key: 'range',
@@ -478,7 +517,7 @@ var SnowEditor = function () {
 
 exports.default = SnowEditor;
 
-},{"../component/dom/Dom":1,"./component/History":6}],5:[function(require,module,exports){
+},{"../component/dom/Dom":1}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -499,12 +538,12 @@ var Component = function () {
     _createClass(Component, [{
         key: 'onClick',
         value: function onClick(event) {
-            console.log('onActiveEvent:', event);
+            // console.log('onActiveEvent:', event);
         }
     }, {
         key: 'onStatusChange',
         value: function onStatusChange() {
-            console.log('onStatusChange:' + this.name);
+            // console.log('onStatusChange:'+this.name);
         }
     }, {
         key: 'name',
@@ -520,6 +559,9 @@ var Component = function () {
         key: 'node',
         set: function set(ele) {
             this.element = ele;
+        },
+        get: function get() {
+            return this.element;
         }
     }]);
 
@@ -529,43 +571,6 @@ var Component = function () {
 exports.default = Component;
 
 },{}],6:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var EditHistory = function () {
-    function EditHistory(editor) {
-        _classCallCheck(this, EditHistory);
-    }
-
-    _createClass(EditHistory, [{
-        key: 'onContentChange',
-        value: function onContentChange(content) {
-            console.log('hsitory', content);
-        }
-    }, {
-        key: 'save',
-        value: function save() {}
-    }, {
-        key: 'reset',
-        value: function reset() {}
-    }, {
-        key: 'go',
-        value: function go(index) {}
-    }]);
-
-    return EditHistory;
-}();
-
-exports.default = EditHistory;
-
-},{}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -611,7 +616,8 @@ var RangeComponent = function (_Component) {
         key: 'onClick',
         value: function onClick(event) {
             if (this.editor.range) {
-                this.onRangeAction(this.editor.range, event);
+                var range = this.onRangeAction(this.editor.range, event) || this.editor.range;
+                this.editor.range = range;
             }
         }
     }]);
@@ -621,7 +627,7 @@ var RangeComponent = function (_Component) {
 
 exports.default = RangeComponent;
 
-},{"./Component":5}],8:[function(require,module,exports){
+},{"./Component":5}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -654,9 +660,7 @@ var RedoCommandComponent = function (_Component) {
     _createClass(RedoCommandComponent, [{
         key: 'onClick',
         value: function onClick(event) {
-            console.log(document.queryCommandState('redo'));
             this.editor.exec('redo');
-            console.log(document.queryCommandState('redo'));
         }
     }, {
         key: 'name',
@@ -675,7 +679,7 @@ var RedoCommandComponent = function (_Component) {
 
 exports.default = RedoCommandComponent;
 
-},{"../Component":5}],9:[function(require,module,exports){
+},{"../Component":5}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -708,9 +712,7 @@ var UndoCommandComponent = function (_Component) {
     _createClass(UndoCommandComponent, [{
         key: 'onClick',
         value: function onClick(event) {
-            console.log(document.queryCommandState('undo'));
             this.editor.exec('undo');
-            console.log(document.queryCommandState('undo'));
         }
     }, {
         key: 'name',
@@ -729,7 +731,7 @@ var UndoCommandComponent = function (_Component) {
 
 exports.default = UndoCommandComponent;
 
-},{"../Component":5}],10:[function(require,module,exports){
+},{"../Component":5}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -781,7 +783,7 @@ var CenterLayoutComponent = function (_RangeComponent) {
 
 exports.default = CenterLayoutComponent;
 
-},{"../Range":7}],11:[function(require,module,exports){
+},{"../Range":6}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -833,7 +835,7 @@ var LeftLayoutComponent = function (_RangeComponent) {
 
 exports.default = LeftLayoutComponent;
 
-},{"../Range":7}],12:[function(require,module,exports){
+},{"../Range":6}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -885,7 +887,7 @@ var RightLayoutComponent = function (_RangeComponent) {
 
 exports.default = RightLayoutComponent;
 
-},{"../Range":7}],13:[function(require,module,exports){
+},{"../Range":6}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -937,7 +939,7 @@ var BoldStyleComponent = function (_RangeComponent) {
 
 exports.default = BoldStyleComponent;
 
-},{"../Range":7}],14:[function(require,module,exports){
+},{"../Range":6}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -989,7 +991,7 @@ var ItalicStyleComponent = function (_RangeComponent) {
 
 exports.default = ItalicStyleComponent;
 
-},{"../Range":7}],15:[function(require,module,exports){
+},{"../Range":6}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1041,7 +1043,7 @@ var UnderlineStyleComponent = function (_RangeComponent) {
 
 exports.default = UnderlineStyleComponent;
 
-},{"../Range":7}],16:[function(require,module,exports){
+},{"../Range":6}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1074,13 +1076,11 @@ var EmotionComponent = function (_RangeComponent) {
     _createClass(EmotionComponent, [{
         key: 'onRangeAction',
         value: function onRangeAction(range, event) {
-            console.log('emotion', range);
-            range.deleteContents();
-            var node = document.createElement('span');
-            node.innerText = '😀';
-            range.insertNode(node);
-            range.collapse();
-            this.editor.range = range;
+            if (!this.editor.selectionIsEmpty) {
+                console.log('clear selectionText', this.editor.selectionText);
+                this.editor.exec('clear', range);
+            }
+            this.editor.exec('insertHTML', '<span>😀</span>');
         }
     }, {
         key: 'name',
@@ -1099,7 +1099,7 @@ var EmotionComponent = function (_RangeComponent) {
 
 exports.default = EmotionComponent;
 
-},{"../Range":7}],17:[function(require,module,exports){
+},{"../Range":6}],16:[function(require,module,exports){
 'use strict';
 
 var _config = require('./config');
@@ -1165,4 +1165,4 @@ _SnowEditor2.default.registerComponent(_Redo2.default);
 
 _SnowEditor2.default.registerComponent(_Emotion2.default);
 
-},{"./config":3,"./editor/SnowEditor":4,"./editor/component/command/Redo":8,"./editor/component/command/Undo":9,"./editor/component/layout/Center":10,"./editor/component/layout/Left":11,"./editor/component/layout/Right":12,"./editor/component/style/Bold":13,"./editor/component/style/Italic":14,"./editor/component/style/Underline":15,"./editor/component/tool/Emotion":16}]},{},[17]);
+},{"./config":3,"./editor/SnowEditor":4,"./editor/component/command/Redo":7,"./editor/component/command/Undo":8,"./editor/component/layout/Center":9,"./editor/component/layout/Left":10,"./editor/component/layout/Right":11,"./editor/component/style/Bold":12,"./editor/component/style/Italic":13,"./editor/component/style/Underline":14,"./editor/component/tool/Emotion":15}]},{},[16]);

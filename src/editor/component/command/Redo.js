@@ -10,9 +10,7 @@ class RedoCommandComponent extends Component {
     }
 
     onClick(event) {
-        console.log(document.queryCommandState('redo'));
         this.editor.exec('redo');
-        console.log(document.queryCommandState('redo'));
     }
 }
 

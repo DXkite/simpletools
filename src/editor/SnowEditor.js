@@ -1,5 +1,4 @@
 import Dom from '../component/dom/Dom'
-import EditHistory from './component/History'
 
 let defaultConfig = null;
 let components = new Array;
@@ -18,10 +17,10 @@ function onStateChange() {
 
 function createEditorView(editor) {
     let element = editor.element;
-    editor.toolbar = n('div', {
+    editor.$toolbar = n('div', {
         class: 'snow-toolbar'
     });
-    editor.content = n('div', {
+    editor.$content = n('div', {
         class: 'snow-content',
         contenteditable: 'true',
         onfocus: function () {
@@ -33,7 +32,7 @@ function createEditorView(editor) {
             editor.fire('click');
         },
         onkeyup: function () {
-            editor.fire('contentChange', editor.content.innerHTML);
+            editor.fire('contentChange', editor.content, editor.range);
         },
         onblur: function () {
             onStateChange.call(editor);
@@ -44,8 +43,8 @@ function createEditorView(editor) {
         },
         element.innerHTML);
     element.innerText = '';
-    element.appendChild(editor.toolbar);
-    element.appendChild(editor.content);
+    element.appendChild(editor.$toolbar);
+    element.appendChild(editor.$content);
 }
 
 function createToolBar(editor) {
@@ -59,7 +58,6 @@ function createToolBar(editor) {
         }
         return false;
     }
-
 
     if (editor.config.toolbar) {
         const toolbar = editor.config.toolbar;
@@ -75,14 +73,32 @@ function createToolBar(editor) {
                 }, {}, comp.view);
                 comp.node = node;
                 editor.components.set(comp.name, comp);
-                editor.toolbar.appendChild(node);
             }
         });
+        toolbar.forEach(function (name) {
+            var comp = editor.components.get(name);
+            editor.$toolbar.appendChild(comp.node);
+        })
     }
 }
 
+const commands = {
+    clear: function (range) {
+        range.deleteContents();
+        return true;
+    }
+};
 
 
+function _exec(name, value) {
+    console.log('_exec', name);
+    
+    if (commands[name]) {
+        commands[name].apply(this, value);
+    } else {
+        document.execCommand(name, null, value[0]);
+    }
+}
 
 
 class SnowEditor {
@@ -90,9 +106,7 @@ class SnowEditor {
     constructor(config) {
         this.config = Object.assign(config, defaultConfig);
         this.element = document.querySelector(config.target);
-        this.history = new EditHistory(this);
         this.listener = {};
-        this.on('contentChange', this.history.onContentChange);
         createEditorView(this);
         createToolBar(this);
     }
@@ -105,18 +119,38 @@ class SnowEditor {
         components.push(component);
     }
 
-    getContent() {
-        return this.content.innerHTML;
+    get name() {
+        return this.config.target;
+    }
+
+    get content() {
+        return this.$content.innerHTML;
+    }
+
+    set content(html) {
+        this.$content.innerHTML = html;
     }
 
     get selectionText() {
-        let val = this.getRange();
+        let val = this.range;
         return val ? val.toString() : null;
     }
 
     get selectionElement() {
-        let val = this.getRange();
+        let val = this.range;
         return val ? val.commonAncestorContainer : null;
+    }
+
+    get selectionIsEmpty() {
+        const range = this.range;
+        if (range && range.startContainer) {
+            if (range.startContainer === range.endContainer) {
+                if (range.startOffset === range.endOffset) {
+                    return true
+                }
+            }
+        }
+        return false
     }
 
     get range() {
@@ -129,9 +163,9 @@ class SnowEditor {
 
     set range(range) {
         if (range) {
-            const selection = window.getSelection()
-            selection.removeAllRanges()
-            selection.addRange(range)
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
         }
     }
 
@@ -159,8 +193,8 @@ class SnowEditor {
         }
     }
 
-    exec(name, value) {
-        document.execCommand(name, false, value);
+    exec(name, ...value) {
+        _exec.call(this, name, value);
     }
 }
 

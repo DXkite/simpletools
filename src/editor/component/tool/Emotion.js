@@ -11,13 +11,11 @@ class EmotionComponent extends RangeComponent {
     }
 
     onRangeAction(range, event) {
-        console.log('emotion',range);
-        range.deleteContents();
-        var node = document.createElement('span');
-        node.innerText = '😀';
-        range.insertNode(node);
-        range.collapse();
-        this.editor.range = range;
+        if (!this.editor.selectionIsEmpty) {
+            console.log('clear selectionText',this.editor.selectionText);
+            this.editor.exec('clear', range);
+        }
+        this.editor.exec('insertHTML','<span>😀</span>');
     }
 }
 
