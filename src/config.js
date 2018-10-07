@@ -1,5 +1,6 @@
 const config = {
     height: '10rem',
+    editable: true,
     toolbar: [
         // 基本控制
         'bold',

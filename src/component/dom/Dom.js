@@ -114,9 +114,10 @@ Dom.method.extend({
     },
     removeClass: function (remove) {
         this.each(function () {
-            var reg = new RegExp('/\\s+?' + remove + '/');
             var get = this.getAttribute('class');
-            this.setAttribute('class', get.replace(reg, ''));
+            var oldClass = get.split(/\s+/);
+            var newClass = oldClass.filter(element => element !== remove);
+            this.setAttribute('class', newClass.join(' '));
         });
         return this;
     },

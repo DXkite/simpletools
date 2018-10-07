@@ -2,6 +2,7 @@ import Dom from '../component/dom/Dom'
 
 let defaultConfig = null;
 let components = new Array;
+let editorCounter = 0;
 
 const n = Dom.element;
 
@@ -22,12 +23,14 @@ function createEditorView(editor) {
     });
     editor.$content = n('div', {
         class: 'snow-content',
-        contenteditable: 'true',
+        contenteditable: editor.config.editable || true,
         onfocus: function () {
+            editor._foucs = true;
             onStateChange.call(editor);
             editor.fire('focus');
         },
         onclick: function () {
+            editor._foucs = true;
             onStateChange.call(editor);
             editor.fire('click');
         },
@@ -35,6 +38,7 @@ function createEditorView(editor) {
             editor.fire('contentChange', editor.content, editor.range);
         },
         onblur: function () {
+            editor._foucs = false;
             onStateChange.call(editor);
             editor.fire('blur');
         },
@@ -83,16 +87,13 @@ function createToolBar(editor) {
 }
 
 const commands = {
-    clear: function (range) {
-        range.deleteContents();
-        return true;
-    }
+    // for browser
 };
 
 
 function _exec(name, value) {
     console.log('_exec', name);
-    
+
     if (commands[name]) {
         commands[name].apply(this, value);
     } else {
@@ -107,6 +108,9 @@ class SnowEditor {
         this.config = Object.assign(config, defaultConfig);
         this.element = document.querySelector(config.target);
         this.listener = {};
+        this._foucs = false;
+        this.id = editorCounter ++;
+        this.$ = Dom;
         createEditorView(this);
         createToolBar(this);
     }
@@ -158,7 +162,6 @@ class SnowEditor {
         if (selection.rangeCount > 0) {
             return selection.getRangeAt(0);
         }
-        return null;
     }
 
     set range(range) {
@@ -167,6 +170,14 @@ class SnowEditor {
             selection.removeAllRanges();
             selection.addRange(range);
         }
+    }
+
+    set editable(editable) {
+        this.$content.setAttribute('contenteditable', editable);
+    }
+
+    get editable() {
+        return this.$content.getAttribute('contenteditable') == 'true';
     }
 
     on(name, callback) {

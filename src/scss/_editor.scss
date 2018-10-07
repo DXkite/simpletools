@@ -10,6 +10,7 @@
 .snow-content {
     padding: .2em;
     border: 1px solid $toolbar-color;
+    word-break: break-all;
     outline: none;
 }
 
@@ -21,7 +22,8 @@
     transition: .1s;
 }
 
-.snow-tool-item:hover {
+.snow-tool-item:hover,
+.snow-tool-item.active {
     background-color: $toolbar-color-dark;
     color: $toolbar-color-light;
 }

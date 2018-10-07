@@ -13,6 +13,16 @@ class LeftLayoutComponent extends RangeComponent {
     onRangeAction(range, event) {
         this.editor.exec('justifyleft');
     }
+    
+    onStatusChange() {
+        if (document.queryCommandState('justifyleft')) {
+            this._active = true;
+            this.editor.$(this.node).addClass('active');
+        } else {
+            this._active = false;
+            this.editor.$(this.node).removeClass('active');
+        }
+    }
 }
 
 export default LeftLayoutComponent

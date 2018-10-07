@@ -12,6 +12,7 @@
 .snow-content {
   padding: .2em;
   border: 1px solid #dee2e6;
+  word-break: break-all;
   outline: none; }
 
 .snow-tool-item {
@@ -24,7 +25,8 @@
   background-color: #dee2e6;
   transition: .1s; }
 
-.snow-tool-item:hover {
+.snow-tool-item:hover,
+.snow-tool-item.active {
   background-color: #6c757d;
   color: #ced4da; }
 

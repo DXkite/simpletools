@@ -124,9 +124,12 @@ Dom.method.extend({
     },
     removeClass: function removeClass(remove) {
         this.each(function () {
-            var reg = new RegExp('/\\s+?' + remove + '/');
             var get = this.getAttribute('class');
-            this.setAttribute('class', get.replace(reg, ''));
+            var oldClass = get.split(/\s+/);
+            var newClass = oldClass.filter(function (element) {
+                return element !== remove;
+            });
+            this.setAttribute('class', newClass.join(' '));
         });
         return this;
     },
@@ -257,6 +260,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 var config = {
     height: '10rem',
+    editable: true,
     toolbar: [
     // 基本控制
     'bold', 'italic', 'underline',
@@ -298,6 +302,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var defaultConfig = null;
 var components = new Array();
+var editorCounter = 0;
 
 var n = _Dom2.default.element;
 
@@ -317,12 +322,14 @@ function createEditorView(editor) {
     });
     editor.$content = n('div', {
         class: 'snow-content',
-        contenteditable: 'true',
+        contenteditable: editor.config.editable || true,
         onfocus: function onfocus() {
+            editor._foucs = true;
             onStateChange.call(editor);
             editor.fire('focus');
         },
         onclick: function onclick() {
+            editor._foucs = true;
             onStateChange.call(editor);
             editor.fire('click');
         },
@@ -330,6 +337,7 @@ function createEditorView(editor) {
             editor.fire('contentChange', editor.content, editor.range);
         },
         onblur: function onblur() {
+            editor._foucs = false;
             onStateChange.call(editor);
             editor.fire('blur');
         }
@@ -377,10 +385,7 @@ function createToolBar(editor) {
 }
 
 var commands = {
-    clear: function clear(range) {
-        range.deleteContents();
-        return true;
-    }
+    // for browser
 };
 
 function _exec(name, value) {
@@ -400,6 +405,9 @@ var SnowEditor = function () {
         this.config = Object.assign(config, defaultConfig);
         this.element = document.querySelector(config.target);
         this.listener = {};
+        this._foucs = false;
+        this.id = editorCounter++;
+        this.$ = _Dom2.default;
         createEditorView(this);
         createToolBar(this);
     }
@@ -491,7 +499,6 @@ var SnowEditor = function () {
             if (selection.rangeCount > 0) {
                 return selection.getRangeAt(0);
             }
-            return null;
         },
         set: function set(range) {
             if (range) {
@@ -499,6 +506,14 @@ var SnowEditor = function () {
                 selection.removeAllRanges();
                 selection.addRange(range);
             }
+        }
+    }, {
+        key: 'editable',
+        set: function set(editable) {
+            this.$content.setAttribute('contenteditable', editable);
+        },
+        get: function get() {
+            return this.$content.getAttribute('contenteditable') == 'true';
         }
     }], [{
         key: 'applyDefaultConfig',
@@ -767,6 +782,17 @@ var CenterLayoutComponent = function (_RangeComponent) {
             this.editor.exec('justifycenter');
         }
     }, {
+        key: 'onStatusChange',
+        value: function onStatusChange() {
+            if (document.queryCommandState('justifycenter')) {
+                this._active = true;
+                this.editor.$(this.node).addClass('active');
+            } else {
+                this._active = false;
+                this.editor.$(this.node).removeClass('active');
+            }
+        }
+    }, {
         key: 'name',
         get: function get() {
             return 'align-center';
@@ -817,6 +843,17 @@ var LeftLayoutComponent = function (_RangeComponent) {
         key: 'onRangeAction',
         value: function onRangeAction(range, event) {
             this.editor.exec('justifyleft');
+        }
+    }, {
+        key: 'onStatusChange',
+        value: function onStatusChange() {
+            if (document.queryCommandState('justifyleft')) {
+                this._active = true;
+                this.editor.$(this.node).addClass('active');
+            } else {
+                this._active = false;
+                this.editor.$(this.node).removeClass('active');
+            }
         }
     }, {
         key: 'name',
@@ -871,6 +908,17 @@ var RightLayoutComponent = function (_RangeComponent) {
             this.editor.exec('justifyright');
         }
     }, {
+        key: 'onStatusChange',
+        value: function onStatusChange() {
+            if (document.queryCommandState('justifyright')) {
+                this._active = true;
+                this.editor.$(this.node).addClass('active');
+            } else {
+                this._active = false;
+                this.editor.$(this.node).removeClass('active');
+            }
+        }
+    }, {
         key: 'name',
         get: function get() {
             return 'align-right';
@@ -921,6 +969,17 @@ var BoldStyleComponent = function (_RangeComponent) {
         key: 'onRangeAction',
         value: function onRangeAction(range, event) {
             this.editor.exec('bold');
+        }
+    }, {
+        key: 'onStatusChange',
+        value: function onStatusChange() {
+            if (document.queryCommandState('bold')) {
+                this._active = true;
+                this.editor.$(this.node).addClass('active');
+            } else {
+                this._active = false;
+                this.editor.$(this.node).removeClass('active');
+            }
         }
     }, {
         key: 'name',
@@ -975,6 +1034,17 @@ var ItalicStyleComponent = function (_RangeComponent) {
             this.editor.exec('italic');
         }
     }, {
+        key: 'onStatusChange',
+        value: function onStatusChange() {
+            if (document.queryCommandState('italic')) {
+                this._active = true;
+                this.editor.$(this.node).addClass('active');
+            } else {
+                this._active = false;
+                this.editor.$(this.node).removeClass('active');
+            }
+        }
+    }, {
         key: 'name',
         get: function get() {
             return 'italic';
@@ -1027,6 +1097,17 @@ var UnderlineStyleComponent = function (_RangeComponent) {
             this.editor.exec('underline');
         }
     }, {
+        key: 'onStatusChange',
+        value: function onStatusChange() {
+            if (document.queryCommandState('underline')) {
+                this._active = true;
+                this.editor.$(this.node).addClass('active');
+            } else {
+                this._active = false;
+                this.editor.$(this.node).removeClass('active');
+            }
+        }
+    }, {
         key: 'name',
         get: function get() {
             return 'underline';
@@ -1076,10 +1157,6 @@ var EmotionComponent = function (_RangeComponent) {
     _createClass(EmotionComponent, [{
         key: 'onRangeAction',
         value: function onRangeAction(range, event) {
-            if (!this.editor.selectionIsEmpty) {
-                console.log('clear selectionText', this.editor.selectionText);
-                this.editor.exec('clear', range);
-            }
             this.editor.exec('insertHTML', '<span>😀</span>');
         }
     }, {

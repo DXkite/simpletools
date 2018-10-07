@@ -13,6 +13,16 @@ class RightLayoutComponent extends RangeComponent {
     onRangeAction(range, event) {
         this.editor.exec('justifyright');
     }
+
+    onStatusChange() {
+        if (document.queryCommandState('justifyright')) {
+            this._active = true;
+            this.editor.$(this.node).addClass('active');
+        } else {
+            this._active = false;
+            this.editor.$(this.node).removeClass('active');
+        }
+    }
 }
 
 export default RightLayoutComponent

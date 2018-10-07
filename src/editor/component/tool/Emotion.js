@@ -11,10 +11,6 @@ class EmotionComponent extends RangeComponent {
     }
 
     onRangeAction(range, event) {
-        if (!this.editor.selectionIsEmpty) {
-            console.log('clear selectionText',this.editor.selectionText);
-            this.editor.exec('clear', range);
-        }
         this.editor.exec('insertHTML','<span>😀</span>');
     }
 }
