@@ -6,20 +6,24 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _index = require('../util/index');
+var _isArray = require('../util/isArray');
 
-var _index2 = _interopRequireDefault(_index);
+var _isArray2 = _interopRequireDefault(_isArray);
+
+var _fixCssPrefix = require('../util/fixCssPrefix');
+
+var _fixCssPrefix2 = _interopRequireDefault(_fixCssPrefix);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var Dom = function Dom(selecter, context) {
-    return new Dom.constructor(selecter, context);
+var DomElement = function DomElement(selecter, context) {
+    return new DomElement.constructor(selecter, context);
 };
 
-Dom.constructor = function (selecter, context) {
+DomElement.constructor = function (selecter, context) {
     if (typeof selecter === 'string') {
         this.elements = (context || document).querySelectorAll(selecter);
-    } else if (selecter instanceof Dom) {
+    } else if (selecter instanceof DomElement) {
         return selecter;
     } else {
         this.elements = [selecter];
@@ -32,7 +36,7 @@ Dom.constructor = function (selecter, context) {
     return this;
 };
 
-Dom.extend = function (methods) {
+DomElement.extend = function (methods) {
     for (var name in methods) {
         this[name] = methods[name];
     }
@@ -44,11 +48,11 @@ function createElementFromString(html) {
     return ele.firstChild;
 }
 
-Dom.extend({
+DomElement.extend({
     element: function element(tag, attr, css, childs) {
         var element = tag.indexOf('<') === -1 ? document.createElement(tag) : createElementFromString(tag);
-        Dom(element).attr(attr).css(css);
-        if (_index2.default.is_array(childs)) {
+        DomElement(element).attr(attr).css(css);
+        if ((0, _isArray2.default)(childs)) {
             for (var name in childs) {
                 element.appendChild(childs[name]);
             }
@@ -79,10 +83,10 @@ function eventOff(element, type, callback, useCaptrue) {
     }
 }
 
-Dom.method = Dom.constructor.prototype;
-Dom.method.extend = Dom.extend;
+DomElement.method = DomElement.constructor.prototype;
+DomElement.method.extend = DomElement.extend;
 // 属性方法
-Dom.method.extend({
+DomElement.method.extend({
     attr: function attr(attrs) {
         this.each(function () {
             if (attrs) {
@@ -105,7 +109,7 @@ Dom.method.extend({
         this.each(function () {
             if (cssObj) {
                 for (var name in cssObj) {
-                    this.style[_index2.default.cssfix(name)] = cssObj[name];
+                    this.style[(0, _fixCssPrefix2.default)(name)] = cssObj[name];
                 }
             }
         });
@@ -153,106 +157,47 @@ Dom.method.extend({
     }
 });
 
-exports.default = Dom;
+exports.default = DomElement;
 
-},{"../util/index":2}],2:[function(require,module,exports){
+},{"../util/fixCssPrefix":2,"../util/isArray":3}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-/* --------------- 全局函数 ------------------ */
-var util = {};
-
-util.is_function = function (obj) {
-    return Object.prototype.toString.call(obj) === '[object Function]';
-};
-util.is_array = function (obj) {
-    return Object.prototype.toString.call(obj) === '[object Array]';
-};
-util.is_object = function (obj) {
-    return Object.prototype.toString.call(obj) === '[object Object]';
-};
-util.is_string = function (obj) {
-    return typeof obj === 'string';
-};
-util.get_root_path = function () {
-    var scripts = document.getElementsByTagName("script");
-    var _self_path = scripts[scripts.length - 1].getAttribute("src");
-    return _self_path.substring(0, _self_path.lastIndexOf("/"));
-};
-// 分发事件
-util.dipatch_event = function (obj, name, value, canBubbleArg, cancelAbleArg) {
-    var event = document.createEvent(str_cache[0]);
-    var canBubble = (typeof canBubbleArg === 'undefined' ? 'undefined' : _typeof(canBubbleArg)) === undefined ? true : canBubbleArg;
-    var cancelAbl = (typeof cancelAbleArg === 'undefined' ? 'undefined' : _typeof(cancelAbleArg)) === undefined ? true : cancelAbleArg;
-    event.initCustomEvent(name, canBubble, cancelAbl, value);
-    obj.dispatchEvent(event);
-    if (obj['on' + name] && is_function(obj['on' + name])) {
-        obj['on' + name].call(obj, event);
-    }
-    return event;
-};
-
-/**
- * 复制合并对象
- * 
- * @param {Object|string} arrays
- * @returns
- */
-util.object_copy = function (arrays) {
-    var object = {};
-    for (var i = 0; i < arguments.length; i++) {
-        for (var index in arguments[i]) {
-            object[index] = arguments[i][index];
-        }
-    }
-    return object;
-};
-
-// 前缀支持
-util.get_css_perfix = function () {
+exports.default = fixCssPrefix;
+var cssPrefix = function () {
     var styles = window.getComputedStyle(document.documentElement, '');
     var core = (Array.prototype.slice.call(styles).join('').match(/-(moz|webkit|ms|)-/) || styles.OLink === '' && ['', 'o'])[1];
     return '-' + core + '-';
-};
-
-util.css_perfix = util.get_css_perfix();
+}();
 
 /**
- * 添加CSS前缀（如果存在前缀）
- * 
- * @param {string} name
- * @returns 
+ * 转换CSS前缀
+ * @param {String} name 
  */
-function add_css_prefix(name) {
+function fixCssPrefix(name) {
     name = name.trim();
-    name = typeof document.documentElement.style[name] === 'undefined' ? util.css_perfix + name : name;
+    name = typeof document.documentElement.style[name] === 'undefined' ? cssPrefix + name : name;
     return name;
 }
 
-/**
- * 将驼峰式CSS转化成CSS文件用的CSS命名
- * 
- * @param {string} name
- * @returns
- */
-util.cssname = function (name) {
-    name = add_css_prefix(name);
-    name = name.replace(/[A-Z]/, function (name) {
-        return '-' + name.toLowerCase();
-    });
-    return name;
-};
-
-util.cssfix = add_css_prefix;
-
-exports.default = util;
-
 },{}],3:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = isArray;
+/**
+ * 判断对象是否为数组
+ * @param {Object} obj 
+ */
+function isArray(obj) {
+  return obj instanceof Array;
+}
+
+},{}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -283,7 +228,7 @@ var config = {
 
 exports.default = config;
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -292,9 +237,9 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _Dom = require('../component/dom/Dom');
+var _DomElement = require('../component/dom/DomElement');
 
-var _Dom2 = _interopRequireDefault(_Dom);
+var _DomElement2 = _interopRequireDefault(_DomElement);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -304,7 +249,7 @@ var defaultConfig = null;
 var components = new Array();
 var editorCounter = 0;
 
-var n = _Dom2.default.element;
+var n = _DomElement2.default.element;
 
 function onStateChange() {
     this.fire('stateChange');
@@ -407,7 +352,7 @@ var SnowEditor = function () {
         this.listener = {};
         this._foucs = false;
         this.id = editorCounter++;
-        this.$ = _Dom2.default;
+        this.$ = _DomElement2.default;
         createEditorView(this);
         createToolBar(this);
     }
@@ -532,7 +477,7 @@ var SnowEditor = function () {
 
 exports.default = SnowEditor;
 
-},{"../component/dom/Dom":1}],5:[function(require,module,exports){
+},{"../component/dom/DomElement":1}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -552,14 +497,10 @@ var Component = function () {
 
     _createClass(Component, [{
         key: 'onClick',
-        value: function onClick(event) {
-            // console.log('onActiveEvent:', event);
-        }
+        value: function onClick(event) {}
     }, {
         key: 'onStatusChange',
-        value: function onStatusChange() {
-            // console.log('onStatusChange:'+this.name);
-        }
+        value: function onStatusChange() {}
     }, {
         key: 'name',
         get: function get() {
@@ -573,10 +514,10 @@ var Component = function () {
     }, {
         key: 'node',
         set: function set(ele) {
-            this.element = ele;
+            this.$element = ele;
         },
         get: function get() {
-            return this.element;
+            return this.$element;
         }
     }]);
 
@@ -585,7 +526,7 @@ var Component = function () {
 
 exports.default = Component;
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -642,7 +583,7 @@ var RangeComponent = function (_Component) {
 
 exports.default = RangeComponent;
 
-},{"./Component":5}],7:[function(require,module,exports){
+},{"./Component":6}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -694,7 +635,7 @@ var RedoCommandComponent = function (_Component) {
 
 exports.default = RedoCommandComponent;
 
-},{"../Component":5}],8:[function(require,module,exports){
+},{"../Component":6}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -746,7 +687,7 @@ var UndoCommandComponent = function (_Component) {
 
 exports.default = UndoCommandComponent;
 
-},{"../Component":5}],9:[function(require,module,exports){
+},{"../Component":6}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -809,7 +750,7 @@ var CenterLayoutComponent = function (_RangeComponent) {
 
 exports.default = CenterLayoutComponent;
 
-},{"../Range":6}],10:[function(require,module,exports){
+},{"../Range":7}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -872,7 +813,7 @@ var LeftLayoutComponent = function (_RangeComponent) {
 
 exports.default = LeftLayoutComponent;
 
-},{"../Range":6}],11:[function(require,module,exports){
+},{"../Range":7}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -935,7 +876,7 @@ var RightLayoutComponent = function (_RangeComponent) {
 
 exports.default = RightLayoutComponent;
 
-},{"../Range":6}],12:[function(require,module,exports){
+},{"../Range":7}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -998,7 +939,7 @@ var BoldStyleComponent = function (_RangeComponent) {
 
 exports.default = BoldStyleComponent;
 
-},{"../Range":6}],13:[function(require,module,exports){
+},{"../Range":7}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1061,7 +1002,7 @@ var ItalicStyleComponent = function (_RangeComponent) {
 
 exports.default = ItalicStyleComponent;
 
-},{"../Range":6}],14:[function(require,module,exports){
+},{"../Range":7}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1124,7 +1065,7 @@ var UnderlineStyleComponent = function (_RangeComponent) {
 
 exports.default = UnderlineStyleComponent;
 
-},{"../Range":6}],15:[function(require,module,exports){
+},{"../Range":7}],16:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1148,10 +1089,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var EmotionComponent = function (_RangeComponent) {
     _inherits(EmotionComponent, _RangeComponent);
 
-    function EmotionComponent() {
+    function EmotionComponent(editor) {
         _classCallCheck(this, EmotionComponent);
 
-        return _possibleConstructorReturn(this, (EmotionComponent.__proto__ || Object.getPrototypeOf(EmotionComponent)).apply(this, arguments));
+        return _possibleConstructorReturn(this, (EmotionComponent.__proto__ || Object.getPrototypeOf(EmotionComponent)).call(this, editor));
     }
 
     _createClass(EmotionComponent, [{
@@ -1176,7 +1117,7 @@ var EmotionComponent = function (_RangeComponent) {
 
 exports.default = EmotionComponent;
 
-},{"../Range":6}],16:[function(require,module,exports){
+},{"../Range":7}],17:[function(require,module,exports){
 'use strict';
 
 var _config = require('./config');
@@ -1242,4 +1183,4 @@ _SnowEditor2.default.registerComponent(_Redo2.default);
 
 _SnowEditor2.default.registerComponent(_Emotion2.default);
 
-},{"./config":3,"./editor/SnowEditor":4,"./editor/component/command/Redo":7,"./editor/component/command/Undo":8,"./editor/component/layout/Center":9,"./editor/component/layout/Left":10,"./editor/component/layout/Right":11,"./editor/component/style/Bold":12,"./editor/component/style/Italic":13,"./editor/component/style/Underline":14,"./editor/component/tool/Emotion":15}]},{},[16]);
+},{"./config":4,"./editor/SnowEditor":5,"./editor/component/command/Redo":8,"./editor/component/command/Undo":9,"./editor/component/layout/Center":10,"./editor/component/layout/Left":11,"./editor/component/layout/Right":12,"./editor/component/style/Bold":13,"./editor/component/style/Italic":14,"./editor/component/style/Underline":15,"./editor/component/tool/Emotion":16}]},{},[17]);

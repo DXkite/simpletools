@@ -2,6 +2,10 @@ import RangeComponent from '../Range'
 
 class EmotionComponent extends RangeComponent {
 
+    constructor(editor) {
+        super(editor);
+    }
+
     get name() {
         return 'emotion';
     }

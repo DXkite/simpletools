@@ -1,11 +1,12 @@
 import config from '../config'
-import Dom from '../dom/Dom'
+import $ from '../dom/DomElement'
 
-const level = config.popLayerLevel || 99999;
+const defaultZIndexLevel = config.popLayerLevel || 99999;
+const n = $.element;
 
 let layerCounter = 0;
 
-function caculatePosition() {
+function getParentBox() {
 
 }
 
@@ -15,7 +16,19 @@ function caculatePosition() {
  */
 class PopLayer {
 
-    constructor(position, content, parent) {
+    constructor(element, parent) {
+        this.$element = n('div', {}, {
+            position: 'fixed',
+            zIndex : defaultZIndexLevel,
+        }, element);
+        this.$parent = parent | window;
+        
+    }
+
+    show() {
+    }
+    
+    hide() {
 
     }
 }

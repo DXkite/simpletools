@@ -1,11 +1,10 @@
-import Dom from '../component/dom/Dom'
+import Dom from '../component/dom/DomElement'
 
 let defaultConfig = null;
 let components = new Array;
 let editorCounter = 0;
 
 const n = Dom.element;
-
 
 function onStateChange() {
     this.fire('stateChange');

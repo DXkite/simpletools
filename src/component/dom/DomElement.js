@@ -1,13 +1,14 @@
-import util from '../util/index'
+import isArray from '../util/isArray'
+import cssfix from '../util/fixCssPrefix'
 
-var Dom = function (selecter, context) {
-    return new Dom.constructor(selecter, context);
+var DomElement = function (selecter, context) {
+    return new DomElement.constructor(selecter, context);
 }
 
-Dom.constructor = function (selecter, context) {
+DomElement.constructor = function (selecter, context) {
     if (typeof selecter === 'string') {
         this.elements = (context || document).querySelectorAll(selecter);
-    } else if (selecter instanceof Dom) {
+    } else if (selecter instanceof DomElement) {
         return selecter;
     } else {
         this.elements = [selecter];
@@ -20,7 +21,7 @@ Dom.constructor = function (selecter, context) {
     return this;
 };
 
-Dom.extend = function (methods) {
+DomElement.extend = function (methods) {
     for (var name in methods) {
         this[name] = methods[name];
     }
@@ -32,11 +33,11 @@ function createElementFromString(html) {
     return ele.firstChild;
 }
 
-Dom.extend({
+DomElement.extend({
     element: function (tag, attr, css, childs) {
         var element = tag.indexOf('<') === -1 ? document.createElement(tag) : createElementFromString(tag);
-        Dom(element).attr(attr).css(css);
-        if (util.is_array(childs)) {
+        DomElement(element).attr(attr).css(css);
+        if (isArray(childs)) {
             for (var name in childs) {
                 element.appendChild(childs[name]);
             }
@@ -69,10 +70,10 @@ function eventOff(element, type, callback, useCaptrue) {
     }
 }
 
-Dom.method = Dom.constructor.prototype;
-Dom.method.extend = Dom.extend;
+DomElement.method = DomElement.constructor.prototype;
+DomElement.method.extend = DomElement.extend;
 // 属性方法
-Dom.method.extend({
+DomElement.method.extend({
     attr: function (attrs) {
         this.each(function () {
             if (attrs) {
@@ -95,7 +96,7 @@ Dom.method.extend({
         this.each(function () {
             if (cssObj) {
                 for (var name in cssObj) {
-                    this.style[util.cssfix(name)] = cssObj[name];
+                    this.style[cssfix(name)] = cssObj[name];
                 }
             }
         });
@@ -141,4 +142,4 @@ Dom.method.extend({
     }
 });
 
-export default Dom
+export default DomElement
