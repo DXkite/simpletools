@@ -3,7 +3,6 @@ class Component {
 
     constructor(editor) {
         this.editor = editor;
-        console.log('component init');
     }
 
     onClick(event) {
@@ -11,7 +10,7 @@ class Component {
     }
 
     onStatusChange() {
-        console.log('onStatusChange');
+        console.log('onStatusChange:'+this.name);
     }
 
     get name() {
@@ -20,6 +19,9 @@ class Component {
 
     get view() {
         return '<div title="Component">Component</div>';
+    }
+    set node(ele) {
+        this.element = ele;
     }
 }
 

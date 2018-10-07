@@ -2,19 +2,26 @@
     background-color: $toolbar-color;
     display: flex;
     align-content: center;
-    border: 1px solid $border-color;
     border-bottom: none;
     padding: 0 .2em;
     flex-wrap: wrap;
 }
 
 .snow-content {
-    border: 1px solid $border-color;
     padding: .2em;
+    border: 1px solid $toolbar-color;
+    outline: none;
 }
 
 .snow-tool-item {
     cursor: pointer;
     user-select: none;
     padding: .2em .3em;
+    background-color: $toolbar-color;
+    transition: .1s;
+}
+
+.snow-tool-item:hover {
+    background-color: $toolbar-color-dark;
+    color: $toolbar-color-light;
 }

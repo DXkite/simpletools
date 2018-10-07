@@ -1,6 +1,6 @@
 
 
-import RangeComponent from '../RangeComponent'
+import RangeComponent from '../Range'
 
 class ItalicStyleComponent extends RangeComponent {
 
@@ -12,7 +12,7 @@ class ItalicStyleComponent extends RangeComponent {
         return '<i class="iconfont snow-icon-'+this.name+'"></i>';
     }
 
-    onRangeAction(event, range) {
+    onRangeAction(range, event) {
         this.editor.exec('italic');
     }
 }

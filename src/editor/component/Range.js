@@ -15,7 +15,9 @@ class RangeComponent extends Component {
     }
 
     onClick(event) {
-        this.onRangeAction(event, this.editor.getRange());
+        if (this.editor.range) {
+            this.onRangeAction(this.editor.range, event);
+        }
     }
 }
 

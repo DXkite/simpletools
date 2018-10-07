@@ -1,4 +1,4 @@
-/*! snow-editor by dxkite 2018-10-06 */
+/*! snow-editor by dxkite 2018-10-07 */
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 'use strict';
 
@@ -19,6 +19,8 @@ var Dom = function Dom(selecter, context) {
 Dom.constructor = function (selecter, context) {
     if (typeof selecter === 'string') {
         this.elements = (context || document).querySelectorAll(selecter);
+    } else if (selecter instanceof Dom) {
+        return selecter;
     } else {
         this.elements = [selecter];
     }
@@ -36,9 +38,15 @@ Dom.extend = function (methods) {
     }
 };
 
+function createElementFromString(html) {
+    var ele = document.createElement('div');
+    ele.innerHTML = html;
+    return ele.firstChild;
+}
+
 Dom.extend({
     element: function element(tag, attr, css, childs) {
-        var element = document.createElement(tag);
+        var element = tag.indexOf('<') === -1 ? document.createElement(tag) : createElementFromString(tag);
         Dom(element).attr(attr).css(css);
         if (_index2.default.is_array(childs)) {
             for (var name in childs) {
@@ -248,7 +256,25 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 var config = {
-    height: '10rem'
+    height: '10rem',
+    toolbar: [
+    // 基本控制
+    'bold', 'italic', 'underline',
+    // 布局控制
+    'align-left', 'align-center', 'align-right',
+    // 表情
+    'emotion',
+    // 撤销与重做
+    'undo', 'redo'],
+    emotions: [{
+        name: '默认',
+        type: 'text',
+        content: '😀 😃 😄 😁 😆 😅 😂 😊 😇 🙂 🙃 😉 😓 😪 😴 🙄 🤔 😬 🤐'.split(/\s/)
+    }, {
+        name: '颜文字',
+        type: 'text',
+        content: []
+    }]
 };
 
 exports.default = config;
@@ -266,20 +292,26 @@ var _Dom = require('../component/dom/Dom');
 
 var _Dom2 = _interopRequireDefault(_Dom);
 
+var _History = require('./component/History');
+
+var _History2 = _interopRequireDefault(_History);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var defaultConfig = null;
 var components = new Array();
+
 var n = _Dom2.default.element;
 
-function onStatuChange() {
-    console.log('onStatuChange');
-}
-
-function onContentChange(content) {
-    console.log('onContentChange:' + content);
+function onStateChange() {
+    this.fire('stateChange');
+    if (this.components) {
+        this.components.forEach(function (element) {
+            element.onStatusChange.call(element);
+        });
+    }
 }
 
 function createEditorView(editor) {
@@ -291,17 +323,19 @@ function createEditorView(editor) {
         class: 'snow-content',
         contenteditable: 'true',
         onfocus: function onfocus() {
-            onStatuChange.call(editor);
+            onStateChange.call(editor);
+            editor.fire('focus');
         },
         onclick: function onclick() {
-            onStatuChange.call(editor);
-            onContentChange.call(editor, editor.content.innerHTML);
+            onStateChange.call(editor);
+            editor.fire('click');
         },
         onkeyup: function onkeyup() {
-            onContentChange.call(editor, editor.content.innerHTML);
+            editor.fire('contentChange', editor.content.innerHTML);
         },
         onblur: function onblur() {
-            onStatuChange.call(editor);
+            onStateChange.call(editor);
+            editor.fire('blur');
         }
     }, {
         'min-height': editor.config['height']
@@ -312,16 +346,35 @@ function createEditorView(editor) {
 }
 
 function createToolBar(editor) {
-    components.forEach(function (Comp) {
-        var comp = new Comp(editor);
-        editor.toolbar.appendChild(n('div', {
-            class: 'snow-tool-item',
-            name: comp.name,
-            onclick: function onclick(e) {
-                comp.onClick.call(comp, e, this);
+    editor.components = new Map();
+
+    var in_array = function in_array(obj, array) {
+        for (var index in array) {
+            if (array[index] == obj) {
+                return true;
             }
-        }, {}, comp.view));
-    });
+        }
+        return false;
+    };
+
+    if (editor.config.toolbar) {
+        var toolbar = editor.config.toolbar;
+        components.forEach(function (Comp) {
+            var comp = new Comp(editor);
+            if (in_array(comp.name, toolbar)) {
+                var node = n('div', {
+                    class: 'snow-tool-item',
+                    name: comp.name,
+                    onclick: function onclick(e) {
+                        comp.onClick.call(comp, e, this);
+                    }
+                }, {}, comp.view);
+                comp.node = node;
+                editor.components.set(comp.name, comp);
+                editor.toolbar.appendChild(node);
+            }
+        });
+    }
 }
 
 var SnowEditor = function () {
@@ -330,6 +383,9 @@ var SnowEditor = function () {
 
         this.config = Object.assign(config, defaultConfig);
         this.element = document.querySelector(config.target);
+        this.history = new _History2.default(this);
+        this.listener = {};
+        this.on('contentChange', this.history.onContentChange);
         createEditorView(this);
         createToolBar(this);
     }
@@ -340,30 +396,70 @@ var SnowEditor = function () {
             return this.content.innerHTML;
         }
     }, {
-        key: 'getSelectionText',
-        value: function getSelectionText() {
-            var val = this.getRange();
-            return val ? val.toString() : null;
+        key: 'on',
+        value: function on(name, callback) {
+            var listener = this.listener[name] || new Array();
+            listener.push(callback);
+            this.listener[name] = listener;
         }
     }, {
-        key: 'getSelectionElement',
-        value: function getSelectionElement() {
-            var val = this.getRange();
-            return val ? val.commonAncestorContainer : null;
-        }
-    }, {
-        key: 'getRange',
-        value: function getRange() {
-            var selection = window.getSelection();
-            if (selection.rangeCount > 0) {
-                return selection.getRangeAt(0);
+        key: 'off',
+        value: function off(name, callback) {
+            if (this.listener[name]) {
+                for (var index in this.listener[name]) {
+                    if (this.listener[name][index] === callback) {
+                        this.listener[name].splice(index, 2, this.listener[name][index + 1]);
+                    }
+                }
             }
-            return null;
+        }
+    }, {
+        key: 'fire',
+        value: function fire(name) {
+            var _this = this;
+
+            for (var _len = arguments.length, arg = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+                arg[_key - 1] = arguments[_key];
+            }
+
+            if (this.listener[name]) {
+                this.listener[name].forEach(function (element) {
+                    element.apply(_this, arg);
+                });
+            }
         }
     }, {
         key: 'exec',
         value: function exec(name, value) {
             document.execCommand(name, false, value);
+        }
+    }, {
+        key: 'selectionText',
+        get: function get() {
+            var val = this.getRange();
+            return val ? val.toString() : null;
+        }
+    }, {
+        key: 'selectionElement',
+        get: function get() {
+            var val = this.getRange();
+            return val ? val.commonAncestorContainer : null;
+        }
+    }, {
+        key: 'range',
+        get: function get() {
+            var selection = window.getSelection();
+            if (selection.rangeCount > 0) {
+                return selection.getRangeAt(0);
+            }
+            return null;
+        },
+        set: function set(range) {
+            if (range) {
+                var selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+            }
         }
     }], [{
         key: 'applyDefaultConfig',
@@ -382,7 +478,7 @@ var SnowEditor = function () {
 
 exports.default = SnowEditor;
 
-},{"../component/dom/Dom":1}],5:[function(require,module,exports){
+},{"../component/dom/Dom":1,"./component/History":6}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -398,7 +494,6 @@ var Component = function () {
         _classCallCheck(this, Component);
 
         this.editor = editor;
-        console.log('component init');
     }
 
     _createClass(Component, [{
@@ -409,7 +504,7 @@ var Component = function () {
     }, {
         key: 'onStatusChange',
         value: function onStatusChange() {
-            console.log('onStatusChange');
+            console.log('onStatusChange:' + this.name);
         }
     }, {
         key: 'name',
@@ -421,6 +516,11 @@ var Component = function () {
         get: function get() {
             return '<div title="Component">Component</div>';
         }
+    }, {
+        key: 'node',
+        set: function set(ele) {
+            this.element = ele;
+        }
     }]);
 
     return Component;
@@ -429,6 +529,43 @@ var Component = function () {
 exports.default = Component;
 
 },{}],6:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var EditHistory = function () {
+    function EditHistory(editor) {
+        _classCallCheck(this, EditHistory);
+    }
+
+    _createClass(EditHistory, [{
+        key: 'onContentChange',
+        value: function onContentChange(content) {
+            console.log('hsitory', content);
+        }
+    }, {
+        key: 'save',
+        value: function save() {}
+    }, {
+        key: 'reset',
+        value: function reset() {}
+    }, {
+        key: 'go',
+        value: function go(index) {}
+    }]);
+
+    return EditHistory;
+}();
+
+exports.default = EditHistory;
+
+},{}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -473,7 +610,9 @@ var RangeComponent = function (_Component) {
     }, {
         key: 'onClick',
         value: function onClick(event) {
-            this.onRangeAction(event, this.editor.getRange());
+            if (this.editor.range) {
+                this.onRangeAction(this.editor.range, event);
+            }
         }
     }]);
 
@@ -482,7 +621,7 @@ var RangeComponent = function (_Component) {
 
 exports.default = RangeComponent;
 
-},{"./Component":5}],7:[function(require,module,exports){
+},{"./Component":5}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -515,7 +654,9 @@ var RedoCommandComponent = function (_Component) {
     _createClass(RedoCommandComponent, [{
         key: 'onClick',
         value: function onClick(event) {
+            console.log(document.queryCommandState('redo'));
             this.editor.exec('redo');
+            console.log(document.queryCommandState('redo'));
         }
     }, {
         key: 'name',
@@ -534,7 +675,7 @@ var RedoCommandComponent = function (_Component) {
 
 exports.default = RedoCommandComponent;
 
-},{"../Component":5}],8:[function(require,module,exports){
+},{"../Component":5}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -567,7 +708,9 @@ var UndoCommandComponent = function (_Component) {
     _createClass(UndoCommandComponent, [{
         key: 'onClick',
         value: function onClick(event) {
+            console.log(document.queryCommandState('undo'));
             this.editor.exec('undo');
+            console.log(document.queryCommandState('undo'));
         }
     }, {
         key: 'name',
@@ -586,7 +729,7 @@ var UndoCommandComponent = function (_Component) {
 
 exports.default = UndoCommandComponent;
 
-},{"../Component":5}],9:[function(require,module,exports){
+},{"../Component":5}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -595,9 +738,9 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _RangeComponent2 = require('../RangeComponent');
+var _Range = require('../Range');
 
-var _RangeComponent3 = _interopRequireDefault(_RangeComponent2);
+var _Range2 = _interopRequireDefault(_Range);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -618,27 +761,27 @@ var CenterLayoutComponent = function (_RangeComponent) {
 
     _createClass(CenterLayoutComponent, [{
         key: 'onRangeAction',
-        value: function onRangeAction(event, range) {
+        value: function onRangeAction(range, event) {
             this.editor.exec('justifycenter');
         }
     }, {
         key: 'name',
         get: function get() {
-            return 'center';
+            return 'align-center';
         }
     }, {
         key: 'view',
         get: function get() {
-            return '<i class="iconfont snow-icon-align-' + this.name + '"></i>';
+            return '<i class="iconfont snow-icon-' + this.name + '"></i>';
         }
     }]);
 
     return CenterLayoutComponent;
-}(_RangeComponent3.default);
+}(_Range2.default);
 
 exports.default = CenterLayoutComponent;
 
-},{"../RangeComponent":6}],10:[function(require,module,exports){
+},{"../Range":7}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -647,9 +790,9 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _RangeComponent2 = require('../RangeComponent');
+var _Range = require('../Range');
 
-var _RangeComponent3 = _interopRequireDefault(_RangeComponent2);
+var _Range2 = _interopRequireDefault(_Range);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -670,27 +813,27 @@ var LeftLayoutComponent = function (_RangeComponent) {
 
     _createClass(LeftLayoutComponent, [{
         key: 'onRangeAction',
-        value: function onRangeAction(event, range) {
+        value: function onRangeAction(range, event) {
             this.editor.exec('justifyleft');
         }
     }, {
         key: 'name',
         get: function get() {
-            return 'left';
+            return 'align-left';
         }
     }, {
         key: 'view',
         get: function get() {
-            return '<i class="iconfont snow-icon-align-' + this.name + '"></i>';
+            return '<i class="iconfont snow-icon-' + this.name + '"></i>';
         }
     }]);
 
     return LeftLayoutComponent;
-}(_RangeComponent3.default);
+}(_Range2.default);
 
 exports.default = LeftLayoutComponent;
 
-},{"../RangeComponent":6}],11:[function(require,module,exports){
+},{"../Range":7}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -699,9 +842,9 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _RangeComponent2 = require('../RangeComponent');
+var _Range = require('../Range');
 
-var _RangeComponent3 = _interopRequireDefault(_RangeComponent2);
+var _Range2 = _interopRequireDefault(_Range);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -722,27 +865,27 @@ var RightLayoutComponent = function (_RangeComponent) {
 
     _createClass(RightLayoutComponent, [{
         key: 'onRangeAction',
-        value: function onRangeAction(event, range) {
+        value: function onRangeAction(range, event) {
             this.editor.exec('justifyright');
         }
     }, {
         key: 'name',
         get: function get() {
-            return 'right';
+            return 'align-right';
         }
     }, {
         key: 'view',
         get: function get() {
-            return '<i class="iconfont snow-icon-align-' + this.name + '"></i>';
+            return '<i class="iconfont snow-icon-' + this.name + '"></i>';
         }
     }]);
 
     return RightLayoutComponent;
-}(_RangeComponent3.default);
+}(_Range2.default);
 
 exports.default = RightLayoutComponent;
 
-},{"../RangeComponent":6}],12:[function(require,module,exports){
+},{"../Range":7}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -751,9 +894,9 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _RangeComponent2 = require('../RangeComponent');
+var _Range = require('../Range');
 
-var _RangeComponent3 = _interopRequireDefault(_RangeComponent2);
+var _Range2 = _interopRequireDefault(_Range);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -774,7 +917,7 @@ var BoldStyleComponent = function (_RangeComponent) {
 
     _createClass(BoldStyleComponent, [{
         key: 'onRangeAction',
-        value: function onRangeAction(event, range) {
+        value: function onRangeAction(range, event) {
             this.editor.exec('bold');
         }
     }, {
@@ -790,11 +933,11 @@ var BoldStyleComponent = function (_RangeComponent) {
     }]);
 
     return BoldStyleComponent;
-}(_RangeComponent3.default);
+}(_Range2.default);
 
 exports.default = BoldStyleComponent;
 
-},{"../RangeComponent":6}],13:[function(require,module,exports){
+},{"../Range":7}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -803,9 +946,9 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _RangeComponent2 = require('../RangeComponent');
+var _Range = require('../Range');
 
-var _RangeComponent3 = _interopRequireDefault(_RangeComponent2);
+var _Range2 = _interopRequireDefault(_Range);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -826,7 +969,7 @@ var ItalicStyleComponent = function (_RangeComponent) {
 
     _createClass(ItalicStyleComponent, [{
         key: 'onRangeAction',
-        value: function onRangeAction(event, range) {
+        value: function onRangeAction(range, event) {
             this.editor.exec('italic');
         }
     }, {
@@ -842,11 +985,11 @@ var ItalicStyleComponent = function (_RangeComponent) {
     }]);
 
     return ItalicStyleComponent;
-}(_RangeComponent3.default);
+}(_Range2.default);
 
 exports.default = ItalicStyleComponent;
 
-},{"../RangeComponent":6}],14:[function(require,module,exports){
+},{"../Range":7}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -855,9 +998,9 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _RangeComponent2 = require('../RangeComponent');
+var _Range = require('../Range');
 
-var _RangeComponent3 = _interopRequireDefault(_RangeComponent2);
+var _Range2 = _interopRequireDefault(_Range);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -878,7 +1021,7 @@ var UnderlineStyleComponent = function (_RangeComponent) {
 
     _createClass(UnderlineStyleComponent, [{
         key: 'onRangeAction',
-        value: function onRangeAction(event, range) {
+        value: function onRangeAction(range, event) {
             this.editor.exec('underline');
         }
     }, {
@@ -894,11 +1037,69 @@ var UnderlineStyleComponent = function (_RangeComponent) {
     }]);
 
     return UnderlineStyleComponent;
-}(_RangeComponent3.default);
+}(_Range2.default);
 
 exports.default = UnderlineStyleComponent;
 
-},{"../RangeComponent":6}],15:[function(require,module,exports){
+},{"../Range":7}],16:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _Range = require('../Range');
+
+var _Range2 = _interopRequireDefault(_Range);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var EmotionComponent = function (_RangeComponent) {
+    _inherits(EmotionComponent, _RangeComponent);
+
+    function EmotionComponent() {
+        _classCallCheck(this, EmotionComponent);
+
+        return _possibleConstructorReturn(this, (EmotionComponent.__proto__ || Object.getPrototypeOf(EmotionComponent)).apply(this, arguments));
+    }
+
+    _createClass(EmotionComponent, [{
+        key: 'onRangeAction',
+        value: function onRangeAction(range, event) {
+            console.log('emotion', range);
+            range.deleteContents();
+            var node = document.createElement('span');
+            node.innerText = '😀';
+            range.insertNode(node);
+            range.collapse();
+            this.editor.range = range;
+        }
+    }, {
+        key: 'name',
+        get: function get() {
+            return 'emotion';
+        }
+    }, {
+        key: 'view',
+        get: function get() {
+            return '<i class="iconfont snow-icon-' + this.name + '"></i>';
+        }
+    }]);
+
+    return EmotionComponent;
+}(_Range2.default);
+
+exports.default = EmotionComponent;
+
+},{"../Range":7}],17:[function(require,module,exports){
 'use strict';
 
 var _config = require('./config');
@@ -941,6 +1142,10 @@ var _Center = require('./editor/component/layout/Center');
 
 var _Center2 = _interopRequireDefault(_Center);
 
+var _Emotion = require('./editor/component/tool/Emotion');
+
+var _Emotion2 = _interopRequireDefault(_Emotion);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 window.SnowEditor = _SnowEditor2.default;
@@ -958,4 +1163,6 @@ _SnowEditor2.default.registerComponent(_Left2.default);
 _SnowEditor2.default.registerComponent(_Undo2.default);
 _SnowEditor2.default.registerComponent(_Redo2.default);
 
-},{"./config":3,"./editor/SnowEditor":4,"./editor/component/command/Redo":7,"./editor/component/command/Undo":8,"./editor/component/layout/Center":9,"./editor/component/layout/Left":10,"./editor/component/layout/Right":11,"./editor/component/style/Bold":12,"./editor/component/style/Italic":13,"./editor/component/style/Underline":14}]},{},[15]);
+_SnowEditor2.default.registerComponent(_Emotion2.default);
+
+},{"./config":3,"./editor/SnowEditor":4,"./editor/component/command/Redo":8,"./editor/component/command/Undo":9,"./editor/component/layout/Center":10,"./editor/component/layout/Left":11,"./editor/component/layout/Right":12,"./editor/component/style/Bold":13,"./editor/component/style/Italic":14,"./editor/component/style/Underline":15,"./editor/component/tool/Emotion":16}]},{},[17]);

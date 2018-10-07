@@ -1,16 +1,16 @@
-import RangeComponent from '../RangeComponent'
+import RangeComponent from '../Range'
 
 class RightLayoutComponent extends RangeComponent {
 
     get name() {
-        return 'right';
+        return 'align-right';
     }
 
     get view() {
-        return '<i class="iconfont snow-icon-align-'+this.name+'"></i>';
+        return '<i class="iconfont snow-icon-'+this.name+'"></i>';
     }
 
-    onRangeAction(event, range) {
+    onRangeAction(range, event) {
         this.editor.exec('justifyright');
     }
 }

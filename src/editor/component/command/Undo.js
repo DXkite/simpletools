@@ -10,7 +10,9 @@ class UndoCommandComponent extends Component {
     }
 
     onClick(event) {
+        console.log(document.queryCommandState('undo'));
         this.editor.exec('undo');
+        console.log(document.queryCommandState('undo'));
     }
 }
 

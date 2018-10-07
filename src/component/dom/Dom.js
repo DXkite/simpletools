@@ -7,6 +7,8 @@ var Dom = function (selecter, context) {
 Dom.constructor = function (selecter, context) {
     if (typeof selecter === 'string') {
         this.elements = (context || document).querySelectorAll(selecter);
+    } else if (selecter instanceof Dom) {
+        return selecter;
     } else {
         this.elements = [selecter];
     }
@@ -24,9 +26,15 @@ Dom.extend = function (methods) {
     }
 };
 
+function createElementFromString(html) {
+    var ele = document.createElement('div');
+    ele.innerHTML = html;
+    return ele.firstChild;
+}
+
 Dom.extend({
     element: function (tag, attr, css, childs) {
-        var element = document.createElement(tag);
+        var element = tag.indexOf('<') === -1 ? document.createElement(tag) : createElementFromString(tag);
         Dom(element).attr(attr).css(css);
         if (util.is_array(childs)) {
             for (var name in childs) {
@@ -40,6 +48,8 @@ Dom.extend({
         return element;
     }
 });
+
+
 
 function eventOn(element, type, callback, useCaptrue) {
     var captrue = useCaptrue === undefined ? false : useCaptrue;

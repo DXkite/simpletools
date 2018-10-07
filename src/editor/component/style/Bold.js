@@ -1,4 +1,4 @@
-import RangeComponent from '../RangeComponent'
+import RangeComponent from '../Range'
 
 class BoldStyleComponent extends RangeComponent {
 
@@ -10,7 +10,7 @@ class BoldStyleComponent extends RangeComponent {
         return '<i class="iconfont snow-icon-'+this.name+'"></i>';
     }
 
-    onRangeAction(event, range) {
+    onRangeAction(range, event) {
         this.editor.exec('bold');
     }
 }

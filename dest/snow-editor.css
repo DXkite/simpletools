@@ -1,18 +1,18 @@
 .snow-toolbar {
-  background-color: #e9ecef;
+  background-color: #dee2e6;
   display: -ms-flexbox;
   display: flex;
   -ms-flex-line-pack: center;
       align-content: center;
-  border: 1px solid #6c757d;
   border-bottom: none;
   padding: 0 .2em;
   -ms-flex-wrap: wrap;
       flex-wrap: wrap; }
 
 .snow-content {
-  border: 1px solid #6c757d;
-  padding: .2em; }
+  padding: .2em;
+  border: 1px solid #dee2e6;
+  outline: none; }
 
 .snow-tool-item {
   cursor: pointer;
@@ -20,7 +20,13 @@
      -moz-user-select: none;
       -ms-user-select: none;
           user-select: none;
-  padding: .2em .3em; }
+  padding: .2em .3em;
+  background-color: #dee2e6;
+  transition: .1s; }
+
+.snow-tool-item:hover {
+  background-color: #6c757d;
+  color: #ced4da; }
 
 @font-face {
   font-family: "iconfont";
