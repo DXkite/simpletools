@@ -1,4 +1,4 @@
-import Dom from '../component/dom/DomElement'
+import Dom from '../dom/DomElement'
 
 let defaultConfig = null;
 let components = new Array;

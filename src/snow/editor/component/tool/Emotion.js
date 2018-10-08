@@ -1,6 +1,6 @@
 import RangeComponent from '../Range'
-import Layer from '../../../component/poplayer/PopLayer'
-import $ from '../../../component/dom/DomElement'
+import Layer from '../../../poplayer/PopLayer'
+import $ from '../../../dom/DomElement'
 import TextEmotions from './emotion/Text'
 
 

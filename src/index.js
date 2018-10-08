@@ -1,15 +1,15 @@
-import config from './config'
-import SnowEditor from './editor/SnowEditor'
+import config from './snow/editor/config'
+import SnowEditor from './snow/editor/SnowEditor'
 
-import BoldStyleComponent from './editor/component/style/Bold'
-import ItalicStyleComponent from './editor/component/style/Italic'
-import UnderlineStyleComponent from './editor/component/style/Underline'
-import RedoCommandComponent from'./editor/component/command/Redo'
-import UndoCommandComponent from'./editor/component/command/Undo'
-import RightLayoutComponent from './editor/component/layout/Right'
-import LeftLayoutComponent from './editor/component/layout/Left'
-import CenterLayoutComponent from './editor/component/layout/Center'
-import EmotionComponent from './editor/component/tool/Emotion'
+import BoldStyleComponent from './snow/editor/component/style/Bold'
+import ItalicStyleComponent from './snow/editor/component/style/Italic'
+import UnderlineStyleComponent from './snow/editor/component/style/Underline'
+import RedoCommandComponent from'./snow/editor/component/command/Redo'
+import UndoCommandComponent from'./snow/editor/component/command/Undo'
+import RightLayoutComponent from './snow/editor/component/layout/Right'
+import LeftLayoutComponent from './snow/editor/component/layout/Left'
+import CenterLayoutComponent from './snow/editor/component/layout/Center'
+import EmotionComponent from './snow/editor/component/tool/Emotion'
 
 window.SnowEditor = SnowEditor
 
