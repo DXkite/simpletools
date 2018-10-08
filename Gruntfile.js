@@ -24,7 +24,7 @@ module.exports = function (grunt) {
         copy: {
             files: {
                 expand: true,
-                cwd: 'src/font',
+                cwd: 'src/snow/editor/font',
                 src: '**',
                 dest: 'dest/font',
                 filter: 'isFile'
