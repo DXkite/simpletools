@@ -1,0 +1,19 @@
+@charset "utf-8";
+
+.toast
+{
+    background-color: rgba($black, 0.7); 
+    color: white; 
+    display: inline-block; 
+    padding: 0.8em; 
+    cursor: pointer; 
+    opacity: 1; 
+    border: 0px; 
+}
+
+/* 扩展样式 主样式名-扩展样式名 */
+.toast-danger
+{
+    @extend .toast;
+    background-color: theme-color("danger");
+}

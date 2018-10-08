@@ -3,7 +3,7 @@ import getSize from '../util/getSize'
 import $ from '../dom/DomElement'
 import getPlatform from '../util/getPlatform'
 
-const defaultZIndexLevel = config.popLayerLevel || 99999;
+const defaultZIndexLevel = config.popLayerLevel|| 9000;
 const n = $.element;
 const STR = {
     layerId: 'snow-layer-shade',
