@@ -10,7 +10,6 @@ const STR = {
     parentSide: 'parentSide',
     windowPop: 'windowPop',
     windowSide: 'windowSide',
-    direction: 'Bottom',
     fadeIn: 'fadeIn',
     fadeOut: 'fadeOut',
 }
@@ -22,7 +21,35 @@ function getBody() {
     return document.getElementsByTagName('body')[0];
 }
 
-function showElement(posOfParent, posOfWindow, posOfPop) {
+function hideElement(defaultDirection) {
+    const animationTime = this.animationTime;
+    const timeout = animationTime * 1000;
+    const showElement = this.showElement;
+    if (this.showState === STR.windowSide) {
+        $(showElement).css({
+            animation: getAnimtion(this.direction, defaultDirection, 'Out') + ' ease ' + animationTime + 's forwards'
+        });
+    } else if (this.showState === STR.parentSide) {
+        $(showElement).css({
+            animation: getAnimtion(this.direction, defaultDirection, 'Out') + ' ease ' + animationTime + 's forwards'
+        });
+    } else if (this.showState === STR.windowPop) {
+        $(showElement).css({
+            animation: STR.fadeOut + ' ease ' + animationTime + 's forwards'
+        });
+    }
+    if (this.showShade) {
+        $(this.showShade).css({ animation: STR.fadeOut + ' ease ' + animationTime + 's forwards' });
+    }
+    setTimeout(() => {
+        getBody().removeChild(showElement);
+        if (this.showShade) {
+            getBody().removeChild(this.showShade);
+        }
+    }, timeout);
+}
+
+function showElement(defaultDirection, posOfParent, posOfWindow, posOfPop) {
 
     const initDisplayInWindow = function (showElement) {
         const shade = this.config.shade || true;
@@ -59,7 +86,7 @@ function showElement(posOfParent, posOfWindow, posOfPop) {
             this.showState = STR.windowPop;
         } else {
             $(showElement).css(posOfWindow).css({
-                animation: getAnimtion(this.direction, STR.direction, 'In') + ' ease ' + animationTime + 's forwards',
+                animation: getAnimtion(this.direction, defaultDirection, 'In') + ' ease ' + animationTime + 's forwards',
             });
             this.showState = STR.windowSide;
         }
@@ -71,7 +98,7 @@ function showElement(posOfParent, posOfWindow, posOfPop) {
         this.showState = STR.parentSide;
         this.showShade = null;
         $(showElement).css(posOfParent).css({
-            animation: getAnimtion(this.direction, STR.direction, 'In') + ' ease ' + animationTime + 's forwards',
+            animation: getAnimtion(this.direction, defaultDirection, 'In') + ' ease ' + animationTime + 's forwards',
         });
     }
 
@@ -110,7 +137,13 @@ const showController = {
             maxHeight: '100%',
             maxWidth: '100%',
         };
-        showElement.call(this, posOfParent, posOfWindow, posOfPop);
+        showElement.call(this,'Bottom', posOfParent, posOfWindow, posOfPop);
+    }
+}
+
+const hideController = {
+    outerBottom: function () {
+        hideElement.call(this,'Bottom');
     }
 }
 
@@ -166,31 +199,7 @@ class PopLayer {
      * 隐藏
      */
     hide() {
-        const animationTime = this.animationTime;
-        const timeout = animationTime * 1000;
-        const showElement = this.showElement;
-        if (this.showState === STR.windowSide) {
-            $(showElement).css({
-                animation: getAnimtion(this.direction, STR.direction, 'Out') + ' ease ' + animationTime + 's forwards'
-            });
-        } else if (this.showState === STR.parentSide) {
-            $(showElement).css({
-                animation: getAnimtion(this.direction, STR.direction, 'Out') + ' ease ' + animationTime + 's forwards'
-            });
-        } else if (this.showState === STR.windowPop) {
-            $(showElement).css({
-                animation: STR.fadeOut + ' ease ' + animationTime + 's forwards'
-            });
-        }
-        if (this.showShade) {
-            $(this.showShade).css({ animation: STR.fadeOut + ' ease ' + animationTime + 's forwards' });
-        }
-        setTimeout(() => {
-            getBody().removeChild(showElement);
-            if (this.showShade) {
-                getBody().removeChild(this.showShade);
-            }
-        }, timeout);
+        hideController[this.position].call(this);   
     }
 }
 

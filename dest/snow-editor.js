@@ -207,7 +207,6 @@ var STR = {
     parentSide: 'parentSide',
     windowPop: 'windowPop',
     windowSide: 'windowSide',
-    direction: 'Bottom',
     fadeIn: 'fadeIn',
     fadeOut: 'fadeOut'
 };
@@ -218,7 +217,37 @@ function getBody() {
     return document.getElementsByTagName('body')[0];
 }
 
-function showElement(posOfParent, posOfWindow, posOfPop) {
+function hideElement(defaultDirection) {
+    var _this = this;
+
+    var animationTime = this.animationTime;
+    var timeout = animationTime * 1000;
+    var showElement = this.showElement;
+    if (this.showState === STR.windowSide) {
+        (0, _DomElement2.default)(showElement).css({
+            animation: getAnimtion(this.direction, defaultDirection, 'Out') + ' ease ' + animationTime + 's forwards'
+        });
+    } else if (this.showState === STR.parentSide) {
+        (0, _DomElement2.default)(showElement).css({
+            animation: getAnimtion(this.direction, defaultDirection, 'Out') + ' ease ' + animationTime + 's forwards'
+        });
+    } else if (this.showState === STR.windowPop) {
+        (0, _DomElement2.default)(showElement).css({
+            animation: STR.fadeOut + ' ease ' + animationTime + 's forwards'
+        });
+    }
+    if (this.showShade) {
+        (0, _DomElement2.default)(this.showShade).css({ animation: STR.fadeOut + ' ease ' + animationTime + 's forwards' });
+    }
+    setTimeout(function () {
+        getBody().removeChild(showElement);
+        if (_this.showShade) {
+            getBody().removeChild(_this.showShade);
+        }
+    }, timeout);
+}
+
+function showElement(defaultDirection, posOfParent, posOfWindow, posOfPop) {
 
     var initDisplayInWindow = function initDisplayInWindow(showElement) {
         var shade = this.config.shade || true;
@@ -253,7 +282,7 @@ function showElement(posOfParent, posOfWindow, posOfPop) {
             this.showState = STR.windowPop;
         } else {
             (0, _DomElement2.default)(showElement).css(posOfWindow).css({
-                animation: getAnimtion(this.direction, STR.direction, 'In') + ' ease ' + animationTime + 's forwards'
+                animation: getAnimtion(this.direction, defaultDirection, 'In') + ' ease ' + animationTime + 's forwards'
             });
             this.showState = STR.windowSide;
         }
@@ -264,7 +293,7 @@ function showElement(posOfParent, posOfWindow, posOfPop) {
         this.showState = STR.parentSide;
         this.showShade = null;
         (0, _DomElement2.default)(showElement).css(posOfParent).css({
-            animation: getAnimtion(this.direction, STR.direction, 'In') + ' ease ' + animationTime + 's forwards'
+            animation: getAnimtion(this.direction, defaultDirection, 'In') + ' ease ' + animationTime + 's forwards'
         });
     };
 
@@ -303,7 +332,13 @@ var showController = {
             maxHeight: '100%',
             maxWidth: '100%'
         };
-        showElement.call(this, posOfParent, posOfWindow, posOfPop);
+        showElement.call(this, 'Bottom', posOfParent, posOfWindow, posOfPop);
+    }
+};
+
+var hideController = {
+    outerBottom: function outerBottom() {
+        hideElement.call(this, 'Bottom');
     }
 };
 
@@ -366,33 +401,7 @@ var PopLayer = function () {
          * 隐藏
          */
         value: function hide() {
-            var _this = this;
-
-            var animationTime = this.animationTime;
-            var timeout = animationTime * 1000;
-            var showElement = this.showElement;
-            if (this.showState === STR.windowSide) {
-                (0, _DomElement2.default)(showElement).css({
-                    animation: getAnimtion(this.direction, STR.direction, 'Out') + ' ease ' + animationTime + 's forwards'
-                });
-            } else if (this.showState === STR.parentSide) {
-                (0, _DomElement2.default)(showElement).css({
-                    animation: getAnimtion(this.direction, STR.direction, 'Out') + ' ease ' + animationTime + 's forwards'
-                });
-            } else if (this.showState === STR.windowPop) {
-                (0, _DomElement2.default)(showElement).css({
-                    animation: STR.fadeOut + ' ease ' + animationTime + 's forwards'
-                });
-            }
-            if (this.showShade) {
-                (0, _DomElement2.default)(this.showShade).css({ animation: STR.fadeOut + ' ease ' + animationTime + 's forwards' });
-            }
-            setTimeout(function () {
-                getBody().removeChild(showElement);
-                if (_this.showShade) {
-                    getBody().removeChild(_this.showShade);
-                }
-            }, timeout);
+            hideController[this.position].call(this);
         }
     }, {
         key: 'animationTime',
