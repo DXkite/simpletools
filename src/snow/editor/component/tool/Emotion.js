@@ -3,7 +3,9 @@ import Layer from '../../../poplayer/PopLayer'
 import $ from '../../../dom/DomElement'
 import TextEmotions from './emotion/Text'
 
-
+/**
+ * 表情处理
+ */
 class EmotionComponent extends RangeComponent {
     init(node) {
         var childs = new Array;

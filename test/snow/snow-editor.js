@@ -46,6 +46,10 @@ var _Emotion = require('./snow/editor/component/tool/Emotion');
 
 var _Emotion2 = _interopRequireDefault(_Emotion);
 
+var _AttachmentManager = require('./snow/editor/component/tool/AttachmentManager');
+
+var _AttachmentManager2 = _interopRequireDefault(_AttachmentManager);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 window.SnowEditor = _SnowEditor2.default;
@@ -64,8 +68,9 @@ _SnowEditor2.default.registerComponent(_Undo2.default);
 _SnowEditor2.default.registerComponent(_Redo2.default);
 
 _SnowEditor2.default.registerComponent(_Emotion2.default);
+_SnowEditor2.default.registerComponent(_AttachmentManager2.default);
 
-},{"./snow/editor/SnowEditor":4,"./snow/editor/component/command/Redo":7,"./snow/editor/component/command/Undo":8,"./snow/editor/component/layout/Center":9,"./snow/editor/component/layout/Left":10,"./snow/editor/component/layout/Right":11,"./snow/editor/component/style/Bold":12,"./snow/editor/component/style/Italic":13,"./snow/editor/component/style/Underline":14,"./snow/editor/component/tool/Emotion":15,"./snow/editor/config":18}],2:[function(require,module,exports){
+},{"./snow/editor/SnowEditor":4,"./snow/editor/component/command/Redo":7,"./snow/editor/component/command/Undo":8,"./snow/editor/component/layout/Center":9,"./snow/editor/component/layout/Left":10,"./snow/editor/component/layout/Right":11,"./snow/editor/component/style/Bold":12,"./snow/editor/component/style/Italic":13,"./snow/editor/component/style/Underline":14,"./snow/editor/component/tool/AttachmentManager":15,"./snow/editor/component/tool/Emotion":16,"./snow/editor/config":19}],2:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -238,7 +243,7 @@ DomElement.method.extend({
 
 exports.default = DomElement;
 
-},{"../util/fixCssPrefix":20,"../util/isArray":24}],4:[function(require,module,exports){
+},{"../util/fixCssPrefix":21,"../util/isArray":25}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1099,6 +1104,78 @@ var _DomElement = require('../../../dom/DomElement');
 
 var _DomElement2 = _interopRequireDefault(_DomElement);
 
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/**
+ * 表情处理
+ */
+var AttachmentManager = function (_RangeComponent) {
+    _inherits(AttachmentManager, _RangeComponent);
+
+    function AttachmentManager() {
+        _classCallCheck(this, AttachmentManager);
+
+        return _possibleConstructorReturn(this, (AttachmentManager.__proto__ || Object.getPrototypeOf(AttachmentManager)).apply(this, arguments));
+    }
+
+    _createClass(AttachmentManager, [{
+        key: 'init',
+        value: function init(node) {
+            var ele = _DomElement2.default.element('div', {}, { 'width': '10em', 'display': 'flex', 'flex-wrap': 'wrap' }, '<b>Attachment</b>');
+            this.layer = new _PopLayer2.default(ele, node);
+        }
+    }, {
+        key: 'onStatusChange',
+        value: function onStatusChange() {}
+    }, {
+        key: 'onRangeAction',
+        value: function onRangeAction(range, event) {
+            this.layer.show();
+        }
+    }, {
+        key: 'name',
+        get: function get() {
+            return 'attachment';
+        }
+    }, {
+        key: 'view',
+        get: function get() {
+            return '<i class="iconfont snow-icon-' + this.name + '"></i>';
+        }
+    }]);
+
+    return AttachmentManager;
+}(_Range2.default);
+
+exports.default = AttachmentManager;
+
+},{"../../../dom/DomElement":3,"../../../poplayer/PopLayer":20,"../Range":6}],16:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _Range = require('../Range');
+
+var _Range2 = _interopRequireDefault(_Range);
+
+var _PopLayer = require('../../../poplayer/PopLayer');
+
+var _PopLayer2 = _interopRequireDefault(_PopLayer);
+
+var _DomElement = require('../../../dom/DomElement');
+
+var _DomElement2 = _interopRequireDefault(_DomElement);
+
 var _Text = require('./emotion/Text');
 
 var _Text2 = _interopRequireDefault(_Text);
@@ -1111,6 +1188,9 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+/**
+ * 表情处理
+ */
 var EmotionComponent = function (_RangeComponent) {
     _inherits(EmotionComponent, _RangeComponent);
 
@@ -1181,7 +1261,7 @@ var EmotionComponent = function (_RangeComponent) {
 
 exports.default = EmotionComponent;
 
-},{"../../../dom/DomElement":3,"../../../poplayer/PopLayer":19,"../Range":6,"./emotion/Text":17}],16:[function(require,module,exports){
+},{"../../../dom/DomElement":3,"../../../poplayer/PopLayer":20,"../Range":6,"./emotion/Text":18}],17:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1200,7 +1280,7 @@ var EmotionObj = function EmotionObj(title, html, view) {
 
 exports.default = EmotionObj;
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1240,7 +1320,7 @@ var TextEmotions = function () {
 
 exports.default = TextEmotions;
 
-},{"./Object":16}],18:[function(require,module,exports){
+},{"./Object":17}],19:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1255,7 +1335,7 @@ var config = {
     // 布局控制
     'align-left', 'align-center', 'align-right',
     // 表情
-    'emotion',
+    'emotion', 'attachment',
     // 撤销与重做
     'undo', 'redo'],
     emotions: [{
@@ -1267,7 +1347,7 @@ var config = {
 
 exports.default = config;
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1511,7 +1591,7 @@ var PopLayer = function () {
 
 exports.default = PopLayer;
 
-},{"../config":2,"../dom/DomElement":3,"../util/getPlatform":21,"../util/getSize":22}],20:[function(require,module,exports){
+},{"../config":2,"../dom/DomElement":3,"../util/getPlatform":22,"../util/getSize":23}],21:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1534,7 +1614,7 @@ function fixCssPrefix(name) {
     return name;
 }
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1554,7 +1634,7 @@ exports.default = function () {
     }
 };
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1586,7 +1666,7 @@ function getSize(elem) {
     }
 }
 
-},{"./getWindowSize":23}],23:[function(require,module,exports){
+},{"./getWindowSize":24}],24:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1607,7 +1687,7 @@ function getWindowSizes() {
     };
 }
 
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

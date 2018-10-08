@@ -10,6 +10,8 @@ import RightLayoutComponent from './snow/editor/component/layout/Right'
 import LeftLayoutComponent from './snow/editor/component/layout/Left'
 import CenterLayoutComponent from './snow/editor/component/layout/Center'
 import EmotionComponent from './snow/editor/component/tool/Emotion'
+import AttachmentManager from './snow/editor/component/tool/AttachmentManager'
+
 
 window.SnowEditor = SnowEditor
 
@@ -27,3 +29,4 @@ SnowEditor.registerComponent(UndoCommandComponent);
 SnowEditor.registerComponent(RedoCommandComponent);
 
 SnowEditor.registerComponent(EmotionComponent);
+SnowEditor.registerComponent(AttachmentManager);

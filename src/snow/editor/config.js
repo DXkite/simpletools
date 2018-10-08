@@ -12,6 +12,7 @@ const config = {
         'align-right',
         // 表情
         'emotion',
+        'attachment',
         // 撤销与重做
         'undo',
         'redo'
