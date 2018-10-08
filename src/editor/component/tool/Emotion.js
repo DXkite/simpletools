@@ -7,7 +7,7 @@ import TextEmotions from './emotion/Text'
 class EmotionComponent extends RangeComponent {
     init(node) {
         var childs = new Array;
-        
+
         const that = this;
         this.editor.config.emotions.forEach(element => {
             var emotion = null;
@@ -30,7 +30,7 @@ class EmotionComponent extends RangeComponent {
                 });
             }
         });
-        const ele = $.element('div', {}, { 'width': '16em', 'display': 'flex', 'flex-wrap': 'wrap' }, childs);
+        const ele = $.element('div', {}, { 'width': '10em', 'display': 'flex', 'flex-wrap': 'wrap' }, childs);
         this.layer = new Layer(ele, node);
     }
 

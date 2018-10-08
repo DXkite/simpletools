@@ -1,0 +1,48 @@
+@import '../scss/animation/fadeIn';
+@import '../scss/animation/fadeOut';
+
+@keyframes slideUpIn {
+    from {
+        transform: translate3d(0, 100%, 0);
+        opacity: 0;
+    }
+    to {
+        transform: translate3d(0, 0, 0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideUpOut {
+    from {
+        transform: translate3d(0, 0, 0);
+        opacity: 1;
+    }
+    to {
+        transform: translate3d(0, 100%, 0);
+        pointer-events: none;
+        opacity: 0;
+    }
+}
+
+@keyframes slideDownIn {
+    from {
+        transform: translate3d(0, -100%, 0);
+        opacity: 0;
+    }
+    to {
+        transform: translate3d(0, 0, 0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideDownOut {
+    from {
+        transform: translate3d(0, 0, 0);
+        opacity: 1;
+    }
+    to {
+        transform: translate3d(0, -100%, 0);
+        pointer-events: none;
+        opacity: 0;
+    }
+}

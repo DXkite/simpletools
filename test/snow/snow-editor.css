@@ -1,3 +1,49 @@
+@keyframes fadeIn {
+  from {
+    opacity: 0; }
+  to {
+    opacity: 1; } }
+.animation-fade-in {
+  animation: fadeIn ease .3s forwards; }
+
+@keyframes fadeOut {
+  from {
+    opacity: 1; }
+  to {
+    opacity: 0; } }
+.animation-fade-out {
+  animation: fadeOut ease .3s forwards; }
+
+@keyframes slideUpIn {
+  from {
+    transform: translate3d(0, 100%, 0);
+    opacity: 0; }
+  to {
+    transform: translate3d(0, 0, 0);
+    opacity: 1; } }
+@keyframes slideUpOut {
+  from {
+    transform: translate3d(0, 0, 0);
+    opacity: 1; }
+  to {
+    transform: translate3d(0, 100%, 0);
+    pointer-events: none;
+    opacity: 0; } }
+@keyframes slideDownIn {
+  from {
+    transform: translate3d(0, -100%, 0);
+    opacity: 0; }
+  to {
+    transform: translate3d(0, 0, 0);
+    opacity: 1; } }
+@keyframes slideDownOut {
+  from {
+    transform: translate3d(0, 0, 0);
+    opacity: 1; }
+  to {
+    transform: translate3d(0, -100%, 0);
+    pointer-events: none;
+    opacity: 0; } }
 .snow-toolbar {
   background-color: #dee2e6;
   display: -ms-flexbox;

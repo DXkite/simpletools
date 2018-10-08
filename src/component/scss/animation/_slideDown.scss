@@ -1,0 +1,13 @@
+@keyframes slideDown {
+    from {
+        transform: translate3d(0, 0, 0);
+    }
+
+    to {
+        transform: translate3d(0, 100%, 0);
+    }
+}
+
+.animation-slide-down {
+    animation: slideDown ease .3s forwards;
+}

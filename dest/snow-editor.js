@@ -171,7 +171,7 @@ DomElement.method.extend({
 
 exports.default = DomElement;
 
-},{"../util/fixCssPrefix":4,"../util/isArray":7}],3:[function(require,module,exports){
+},{"../util/fixCssPrefix":4,"../util/isArray":8}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -192,6 +192,10 @@ var _DomElement = require('../dom/DomElement');
 
 var _DomElement2 = _interopRequireDefault(_DomElement);
 
+var _getPlatform = require('../util/getPlatform');
+
+var _getPlatform2 = _interopRequireDefault(_getPlatform);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -199,71 +203,97 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var defaultZIndexLevel = _config2.default.popLayerLevel || 99999;
 var n = _DomElement2.default.element;
 var STR = {
-    layerId: 'snow-layer-shade'
+    layerId: 'snow-layer-shade',
+    parentDropDown: 'parentDropDown',
+    windowPop: 'windowPop',
+    windowSlideUp: 'windowSlideUp'
 };
+
 var layerCounter = 0;
 
 function getBody() {
     return document.getElementsByTagName('body')[0];
 }
 
-function displayInWindow(windowSize, elemSize) {
+function initDisplayInWindow(showElement, windowSize, elemSize) {
+
     var shade = this.config.shade || true;
     var hideInShadeClick = this.config.shadeClickHide || true;
+    var layerPop = this.config.pop || (0, _getPlatform2.default)() === 'pc';
     var layer = this;
-
+    var animationTime = this.animationTime;
     if (shade) {
-        var shadeEle = document.getElementById(STR.layerId);
-        if (shadeEle === null && shade) {
-            var style = window.getComputedStyle(this.$element);
-            var shadeEle = n('div', {
-                id: STR.layerId,
-                onclick: function onclick() {
-                    if (hideInShadeClick) {
-                        layer.hide();
-                        (0, _DomElement2.default)(shadeEle).css({ display: 'none' });
-                    }
+        var style = window.getComputedStyle(showElement);
+        this.showShade = n('div', {
+            id: STR.layerId,
+            onclick: function onclick() {
+                if (hideInShadeClick) {
+                    layer.hide();
+                    (0, _DomElement2.default)(layer.showShade).css({ display: 'none' });
                 }
-            }, {
-                position: 'fixed',
-                top: 0, left: 0, right: 0, bottom: 0,
-                zIndex: style.zIndex - 10,
-                backgroundColor: 'rgba(0,0,0,0.4)'
-            });
-            getBody().appendChild(shadeEle);
-            this.$shadeElem = shadeEle;
-        }
+            }
+        }, {
+            position: 'fixed',
+            top: 0, left: 0, right: 0, bottom: 0,
+            zIndex: style.zIndex - 10,
+            animation: 'fadeIn ease ' + animationTime + 's forwards',
+            backgroundColor: 'rgba(0,0,0,0.4)'
+        });
+        getBody().appendChild(this.showShade);
+    }
 
-        (0, _DomElement2.default)(this.$element).css({
+    if (layerPop) {
+        (0, _DomElement2.default)(showElement).css({
             left: elemSize.width >= windowSize.width ? '0px' : windowSize.width / 2 - elemSize.width / 2 + 'px',
             top: elemSize.height >= windowSize.height ? windowSize.height + 'px' : windowSize.height / 2 - elemSize.height / 2 + 'px',
             overflow: 'auto',
             maxHeight: '100%',
             maxWidth: '100%',
-            display: 'block'
+            animation: 'fadeIn ease ' + animationTime + 's forwards'
         });
+        this.showState = STR.windowPop;
+    } else {
+        (0, _DomElement2.default)(showElement).css({
+            left: '0px',
+            top: elemSize.height >= windowSize.height ? windowSize.height * 0.8 + 'px' : null,
+            bottom: '0px',
+            overflow: 'auto',
+            maxHeight: '80%',
+            maxWidth: '100%',
+            width: '100%',
+            animation: getAnimtion(this.animation, 'slideUp', 'In') + ' ease ' + animationTime + 's forwards'
+        });
+        this.showState = STR.windowSlideUp;
     }
 }
 
-function displayInParent(size) {
-    (0, _DomElement2.default)(this.$element).css({ 'left': size.left + 'px', 'top': size.top + size.height + 'px', 'display': 'block' });
+function initDisplayAfterParent(showElement, size) {
+    var animationTime = this.animationTime;
+    this.showState = STR.parentDropDown;
+    this.showShade = null;
+    (0, _DomElement2.default)(showElement).css({
+        'left': size.left + 'px',
+        'top': size.top + size.height + 'px',
+        animation: getAnimtion(this.animation, 'slideUp', 'In') + ' ease ' + animationTime + 's forwards'
+    });
 }
 
 function judgeDisplay() {
-
-    if (!document.getElementById(this.id)) {
-        getBody().appendChild(this.$element);
-    }
-
+    var showElement = n('div', { id: 'pop-layer-' + this.id }, { display: 'block', position: 'fixed', zIndex: defaultZIndexLevel }, this.$element);
+    getBody().appendChild(showElement);
+    this.showElement = showElement;
     var size = (0, _getSize2.default)(this.$parent);
-    var eleSize = (0, _getSize2.default)(this.$element);
+    var eleSize = (0, _getSize2.default)(showElement);
     var windowSize = (0, _getSize2.default)(null);
-
     if (size.left + eleSize.width > windowSize.width) {
-        displayInWindow.call(this, windowSize, eleSize);
+        initDisplayInWindow.call(this, showElement, windowSize, eleSize);
     } else {
-        displayInParent.call(this, size);
+        initDisplayAfterParent.call(this, showElement, size);
     }
+}
+
+function getAnimtion(name, def, subfix) {
+    return (name || def) + subfix;
 }
 
 /**
@@ -272,41 +302,83 @@ function judgeDisplay() {
  */
 
 var PopLayer = function () {
+
+    /**
+     * 创建一个弹出层
+     * 
+     * @param {Element} element 显示的元素
+     * @param {Element|Window} parent 显示的父元素 
+     * @param {Array} config 配置
+     */
     function PopLayer(element, parent, config) {
         _classCallCheck(this, PopLayer);
 
         this.$parent = parent || window;
+        this.$element = element;
         this.config = config || { shade: true };
         this.id = layerCounter++;
-        this.$element = n('div', {
-            id: 'pop-layer-' + this.id
-        }, {
-            display: 'block',
-            position: 'fixed',
-            zIndex: defaultZIndexLevel
-        }, element);
+        this.animation = this.config.animation;
     }
+
+    /**
+     * 显示
+     */
+
 
     _createClass(PopLayer, [{
         key: 'show',
         value: function show() {
-            if (this.inited) {
-                if (this.$shadeElem) {
-                    (0, _DomElement2.default)(this.$shadeElem).css({ 'display': 'block' });
-                }
-                (0, _DomElement2.default)(this.$element).css({ 'display': 'block' });
-            } else {
-                judgeDisplay.call(this);
-                this.inited = true;
+            judgeDisplay.call(this);
+            (0, _DomElement2.default)(this.showElement).css({ 'display': 'block' });
+            if (this.showShade) {
+                (0, _DomElement2.default)(this.showShade).css({ 'display': 'block' });
             }
         }
+
+        /**
+         * 获取动画时长
+         */
+
     }, {
         key: 'hide',
+
+
+        /**
+         * 隐藏
+         */
         value: function hide() {
-            (0, _DomElement2.default)(this.$element).css({ 'display': 'none' });
-            if (this.$shadeElem) {
-                (0, _DomElement2.default)(this.$shadeElem).css({ 'display': 'none' });
+            var _this = this;
+
+            var animationTime = this.animationTime;
+            var timeout = animationTime * 1000;
+            var showElement = this.showElement;
+            if (this.showState === STR.windowSlideUp) {
+                (0, _DomElement2.default)(showElement).css({
+                    animation: getAnimtion(this.animation, 'slideUp', 'Out') + ' ease ' + animationTime + 's forwards'
+                });
+            } else if (this.showState === STR.parentDropDown) {
+                (0, _DomElement2.default)(showElement).css({
+                    animation: getAnimtion(this.animation, 'slideUp', 'Out') + ' ease ' + animationTime + 's forwards'
+                });
+            } else if (this.showState === STR.windowPop) {
+                (0, _DomElement2.default)(showElement).css({
+                    animation: 'fadeOut ease ' + animationTime + 's forwards'
+                });
             }
+            if (this.showShade) {
+                (0, _DomElement2.default)(this.showShade).css({ animation: 'fadeOut ease ' + animationTime + 's forwards' });
+            }
+            setTimeout(function () {
+                getBody().removeChild(showElement);
+                if (_this.showShade) {
+                    getBody().removeChild(_this.showShade);
+                }
+            }, timeout);
+        }
+    }, {
+        key: 'animationTime',
+        get: function get() {
+            return this.config.animationTime || .3;
         }
     }]);
 
@@ -315,7 +387,7 @@ var PopLayer = function () {
 
 exports.default = PopLayer;
 
-},{"../config":1,"../dom/DomElement":2,"../util/getSize":5}],4:[function(require,module,exports){
+},{"../config":1,"../dom/DomElement":2,"../util/getPlatform":5,"../util/getSize":6}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -339,6 +411,26 @@ function fixCssPrefix(name) {
 }
 
 },{}],5:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function () {
+    var agent = navigator.userAgent;
+    if (agent.match(/(Mobile|Android|Linux|iPhone|iPad)/i)) {
+        if (agent.match(/(Android|Linux)/i)) {
+            return 'android';
+        } else {
+            return 'ios';
+        }
+    } else {
+        return 'pc';
+    }
+};
+
+},{}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -370,7 +462,7 @@ function getSize(elem) {
     }
 }
 
-},{"./getWindowSize":6}],6:[function(require,module,exports){
+},{"./getWindowSize":7}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -391,7 +483,7 @@ function getWindowSizes() {
     };
 }
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -406,7 +498,7 @@ function isArray(obj) {
   return obj instanceof Array;
 }
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -433,7 +525,7 @@ var config = {
 
 exports.default = config;
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -682,7 +774,7 @@ var SnowEditor = function () {
 
 exports.default = SnowEditor;
 
-},{"../component/dom/DomElement":2}],10:[function(require,module,exports){
+},{"../component/dom/DomElement":2}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -734,7 +826,7 @@ var Component = function () {
 
 exports.default = Component;
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -782,7 +874,6 @@ var RangeComponent = function (_Component) {
             if (this.editor.range) {
                 var range = this.onRangeAction(this.editor.range, event) || this.editor.range;
                 this.editor.range = range;
-                console.log(range);
             }
         }
     }]);
@@ -792,7 +883,7 @@ var RangeComponent = function (_Component) {
 
 exports.default = RangeComponent;
 
-},{"./Component":10}],12:[function(require,module,exports){
+},{"./Component":11}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -844,7 +935,7 @@ var RedoCommandComponent = function (_Component) {
 
 exports.default = RedoCommandComponent;
 
-},{"../Component":10}],13:[function(require,module,exports){
+},{"../Component":11}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -896,7 +987,7 @@ var UndoCommandComponent = function (_Component) {
 
 exports.default = UndoCommandComponent;
 
-},{"../Component":10}],14:[function(require,module,exports){
+},{"../Component":11}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -959,7 +1050,7 @@ var CenterLayoutComponent = function (_RangeComponent) {
 
 exports.default = CenterLayoutComponent;
 
-},{"../Range":11}],15:[function(require,module,exports){
+},{"../Range":12}],16:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1022,7 +1113,7 @@ var LeftLayoutComponent = function (_RangeComponent) {
 
 exports.default = LeftLayoutComponent;
 
-},{"../Range":11}],16:[function(require,module,exports){
+},{"../Range":12}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1085,7 +1176,7 @@ var RightLayoutComponent = function (_RangeComponent) {
 
 exports.default = RightLayoutComponent;
 
-},{"../Range":11}],17:[function(require,module,exports){
+},{"../Range":12}],18:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1148,7 +1239,7 @@ var BoldStyleComponent = function (_RangeComponent) {
 
 exports.default = BoldStyleComponent;
 
-},{"../Range":11}],18:[function(require,module,exports){
+},{"../Range":12}],19:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1211,7 +1302,7 @@ var ItalicStyleComponent = function (_RangeComponent) {
 
 exports.default = ItalicStyleComponent;
 
-},{"../Range":11}],19:[function(require,module,exports){
+},{"../Range":12}],20:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1274,7 +1365,7 @@ var UnderlineStyleComponent = function (_RangeComponent) {
 
 exports.default = UnderlineStyleComponent;
 
-},{"../Range":11}],20:[function(require,module,exports){
+},{"../Range":12}],21:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1343,7 +1434,7 @@ var EmotionComponent = function (_RangeComponent) {
                     });
                 }
             });
-            var ele = _DomElement2.default.element('div', {}, { 'width': '16em', 'display': 'flex', 'flex-wrap': 'wrap' }, childs);
+            var ele = _DomElement2.default.element('div', {}, { 'width': '10em', 'display': 'flex', 'flex-wrap': 'wrap' }, childs);
             this.layer = new _PopLayer2.default(ele, node);
         }
     }, {
@@ -1379,7 +1470,7 @@ var EmotionComponent = function (_RangeComponent) {
 
 exports.default = EmotionComponent;
 
-},{"../../../component/dom/DomElement":2,"../../../component/poplayer/PopLayer":3,"../Range":11,"./emotion/Text":22}],21:[function(require,module,exports){
+},{"../../../component/dom/DomElement":2,"../../../component/poplayer/PopLayer":3,"../Range":12,"./emotion/Text":23}],22:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1398,7 +1489,7 @@ var EmotionObj = function EmotionObj(title, html, view) {
 
 exports.default = EmotionObj;
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1438,7 +1529,7 @@ var TextEmotions = function () {
 
 exports.default = TextEmotions;
 
-},{"./Object":21}],23:[function(require,module,exports){
+},{"./Object":22}],24:[function(require,module,exports){
 'use strict';
 
 var _config = require('./config');
@@ -1504,4 +1595,4 @@ _SnowEditor2.default.registerComponent(_Redo2.default);
 
 _SnowEditor2.default.registerComponent(_Emotion2.default);
 
-},{"./config":8,"./editor/SnowEditor":9,"./editor/component/command/Redo":12,"./editor/component/command/Undo":13,"./editor/component/layout/Center":14,"./editor/component/layout/Left":15,"./editor/component/layout/Right":16,"./editor/component/style/Bold":17,"./editor/component/style/Italic":18,"./editor/component/style/Underline":19,"./editor/component/tool/Emotion":20}]},{},[23]);
+},{"./config":9,"./editor/SnowEditor":10,"./editor/component/command/Redo":13,"./editor/component/command/Undo":14,"./editor/component/layout/Center":15,"./editor/component/layout/Left":16,"./editor/component/layout/Right":17,"./editor/component/style/Bold":18,"./editor/component/style/Italic":19,"./editor/component/style/Underline":20,"./editor/component/tool/Emotion":21}]},{},[24]);
