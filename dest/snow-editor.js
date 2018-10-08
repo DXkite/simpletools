@@ -206,7 +206,10 @@ var STR = {
     layerId: 'snow-layer-shade',
     parentDropDown: 'parentDropDown',
     windowPop: 'windowPop',
-    windowSlideUp: 'windowSlideUp'
+    windowSlideUp: 'windowSlideUp',
+    direction: 'Bottom',
+    fadeIn: 'fadeIn',
+    fadeOut: 'fadeOut'
 };
 
 var layerCounter = 0;
@@ -236,7 +239,7 @@ function initDisplayInWindow(showElement, windowSize, elemSize) {
             position: 'fixed',
             top: 0, left: 0, right: 0, bottom: 0,
             zIndex: style.zIndex - 10,
-            animation: 'fadeIn ease ' + animationTime + 's forwards',
+            animation: STR.fadeIn + ' ease ' + animationTime + 's forwards',
             backgroundColor: 'rgba(0,0,0,0.4)'
         });
         getBody().appendChild(this.showShade);
@@ -249,7 +252,7 @@ function initDisplayInWindow(showElement, windowSize, elemSize) {
             overflow: 'auto',
             maxHeight: '100%',
             maxWidth: '100%',
-            animation: 'fadeIn ease ' + animationTime + 's forwards'
+            animation: STR.fadeIn + ' ease ' + animationTime + 's forwards'
         });
         this.showState = STR.windowPop;
     } else {
@@ -261,7 +264,7 @@ function initDisplayInWindow(showElement, windowSize, elemSize) {
             maxHeight: '80%',
             maxWidth: '100%',
             width: '100%',
-            animation: getAnimtion(this.animation, 'slideUp', 'In') + ' ease ' + animationTime + 's forwards'
+            animation: getAnimtion(this.direction, STR.direction, 'In') + ' ease ' + animationTime + 's forwards'
         });
         this.showState = STR.windowSlideUp;
     }
@@ -274,7 +277,7 @@ function initDisplayAfterParent(showElement, size) {
     (0, _DomElement2.default)(showElement).css({
         'left': size.left + 'px',
         'top': size.top + size.height + 'px',
-        animation: getAnimtion(this.animation, 'slideUp', 'In') + ' ease ' + animationTime + 's forwards'
+        animation: getAnimtion(this.direction, STR.direction, 'In') + ' ease ' + animationTime + 's forwards'
     });
 }
 
@@ -293,7 +296,7 @@ function judgeDisplay() {
 }
 
 function getAnimtion(name, def, subfix) {
-    return (name || def) + subfix;
+    return 'slide' + (name || def) + subfix;
 }
 
 /**
@@ -317,7 +320,7 @@ var PopLayer = function () {
         this.$element = element;
         this.config = config || { shade: true };
         this.id = layerCounter++;
-        this.animation = this.config.animation;
+        this.direction = this.config.direction;
     }
 
     /**
@@ -354,19 +357,19 @@ var PopLayer = function () {
             var showElement = this.showElement;
             if (this.showState === STR.windowSlideUp) {
                 (0, _DomElement2.default)(showElement).css({
-                    animation: getAnimtion(this.animation, 'slideUp', 'Out') + ' ease ' + animationTime + 's forwards'
+                    animation: getAnimtion(this.direction, STR.direction, 'Out') + ' ease ' + animationTime + 's forwards'
                 });
             } else if (this.showState === STR.parentDropDown) {
                 (0, _DomElement2.default)(showElement).css({
-                    animation: getAnimtion(this.animation, 'slideUp', 'Out') + ' ease ' + animationTime + 's forwards'
+                    animation: getAnimtion(this.direction, STR.direction, 'Out') + ' ease ' + animationTime + 's forwards'
                 });
             } else if (this.showState === STR.windowPop) {
                 (0, _DomElement2.default)(showElement).css({
-                    animation: 'fadeOut ease ' + animationTime + 's forwards'
+                    animation: STR.fadeOut + ' ease ' + animationTime + 's forwards'
                 });
             }
             if (this.showShade) {
-                (0, _DomElement2.default)(this.showShade).css({ animation: 'fadeOut ease ' + animationTime + 's forwards' });
+                (0, _DomElement2.default)(this.showShade).css({ animation: STR.fadeOut + ' ease ' + animationTime + 's forwards' });
             }
             setTimeout(function () {
                 getBody().removeChild(showElement);
@@ -1417,8 +1420,6 @@ var EmotionComponent = function (_RangeComponent) {
                 var emotion = null;
                 if (element.type === 'text') {
                     emotion = new _Text2.default(element);
-                } else {
-                    emotion = new SplitEmotions(element);
                 }
                 if (emotion) {
                     emotion.content.forEach(function (emotionObj) {

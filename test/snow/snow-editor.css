@@ -14,34 +14,64 @@
 .animation-fade-out {
   animation: fadeOut ease .3s forwards; }
 
-@keyframes slideUpIn {
+@keyframes slideTopIn {
   from {
-    transform: translate3d(0, 100%, 0);
+    transform: translateY(100%);
     opacity: 0; }
   to {
-    transform: translate3d(0, 0, 0);
+    transform: translateY(0);
     opacity: 1; } }
-@keyframes slideUpOut {
+@keyframes slideTopOut {
   from {
-    transform: translate3d(0, 0, 0);
+    transform: translateY(0);
     opacity: 1; }
   to {
-    transform: translate3d(0, 100%, 0);
+    transform: translateY(100%);
     pointer-events: none;
     opacity: 0; } }
-@keyframes slideDownIn {
+@keyframes slideBottomIn {
   from {
-    transform: translate3d(0, -100%, 0);
+    transform: translateY(100%);
     opacity: 0; }
   to {
-    transform: translate3d(0, 0, 0);
+    transform: translateY(0);
     opacity: 1; } }
-@keyframes slideDownOut {
+@keyframes slideBottomOut {
   from {
-    transform: translate3d(0, 0, 0);
+    transform: translateY(0);
     opacity: 1; }
   to {
-    transform: translate3d(0, -100%, 0);
+    transform: translateY(100%);
+    pointer-events: none;
+    opacity: 0; } }
+@keyframes slideLeftIn {
+  from {
+    transform: translateX(-100%);
+    opacity: 0; }
+  to {
+    transform: translateX(0);
+    opacity: 1; } }
+@keyframes slideLeftOut {
+  from {
+    transform: translateX(0);
+    opacity: 1; }
+  to {
+    transform: translateX(-100%);
+    pointer-events: none;
+    opacity: 0; } }
+@keyframes slideRightIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0; }
+  to {
+    transform: translateX(0);
+    opacity: 1; } }
+@keyframes slideRightOut {
+  from {
+    transform: translateX(0);
+    opacity: 1; }
+  to {
+    transform: translateX(100%);
     pointer-events: none;
     opacity: 0; } }
 .snow-toolbar {

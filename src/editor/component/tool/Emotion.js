@@ -13,8 +13,6 @@ class EmotionComponent extends RangeComponent {
             var emotion = null;
             if (element.type === 'text') {
                 emotion = new TextEmotions(element);
-            } else {
-                emotion = new SplitEmotions(element);
             }
             if (emotion) {
                 emotion.content.forEach(emotionObj => {

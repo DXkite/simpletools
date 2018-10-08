@@ -10,6 +10,9 @@ const STR = {
     parentDropDown: 'parentDropDown',
     windowPop: 'windowPop',
     windowSlideUp: 'windowSlideUp',
+    direction: 'Bottom',
+    fadeIn: 'fadeIn',
+    fadeOut: 'fadeOut',
 }
 
 let layerCounter = 0;
@@ -40,7 +43,7 @@ function initDisplayInWindow(showElement, windowSize, elemSize) {
                 position: 'fixed',
                 top: 0, left: 0, right: 0, bottom: 0,
                 zIndex: style.zIndex - 10,
-                animation: 'fadeIn ease ' + animationTime + 's forwards',
+                animation: STR.fadeIn + ' ease ' + animationTime + 's forwards',
                 backgroundColor: 'rgba(0,0,0,0.4)'
             }
         );
@@ -54,7 +57,7 @@ function initDisplayInWindow(showElement, windowSize, elemSize) {
             overflow: 'auto',
             maxHeight: '100%',
             maxWidth: '100%',
-            animation: 'fadeIn ease ' + animationTime + 's forwards',
+            animation: STR.fadeIn + ' ease ' + animationTime + 's forwards',
         });
         this.showState = STR.windowPop;
     } else {
@@ -66,7 +69,7 @@ function initDisplayInWindow(showElement, windowSize, elemSize) {
             maxHeight: '80%',
             maxWidth: '100%',
             width: '100%',
-            animation: getAnimtion(this.animation, 'slideUp', 'In') + ' ease ' + animationTime + 's forwards',
+            animation: getAnimtion(this.direction, STR.direction, 'In') + ' ease ' + animationTime + 's forwards',
         });
         this.showState = STR.windowSlideUp;
     }
@@ -80,7 +83,7 @@ function initDisplayAfterParent(showElement, size) {
     $(showElement).css({
         'left': size.left + 'px',
         'top': (size.top + size.height) + 'px',
-        animation: getAnimtion(this.animation, 'slideUp', 'In') + ' ease ' + animationTime + 's forwards',
+        animation: getAnimtion(this.direction, STR.direction, 'In') + ' ease ' + animationTime + 's forwards',
     });
 }
 
@@ -99,7 +102,7 @@ function judgeDisplay() {
 }
 
 function getAnimtion(name, def, subfix) {
-    return (name || def) + subfix;
+    return 'slide'+(name || def) + subfix;
 }
 
 
@@ -121,7 +124,7 @@ class PopLayer {
         this.$element = element;
         this.config = config || { shade: true };
         this.id = layerCounter++;
-        this.animation = this.config.animation;
+        this.direction = this.config.direction;
     }
 
     /**
@@ -151,19 +154,19 @@ class PopLayer {
         const showElement = this.showElement;
         if (this.showState === STR.windowSlideUp) {
             $(showElement).css({
-                animation: getAnimtion(this.animation, 'slideUp', 'Out') + ' ease ' + animationTime + 's forwards'
+                animation: getAnimtion(this.direction, STR.direction, 'Out') + ' ease ' + animationTime + 's forwards'
             });
         } else if (this.showState === STR.parentDropDown) {
             $(showElement).css({
-                animation: getAnimtion(this.animation, 'slideUp', 'Out') + ' ease ' + animationTime + 's forwards'
+                animation: getAnimtion(this.direction, STR.direction, 'Out') + ' ease ' + animationTime + 's forwards'
             });
         } else if (this.showState === STR.windowPop) {
             $(showElement).css({
-                animation: 'fadeOut ease ' + animationTime + 's forwards'
+                animation: STR.fadeOut + ' ease ' + animationTime + 's forwards'
             });
         }
         if (this.showShade) {
-            $(this.showShade).css({ animation: 'fadeOut ease ' + animationTime + 's forwards' });
+            $(this.showShade).css({ animation: STR.fadeOut + ' ease ' + animationTime + 's forwards' });
         }
         setTimeout(() => {
             getBody().removeChild(showElement);
