@@ -16,7 +16,7 @@ function onStateChange() {
 }
 
 function createEditorView(editor) {
-    let element = editor.element;
+    let element = editor.$element;
     editor.$toolbar = n('div', {
         class: 'snow-toolbar'
     });
@@ -75,6 +75,7 @@ function createToolBar(editor) {
                     }
                 }, {}, comp.view);
                 comp.node = node;
+                comp.init.call(comp, node);
                 editor.components.set(comp.name, comp);
             }
         });
@@ -104,10 +105,10 @@ class SnowEditor {
 
     constructor(config) {
         this.config = Object.assign(config, defaultConfig);
-        this.element = document.querySelector(config.target);
+        this.$element = document.querySelector(config.target);
         this.listener = {};
         this._foucs = false;
-        this.id = editorCounter ++;
+        this.id = editorCounter++;
         this.$ = Dom;
         createEditorView(this);
         createToolBar(this);

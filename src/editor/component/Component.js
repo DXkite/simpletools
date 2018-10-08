@@ -6,6 +6,10 @@ class Component {
         
     }
 
+    init(node) {
+
+    }
+
     onClick(event) {
     }
 

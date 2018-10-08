@@ -1,20 +1,9 @@
 
-class EditHistory {
+class HistoryManager {
     constructor(editor) {
-
+        this.history = [];
     }
-    onContentChange(content) {
-        console.log('hsitory', content);
-    }
-    save() {
-
-    }
-    reset() {
-
-    }
-    go(index) {
-
-    }
+    
 }
 
-export default EditHistory
+export default HistoryManager

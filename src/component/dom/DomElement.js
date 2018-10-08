@@ -141,5 +141,5 @@ DomElement.method.extend({
         return this;
     }
 });
-
+        
 export default DomElement

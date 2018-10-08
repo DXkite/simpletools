@@ -1,4 +1,4 @@
-/*! snow-editor by dxkite 2018-10-07 */
+/*! snow-editor by dxkite 2018-10-08 */
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
 
@@ -171,7 +171,7 @@ DomElement.method.extend({
 
 exports.default = DomElement;
 
-},{"../util/fixCssPrefix":4,"../util/isArray":5}],3:[function(require,module,exports){
+},{"../util/fixCssPrefix":4,"../util/isArray":7}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -184,6 +184,10 @@ var _config = require('../config');
 
 var _config2 = _interopRequireDefault(_config);
 
+var _getSize = require('../util/getSize');
+
+var _getSize2 = _interopRequireDefault(_getSize);
+
 var _DomElement = require('../dom/DomElement');
 
 var _DomElement2 = _interopRequireDefault(_DomElement);
@@ -194,10 +198,73 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var defaultZIndexLevel = _config2.default.popLayerLevel || 99999;
 var n = _DomElement2.default.element;
-
+var STR = {
+    layerId: 'snow-layer-shade'
+};
 var layerCounter = 0;
 
-function getParentBox() {}
+function getBody() {
+    return document.getElementsByTagName('body')[0];
+}
+
+function displayInWindow(windowSize, elemSize) {
+    var shade = this.config.shade || true;
+    var hideInShadeClick = this.config.shadeClickHide || true;
+    var layer = this;
+
+    if (shade) {
+        var shadeEle = document.getElementById(STR.layerId);
+        if (shadeEle === null && shade) {
+            var style = window.getComputedStyle(this.$element);
+            var shadeEle = n('div', {
+                id: STR.layerId,
+                onclick: function onclick() {
+                    if (hideInShadeClick) {
+                        layer.hide();
+                        (0, _DomElement2.default)(shadeEle).css({ display: 'none' });
+                    }
+                }
+            }, {
+                position: 'fixed',
+                top: 0, left: 0, right: 0, bottom: 0,
+                zIndex: style.zIndex - 10,
+                backgroundColor: 'rgba(0,0,0,0.4)'
+            });
+            getBody().appendChild(shadeEle);
+            this.$shadeElem = shadeEle;
+        }
+
+        (0, _DomElement2.default)(this.$element).css({
+            left: elemSize.width >= windowSize.width ? '0px' : windowSize.width / 2 - elemSize.width / 2 + 'px',
+            top: elemSize.height >= windowSize.height ? windowSize.height + 'px' : windowSize.height / 2 - elemSize.height / 2 + 'px',
+            overflow: 'auto',
+            maxHeight: '100%',
+            maxWidth: '100%',
+            display: 'block'
+        });
+    }
+}
+
+function displayInParent(size) {
+    (0, _DomElement2.default)(this.$element).css({ 'left': size.left + 'px', 'top': size.top + size.height + 'px', 'display': 'block' });
+}
+
+function judgeDisplay() {
+
+    if (!document.getElementById(this.id)) {
+        getBody().appendChild(this.$element);
+    }
+
+    var size = (0, _getSize2.default)(this.$parent);
+    var eleSize = (0, _getSize2.default)(this.$element);
+    var windowSize = (0, _getSize2.default)(null);
+
+    if (size.left + eleSize.width > windowSize.width) {
+        displayInWindow.call(this, windowSize, eleSize);
+    } else {
+        displayInParent.call(this, size);
+    }
+}
 
 /**
  * 自动弹出层
@@ -205,12 +272,15 @@ function getParentBox() {}
  */
 
 var PopLayer = function () {
-    function PopLayer(element, parent) {
+    function PopLayer(element, parent, config) {
         _classCallCheck(this, PopLayer);
 
-        this.$parent = parent | window;
+        this.$parent = parent || window;
+        this.config = config || { shade: true };
         this.id = layerCounter++;
-        this.$element = n('div', { id: 'pop-layer-' + this.id }, {
+        this.$element = n('div', {
+            id: 'pop-layer-' + this.id
+        }, {
             display: 'block',
             position: 'fixed',
             zIndex: defaultZIndexLevel
@@ -220,16 +290,23 @@ var PopLayer = function () {
     _createClass(PopLayer, [{
         key: 'show',
         value: function show() {
-            if (document.getElementById(this.id)) {
+            if (this.inited) {
+                if (this.$shadeElem) {
+                    (0, _DomElement2.default)(this.$shadeElem).css({ 'display': 'block' });
+                }
                 (0, _DomElement2.default)(this.$element).css({ 'display': 'block' });
             } else {
-                document.getElementsByTagName('body')[0].appendChild(this.$element);
+                judgeDisplay.call(this);
+                this.inited = true;
             }
         }
     }, {
         key: 'hide',
         value: function hide() {
             (0, _DomElement2.default)(this.$element).css({ 'display': 'none' });
+            if (this.$shadeElem) {
+                (0, _DomElement2.default)(this.$shadeElem).css({ 'display': 'none' });
+            }
         }
     }]);
 
@@ -238,7 +315,7 @@ var PopLayer = function () {
 
 exports.default = PopLayer;
 
-},{"../config":1,"../dom/DomElement":2}],4:[function(require,module,exports){
+},{"../config":1,"../dom/DomElement":2,"../util/getSize":5}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -262,6 +339,59 @@ function fixCssPrefix(name) {
 }
 
 },{}],5:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = getSize;
+
+var _getWindowSize2 = require('./getWindowSize');
+
+var _getWindowSize3 = _interopRequireDefault(_getWindowSize2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function getSize(elem) {
+    if (elem instanceof Element) {
+        return elem.getBoundingClientRect();
+    } else {
+        var _getWindowSize = (0, _getWindowSize3.default)(),
+            width = _getWindowSize.width,
+            height = _getWindowSize.height;
+
+        var elementRect = {
+            width: width,
+            height: height,
+            left: 0,
+            top: 0
+        };
+        return elementRect;
+    }
+}
+
+},{"./getWindowSize":6}],6:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = getWindowSizes;
+
+function getSize(axis, body, html) {
+    return Math.max(body['offset' + axis], body['scroll' + axis], html['client' + axis], html['offset' + axis], html['scroll' + axis]);
+}
+
+function getWindowSizes() {
+    var body = window.document.body;
+    var html = window.document.documentElement;
+    return {
+        height: getSize('Height', body, html),
+        width: getSize('Width', body, html)
+    };
+}
+
+},{}],7:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -276,7 +406,7 @@ function isArray(obj) {
   return obj instanceof Array;
 }
 
-},{}],6:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -297,13 +427,13 @@ var config = {
     emotions: [{
         name: 'Emoji',
         type: 'text',
-        content: '😀 😃 😄 😁 😆 😅 😂 😊 😇 🙂 🙃 😉 😓 😪 😴 🙄 🤔 😬 🤐'.split(/\s/)
+        content: '😀 😃 😄 😁 😆 😅 😂 😊 😇 🙂 🙃 😉 😓 😪 😴 🙄 🤔 😬 🤐 😭'.split(/\s/)
     }]
 };
 
 exports.default = config;
 
-},{}],7:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -336,7 +466,7 @@ function onStateChange() {
 }
 
 function createEditorView(editor) {
-    var element = editor.element;
+    var element = editor.$element;
     editor.$toolbar = n('div', {
         class: 'snow-toolbar'
     });
@@ -394,6 +524,7 @@ function createToolBar(editor) {
                     }
                 }, {}, comp.view);
                 comp.node = node;
+                comp.init.call(comp, node);
                 editor.components.set(comp.name, comp);
             }
         });
@@ -422,7 +553,7 @@ var SnowEditor = function () {
         _classCallCheck(this, SnowEditor);
 
         this.config = Object.assign(config, defaultConfig);
-        this.element = document.querySelector(config.target);
+        this.$element = document.querySelector(config.target);
         this.listener = {};
         this._foucs = false;
         this.id = editorCounter++;
@@ -551,7 +682,7 @@ var SnowEditor = function () {
 
 exports.default = SnowEditor;
 
-},{"../component/dom/DomElement":2}],8:[function(require,module,exports){
+},{"../component/dom/DomElement":2}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -570,6 +701,9 @@ var Component = function () {
     }
 
     _createClass(Component, [{
+        key: 'init',
+        value: function init(node) {}
+    }, {
         key: 'onClick',
         value: function onClick(event) {}
     }, {
@@ -600,7 +734,7 @@ var Component = function () {
 
 exports.default = Component;
 
-},{}],9:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -648,6 +782,7 @@ var RangeComponent = function (_Component) {
             if (this.editor.range) {
                 var range = this.onRangeAction(this.editor.range, event) || this.editor.range;
                 this.editor.range = range;
+                console.log(range);
             }
         }
     }]);
@@ -657,7 +792,7 @@ var RangeComponent = function (_Component) {
 
 exports.default = RangeComponent;
 
-},{"./Component":8}],10:[function(require,module,exports){
+},{"./Component":10}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -709,7 +844,7 @@ var RedoCommandComponent = function (_Component) {
 
 exports.default = RedoCommandComponent;
 
-},{"../Component":8}],11:[function(require,module,exports){
+},{"../Component":10}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -761,7 +896,7 @@ var UndoCommandComponent = function (_Component) {
 
 exports.default = UndoCommandComponent;
 
-},{"../Component":8}],12:[function(require,module,exports){
+},{"../Component":10}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -824,7 +959,7 @@ var CenterLayoutComponent = function (_RangeComponent) {
 
 exports.default = CenterLayoutComponent;
 
-},{"../Range":9}],13:[function(require,module,exports){
+},{"../Range":11}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -887,7 +1022,7 @@ var LeftLayoutComponent = function (_RangeComponent) {
 
 exports.default = LeftLayoutComponent;
 
-},{"../Range":9}],14:[function(require,module,exports){
+},{"../Range":11}],16:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -950,7 +1085,7 @@ var RightLayoutComponent = function (_RangeComponent) {
 
 exports.default = RightLayoutComponent;
 
-},{"../Range":9}],15:[function(require,module,exports){
+},{"../Range":11}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1013,7 +1148,7 @@ var BoldStyleComponent = function (_RangeComponent) {
 
 exports.default = BoldStyleComponent;
 
-},{"../Range":9}],16:[function(require,module,exports){
+},{"../Range":11}],18:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1076,7 +1211,7 @@ var ItalicStyleComponent = function (_RangeComponent) {
 
 exports.default = ItalicStyleComponent;
 
-},{"../Range":9}],17:[function(require,module,exports){
+},{"../Range":11}],19:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1139,7 +1274,7 @@ var UnderlineStyleComponent = function (_RangeComponent) {
 
 exports.default = UnderlineStyleComponent;
 
-},{"../Range":9}],18:[function(require,module,exports){
+},{"../Range":11}],20:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1175,37 +1310,43 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var EmotionComponent = function (_RangeComponent) {
     _inherits(EmotionComponent, _RangeComponent);
 
-    function EmotionComponent(editor) {
+    function EmotionComponent() {
         _classCallCheck(this, EmotionComponent);
 
-        var _this = _possibleConstructorReturn(this, (EmotionComponent.__proto__ || Object.getPrototypeOf(EmotionComponent)).call(this, editor));
-
-        var childs = new Array();
-        _this.editor.config.emotions.forEach(function (element) {
-            var emotion = null;
-            if (element.type === 'text') {
-                emotion = new _Text2.default(element);
-            } else {
-                emotion = new SplitEmotions(element);
-            }
-            if (emotion) {
-                emotion.content.forEach(function (emotionObj) {
-                    var item = _DomElement2.default.element('span', {
-                        class: 'snow-tool-emotions-item',
-                        title: emotionObj.title,
-                        onclick: function onclick() {
-                            editor.exec('insertHTML', emotionObj.html);
-                        }
-                    }, {}, emotionObj.view);
-                    childs.push(item);
-                });
-            }
-        });
-        _this.layer = new _PopLayer2.default(_DomElement2.default.element('div', {}, {}, childs));
-        return _this;
+        return _possibleConstructorReturn(this, (EmotionComponent.__proto__ || Object.getPrototypeOf(EmotionComponent)).apply(this, arguments));
     }
 
     _createClass(EmotionComponent, [{
+        key: 'init',
+        value: function init(node) {
+            var childs = new Array();
+
+            var that = this;
+            this.editor.config.emotions.forEach(function (element) {
+                var emotion = null;
+                if (element.type === 'text') {
+                    emotion = new _Text2.default(element);
+                } else {
+                    emotion = new SplitEmotions(element);
+                }
+                if (emotion) {
+                    emotion.content.forEach(function (emotionObj) {
+                        var item = _DomElement2.default.element('span', {
+                            class: 'snow-tool-emotions-item',
+                            title: emotionObj.title,
+                            onclick: function onclick() {
+                                editor.exec('insertHTML', emotionObj.html);
+                                that.layer.hide();
+                            }
+                        }, {}, emotionObj.view);
+                        childs.push(item);
+                    });
+                }
+            });
+            var ele = _DomElement2.default.element('div', {}, { 'width': '16em', 'display': 'flex', 'flex-wrap': 'wrap' }, childs);
+            this.layer = new _PopLayer2.default(ele, node);
+        }
+    }, {
         key: 'onStatusChange',
         value: function onStatusChange() {
             if (this.editor.range) {
@@ -1238,7 +1379,7 @@ var EmotionComponent = function (_RangeComponent) {
 
 exports.default = EmotionComponent;
 
-},{"../../../component/dom/DomElement":2,"../../../component/poplayer/PopLayer":3,"../Range":9,"./emotion/Text":20}],19:[function(require,module,exports){
+},{"../../../component/dom/DomElement":2,"../../../component/poplayer/PopLayer":3,"../Range":11,"./emotion/Text":22}],21:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1257,7 +1398,7 @@ var EmotionObj = function EmotionObj(title, html, view) {
 
 exports.default = EmotionObj;
 
-},{}],20:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1297,7 +1438,7 @@ var TextEmotions = function () {
 
 exports.default = TextEmotions;
 
-},{"./Object":19}],21:[function(require,module,exports){
+},{"./Object":21}],23:[function(require,module,exports){
 'use strict';
 
 var _config = require('./config');
@@ -1363,4 +1504,4 @@ _SnowEditor2.default.registerComponent(_Redo2.default);
 
 _SnowEditor2.default.registerComponent(_Emotion2.default);
 
-},{"./config":6,"./editor/SnowEditor":7,"./editor/component/command/Redo":10,"./editor/component/command/Undo":11,"./editor/component/layout/Center":12,"./editor/component/layout/Left":13,"./editor/component/layout/Right":14,"./editor/component/style/Bold":15,"./editor/component/style/Italic":16,"./editor/component/style/Underline":17,"./editor/component/tool/Emotion":18}]},{},[21]);
+},{"./config":8,"./editor/SnowEditor":9,"./editor/component/command/Redo":12,"./editor/component/command/Undo":13,"./editor/component/layout/Center":14,"./editor/component/layout/Left":15,"./editor/component/layout/Right":16,"./editor/component/style/Bold":17,"./editor/component/style/Italic":18,"./editor/component/style/Underline":19,"./editor/component/tool/Emotion":20}]},{},[23]);

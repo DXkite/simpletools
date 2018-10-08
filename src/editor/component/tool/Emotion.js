@@ -5,10 +5,10 @@ import TextEmotions from './emotion/Text'
 
 
 class EmotionComponent extends RangeComponent {
-
-    constructor(editor) {
-        super(editor);
+    init(node) {
         var childs = new Array;
+        
+        const that = this;
         this.editor.config.emotions.forEach(element => {
             var emotion = null;
             if (element.type === 'text') {
@@ -17,19 +17,21 @@ class EmotionComponent extends RangeComponent {
                 emotion = new SplitEmotions(element);
             }
             if (emotion) {
-                emotion.content.forEach(emotionObj => { 
+                emotion.content.forEach(emotionObj => {
                     const item = $.element('span', {
                         class: 'snow-tool-emotions-item',
                         title: emotionObj.title,
                         onclick: function () {
                             editor.exec('insertHTML', emotionObj.html);
+                            that.layer.hide();
                         }
                     }, {}, emotionObj.view);
                     childs.push(item);
                 });
             }
         });
-        this.layer = new Layer($.element('div', {}, {}, childs));
+        const ele = $.element('div', {}, { 'width': '16em', 'display': 'flex', 'flex-wrap': 'wrap' }, childs);
+        this.layer = new Layer(ele, node);
     }
 
     get name() {

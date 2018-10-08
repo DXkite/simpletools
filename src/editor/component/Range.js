@@ -18,6 +18,7 @@ class RangeComponent extends Component {
         if (this.editor.range) {
             var range = this.onRangeAction(this.editor.range, event) || this.editor.range;
             this.editor.range = range;
+            console.log(range);
         }
     }
 }
