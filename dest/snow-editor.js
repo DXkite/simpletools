@@ -204,9 +204,9 @@ var defaultZIndexLevel = _config2.default.popLayerLevel || 99999;
 var n = _DomElement2.default.element;
 var STR = {
     layerId: 'snow-layer-shade',
-    parentDropDown: 'parentDropDown',
+    parentSide: 'parentSide',
     windowPop: 'windowPop',
-    windowSlideUp: 'windowSlideUp',
+    windowSide: 'windowSide',
     direction: 'Bottom',
     fadeIn: 'fadeIn',
     fadeOut: 'fadeOut'
@@ -218,70 +218,56 @@ function getBody() {
     return document.getElementsByTagName('body')[0];
 }
 
-function initDisplayInWindow(showElement, windowSize, elemSize) {
+function showElement(posOfParent, posOfWindow, posOfPop) {
 
-    var shade = this.config.shade || true;
-    var hideInShadeClick = this.config.shadeClickHide || true;
-    var layerPop = this.config.pop || (0, _getPlatform2.default)() === 'pc';
-    var layer = this;
-    var animationTime = this.animationTime;
-    if (shade) {
-        var style = window.getComputedStyle(showElement);
-        this.showShade = n('div', {
-            id: STR.layerId,
-            onclick: function onclick() {
-                if (hideInShadeClick) {
-                    layer.hide();
-                    (0, _DomElement2.default)(layer.showShade).css({ display: 'none' });
+    var initDisplayInWindow = function initDisplayInWindow(showElement) {
+        var shade = this.config.shade || true;
+        var hideInShadeClick = this.config.shadeClickHide || true;
+        var layerPop = this.config.pop || (0, _getPlatform2.default)() === 'pc';
+        var layer = this;
+        var animationTime = this.animationTime;
+        if (shade) {
+            var style = window.getComputedStyle(showElement);
+            this.showShade = n('div', {
+                id: STR.layerId,
+                onclick: function onclick() {
+                    if (hideInShadeClick) {
+                        layer.hide();
+                        (0, _DomElement2.default)(layer.showShade).css({ display: 'none' });
+                    }
                 }
-            }
-        }, {
-            position: 'fixed',
-            top: 0, left: 0, right: 0, bottom: 0,
-            zIndex: style.zIndex - 10,
-            animation: STR.fadeIn + ' ease ' + animationTime + 's forwards',
-            backgroundColor: 'rgba(0,0,0,0.4)'
-        });
-        getBody().appendChild(this.showShade);
-    }
+            }, {
+                position: 'fixed',
+                top: 0, left: 0, right: 0, bottom: 0,
+                zIndex: style.zIndex - 10,
+                animation: STR.fadeIn + ' ease ' + animationTime + 's forwards',
+                backgroundColor: 'rgba(0,0,0,0.4)'
+            });
+            getBody().appendChild(this.showShade);
+        }
 
-    if (layerPop) {
-        (0, _DomElement2.default)(showElement).css({
-            left: elemSize.width >= windowSize.width ? '0px' : windowSize.width / 2 - elemSize.width / 2 + 'px',
-            top: elemSize.height >= windowSize.height ? windowSize.height + 'px' : windowSize.height / 2 - elemSize.height / 2 + 'px',
-            overflow: 'auto',
-            maxHeight: '100%',
-            maxWidth: '100%',
-            animation: STR.fadeIn + ' ease ' + animationTime + 's forwards'
-        });
-        this.showState = STR.windowPop;
-    } else {
-        (0, _DomElement2.default)(showElement).css({
-            left: '0px',
-            top: elemSize.height >= windowSize.height ? windowSize.height * 0.8 + 'px' : null,
-            bottom: '0px',
-            overflow: 'auto',
-            maxHeight: '80%',
-            maxWidth: '100%',
-            width: '100%',
+        if (layerPop) {
+            (0, _DomElement2.default)(showElement).css(posOfPop).css({
+                animation: STR.fadeIn + ' ease ' + animationTime + 's forwards'
+            });
+            this.showState = STR.windowPop;
+        } else {
+            (0, _DomElement2.default)(showElement).css(posOfWindow).css({
+                animation: getAnimtion(this.direction, STR.direction, 'In') + ' ease ' + animationTime + 's forwards'
+            });
+            this.showState = STR.windowSide;
+        }
+    };
+
+    var initDisplayAfterParent = function initDisplayAfterParent(showElement) {
+        var animationTime = this.animationTime;
+        this.showState = STR.parentSide;
+        this.showShade = null;
+        (0, _DomElement2.default)(showElement).css(posOfParent).css({
             animation: getAnimtion(this.direction, STR.direction, 'In') + ' ease ' + animationTime + 's forwards'
         });
-        this.showState = STR.windowSlideUp;
-    }
-}
+    };
 
-function initDisplayAfterParent(showElement, size) {
-    var animationTime = this.animationTime;
-    this.showState = STR.parentDropDown;
-    this.showShade = null;
-    (0, _DomElement2.default)(showElement).css({
-        'left': size.left + 'px',
-        'top': size.top + size.height + 'px',
-        animation: getAnimtion(this.direction, STR.direction, 'In') + ' ease ' + animationTime + 's forwards'
-    });
-}
-
-function judgeDisplay() {
     var showElement = n('div', { id: 'pop-layer-' + this.id }, { display: 'block', position: 'fixed', zIndex: defaultZIndexLevel }, this.$element);
     getBody().appendChild(showElement);
     this.showElement = showElement;
@@ -294,6 +280,32 @@ function judgeDisplay() {
         initDisplayAfterParent.call(this, showElement, size);
     }
 }
+
+var showController = {
+    outerBottom: function outerBottom(elemSize, parentSize, windowSize) {
+        var posOfParent = {
+            left: parentSize.left + 'px',
+            top: parentSize.top + parentSize.height + 'px'
+        };
+        var posOfWindow = {
+            left: '0px',
+            top: elemSize.height >= windowSize.height ? windowSize.height * 0.8 + 'px' : null,
+            bottom: '0px',
+            overflow: 'auto',
+            maxHeight: '80%',
+            maxWidth: '100%',
+            width: '100%'
+        };
+        var posOfPop = {
+            left: elemSize.width >= windowSize.width ? '0px' : windowSize.width / 2 - elemSize.width / 2 + 'px',
+            top: elemSize.height >= windowSize.height ? windowSize.height + 'px' : windowSize.height / 2 - elemSize.height / 2 + 'px',
+            overflow: 'auto',
+            maxHeight: '100%',
+            maxWidth: '100%'
+        };
+        showElement.call(this, posOfParent, posOfWindow, posOfPop);
+    }
+};
 
 function getAnimtion(name, def, subfix) {
     return 'slide' + (name || def) + subfix;
@@ -321,6 +333,7 @@ var PopLayer = function () {
         this.config = config || { shade: true };
         this.id = layerCounter++;
         this.direction = this.config.direction;
+        this.position = 'outerBottom';
     }
 
     /**
@@ -331,7 +344,10 @@ var PopLayer = function () {
     _createClass(PopLayer, [{
         key: 'show',
         value: function show() {
-            judgeDisplay.call(this);
+            var size = (0, _getSize2.default)(this.$parent);
+            var eleSize = (0, _getSize2.default)(showElement);
+            var windowSize = (0, _getSize2.default)(null);
+            showController[this.position].call(this, eleSize, size, windowSize);
             (0, _DomElement2.default)(this.showElement).css({ 'display': 'block' });
             if (this.showShade) {
                 (0, _DomElement2.default)(this.showShade).css({ 'display': 'block' });
@@ -355,11 +371,11 @@ var PopLayer = function () {
             var animationTime = this.animationTime;
             var timeout = animationTime * 1000;
             var showElement = this.showElement;
-            if (this.showState === STR.windowSlideUp) {
+            if (this.showState === STR.windowSide) {
                 (0, _DomElement2.default)(showElement).css({
                     animation: getAnimtion(this.direction, STR.direction, 'Out') + ' ease ' + animationTime + 's forwards'
                 });
-            } else if (this.showState === STR.parentDropDown) {
+            } else if (this.showState === STR.parentSide) {
                 (0, _DomElement2.default)(showElement).css({
                     animation: getAnimtion(this.direction, STR.direction, 'Out') + ' ease ' + animationTime + 's forwards'
                 });
