@@ -211,7 +211,7 @@ class SnowEditor {
         _exec.call(this, name, value);
     }
 
-    alter(message, ...args) {
+    alert(message, ...args) {
         toast(SnowEditor._(message, ...args));
     }
 

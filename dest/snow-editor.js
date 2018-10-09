@@ -70,7 +70,7 @@ _SnowEditor2.default.registerComponent(_Redo2.default);
 _SnowEditor2.default.registerComponent(_Emotion2.default);
 _SnowEditor2.default.registerComponent(_AttachmentManager2.default);
 
-},{"./snow/editor/SnowEditor":4,"./snow/editor/component/command/Redo":8,"./snow/editor/component/command/Undo":9,"./snow/editor/component/layout/Center":10,"./snow/editor/component/layout/Left":11,"./snow/editor/component/layout/Right":12,"./snow/editor/component/style/Bold":13,"./snow/editor/component/style/Italic":14,"./snow/editor/component/style/Underline":15,"./snow/editor/component/tool/AttachmentManager":16,"./snow/editor/component/tool/Emotion":17,"./snow/editor/config":20}],2:[function(require,module,exports){
+},{"./snow/editor/SnowEditor":4,"./snow/editor/component/command/Redo":8,"./snow/editor/component/command/Undo":9,"./snow/editor/component/layout/Center":10,"./snow/editor/component/layout/Left":11,"./snow/editor/component/layout/Right":12,"./snow/editor/component/style/Bold":13,"./snow/editor/component/style/Italic":14,"./snow/editor/component/style/Underline":15,"./snow/editor/component/tool/AttachmentManager":16,"./snow/editor/component/tool/Emotion":17,"./snow/editor/config":23}],2:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -251,7 +251,7 @@ DomElement.method.extend({
 
 exports.default = DomElement;
 
-},{"../util/fixCssPrefix":23,"../util/isArray":29}],4:[function(require,module,exports){
+},{"../util/fixCssPrefix":26,"../util/isArray":32}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -436,8 +436,8 @@ var SnowEditor = function () {
             _exec.call(this, name, value);
         }
     }, {
-        key: 'alter',
-        value: function alter(message) {
+        key: 'alert',
+        value: function alert(message) {
             for (var _len3 = arguments.length, args = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
                 args[_key3 - 1] = arguments[_key3];
             }
@@ -535,7 +535,7 @@ var SnowEditor = function () {
 
 exports.default = SnowEditor;
 
-},{"../dom/DomElement":3,"../toast/Toast":22,"../util/printf":30,"./config":20}],5:[function(require,module,exports){
+},{"../dom/DomElement":3,"../toast/Toast":25,"../util/printf":33,"./config":23}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -552,6 +552,7 @@ var Attachment = function () {
 
         this.name = name;
         this.file = file;
+        this.data = null;
     }
 
     _createClass(Attachment, [{
@@ -561,11 +562,23 @@ var Attachment = function () {
             );
         }
     }, {
-        key: "insertHtml",
-        get: function get() {}
+        key: "upload",
+        value: function upload() {}
     }, {
-        key: "uploadFile",
-        get: function get() {}
+        key: "lcoal",
+        get: function get() {
+            return this.data.lcoal || true;
+        }
+    }, {
+        key: "html",
+        get: function get() {
+            var data = this.data;
+            if (this.isImage) {
+                return "<img title=\"" + data.name + "\" alt=\"" + data.name + "\" src=\"" + data.link + "\">";
+            } else {
+                return "<a title=\"" + data.name + "\" herf=\"" + data.link + "\">" + data.name + "</a>";
+            }
+        }
     }]);
 
     return Attachment;
@@ -1197,6 +1210,10 @@ var _Attahment = require('../Attahment');
 
 var _Attahment2 = _interopRequireDefault(_Attahment);
 
+var _uploader = require('./uploader');
+
+var _uploader2 = _interopRequireDefault(_uploader);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1220,13 +1237,21 @@ function getPasteImage(event) {
 
 function getDropFiles(event) {
     var files = (0, _getDropFiles3.default)(event);
-    var images = new Array();
+    var drop = new Array();
     for (var i = 0; i < files.length; i++) {
         var file = files[i];
         var attachment = new _Attahment2.default(file, file.name);
-        images.push(attachment);
+        drop.push(attachment);
     }
-    return images;
+    return drop;
+}
+
+function attachmentHandler(editor, attachment) {
+    (0, _uploader2.default)(editor, attachment.file).then(function (data) {
+        attachment.data = data;
+        editor.exec('insertHTML', attachment.html);
+        editor.attachment.push(attachment);
+    });
 }
 
 /**
@@ -1242,12 +1267,16 @@ var AttachmentManager = function (_RangeComponent) {
         var _this = _possibleConstructorReturn(this, (AttachmentManager.__proto__ || Object.getPrototypeOf(AttachmentManager)).call(this, editor));
 
         (0, _DomElement2.default)(editor.$content).on('paste', function (event) {
-            console.log('paste file', getPasteImage(event));
+            getPasteImage(event).forEach(function (attachment) {
+                attachmentHandler(editor, attachment);
+            });
         });
         (0, _DomElement2.default)(window).on('drop', function (event) {
             event.preventDefault();
             if (event.target === editor.$content) {
-                console.log('drop file', getDropFiles(event)[0]);
+                getDropFiles(event).forEach(function (attachment) {
+                    attachmentHandler(editor, attachment);
+                });
             }
         });
         return _this;
@@ -1284,7 +1313,7 @@ var AttachmentManager = function (_RangeComponent) {
 
 exports.default = AttachmentManager;
 
-},{"../../../dom/DomElement":3,"../../../poplayer/PopLayer":21,"../../../util/getDropFiles":24,"../../../util/getPasteFiles":25,"../Attahment":5,"../Range":7}],17:[function(require,module,exports){
+},{"../../../dom/DomElement":3,"../../../poplayer/PopLayer":24,"../../../util/getDropFiles":27,"../../../util/getPasteFiles":28,"../Attahment":5,"../Range":7,"./uploader":20}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1390,7 +1419,7 @@ var EmotionComponent = function (_RangeComponent) {
 
 exports.default = EmotionComponent;
 
-},{"../../../dom/DomElement":3,"../../../poplayer/PopLayer":21,"../Range":7,"./emotion/Text":19}],18:[function(require,module,exports){
+},{"../../../dom/DomElement":3,"../../../poplayer/PopLayer":24,"../Range":7,"./emotion/Text":19}],18:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1455,6 +1484,107 @@ exports.default = TextEmotions;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.default = uploader;
+
+var _config = require('../../../config');
+
+var _config2 = _interopRequireDefault(_config);
+
+var _uploadToLocal = require('./uploadToLocal');
+
+var _uploadToLocal2 = _interopRequireDefault(_uploadToLocal);
+
+var _uploadToServer = require('./uploadToServer');
+
+var _uploadToServer2 = _interopRequireDefault(_uploadToServer);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * 文件上传接口
+ * 
+ * @param {SnowEditor} editor 编辑器
+ * @param {File} file 上传的文件
+ */
+function uploader(editor, file) {
+    var hasUploader = _config2.default.upload && _config2.default.upload.uploader;
+    if (hasUploader) {
+        return (0, _uploadToServer2.default)(editor, file);
+    } else {
+        return (0, _uploadToLocal2.default)(editor, file);
+    }
+}
+
+},{"../../../config":23,"./uploadToLocal":21,"./uploadToServer":22}],21:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = uploadToLocal;
+
+var _config = require('../../../config');
+
+var _config2 = _interopRequireDefault(_config);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * 将文件在本地转换为 Base64
+ * @param {SnowEditor} editor 编辑器
+ * @param {File} file 上传的文件
+ */
+function uploadToLocal(editor, file) {
+    return new Promise(function (resolve, reject) {
+        var reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.addEventListener('load', function () {
+            var result = { local: true, name: file.name, link: reader.result };
+            var hasAdapter = _config2.default.upload && _config2.default.upload.adapter && _config2.default.upload.adapter.local && _config2.default.upload.adapter.local.resovle;
+            if (hasAdapter) {
+                resolve(_config2.default.upload.adapter.local.resovle(result));
+            } else {
+                resovle(result);
+            }
+        });
+    });
+}
+
+},{"../../../config":23}],22:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = uploadToServer;
+
+var _config = require('../../../config');
+
+var _config2 = _interopRequireDefault(_config);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * 上传文件至服务器
+ * @param {SnowEditor} editor 编辑器
+ * @param {File} file 上传的文件
+ */
+function uploadToServer(editor, file) {
+    return new Promise(function (resolve, reject) {
+        var hasAdapter = _config2.default.upload && _config2.default.upload.adapter && _config2.default.upload.adapter.server;
+        var hasUploader = _config2.default.upload && _config2.default.upload.uploader;
+        if (hasUploader) {} else {
+            editor.alert('未定义文件上传函数');
+        }
+    });
+}
+
+},{"../../../config":23}],23:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 /**
  * 基础默认配置
  */
@@ -1507,7 +1637,7 @@ var config = {
 
 exports.default = config;
 
-},{}],21:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1767,7 +1897,7 @@ var PopLayer = function () {
 
 exports.default = PopLayer;
 
-},{"../config":2,"../dom/DomElement":3,"../util/getPlatform":26,"../util/getSize":27}],22:[function(require,module,exports){
+},{"../config":2,"../dom/DomElement":3,"../util/getPlatform":29,"../util/getSize":30}],25:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1854,7 +1984,7 @@ Toast.show = function () {
 
 exports.default = Toast;
 
-},{"../config":2,"../dom/DomElement":3}],23:[function(require,module,exports){
+},{"../config":2,"../dom/DomElement":3}],26:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1877,7 +2007,7 @@ function fixCssPrefix(name) {
     return name;
 }
 
-},{}],24:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1892,7 +2022,7 @@ function getDropFiles(event) {
   return event.dataTransfer && event.dataTransfer.files ? event.dataTransfer.files : null;
 }
 
-},{}],25:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1907,7 +2037,7 @@ function getPasteFiles(event) {
   return event.clipboardData && event.clipboardData.items ? event.clipboardData.items : null;
 }
 
-},{}],26:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1927,7 +2057,7 @@ exports.default = function () {
     }
 };
 
-},{}],27:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1959,7 +2089,7 @@ function getSize(elem) {
     }
 }
 
-},{"./getWindowSize":28}],28:[function(require,module,exports){
+},{"./getWindowSize":31}],31:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1980,7 +2110,7 @@ function getWindowSizes() {
     };
 }
 
-},{}],29:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1995,7 +2125,7 @@ function isArray(obj) {
   return obj instanceof Array;
 }
 
-},{}],30:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
