@@ -1,6 +1,9 @@
 import Dom from '../dom/DomElement'
+import printf from '../util/printf'
+import toast from '../toast/Toast'
+import _defaultConfig from './config'
 
-let defaultConfig = null;
+let defaultConfig = _defaultConfig;
 let components = new Array;
 let editorCounter = 0;
 
@@ -110,6 +113,7 @@ class SnowEditor {
         this._foucs = false;
         this.id = editorCounter++;
         this.$ = Dom;
+        this.attachment = new Array;
         createEditorView(this);
         createToolBar(this);
     }
@@ -205,6 +209,17 @@ class SnowEditor {
 
     exec(name, ...value) {
         _exec.call(this, name, value);
+    }
+
+    alter(message) {
+        toast(message);
+    }
+
+    static _(str, ...arges) {
+        const langs = defaultConfig.language && defaultConfig.language.str || [];
+        const local = defaultConfig.language && defaultConfig.language.local || 'zh-CN';
+        const output = langs[local] || str;
+        return printf(output, ...arges);
     }
 }
 

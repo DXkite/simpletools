@@ -3,7 +3,7 @@ import getSize from '../util/getSize'
 import $ from '../dom/DomElement'
 import getPlatform from '../util/getPlatform'
 
-const defaultZIndexLevel = config.popLayerLevel|| 9000;
+const defaultZIndexLevel = config.popLayerLevel || 9000;
 const n = $.element;
 const STR = {
     layerId: 'snow-layer-shade',
@@ -42,15 +42,12 @@ function hideElement(defaultDirection) {
         $(this.showShade).css({ animation: STR.fadeOut + ' ease ' + animationTime + 's forwards' });
     }
     setTimeout(() => {
-        getBody().removeChild(showElement);
-        if (this.showShade) {
-            getBody().removeChild(this.showShade);
-        }
+        this.clear();
     }, timeout);
 }
 
 function showElement(defaultDirection, posOfParent, posOfWindow, posOfPop) {
-
+    this.clear();
     const initDisplayInWindow = function (showElement) {
         const shade = this.config.shade || true;
         const hideInShadeClick = this.config.shadeClickHide || true;
@@ -137,13 +134,13 @@ const showController = {
             maxHeight: '100%',
             maxWidth: '100%',
         };
-        showElement.call(this,'Bottom', posOfParent, posOfWindow, posOfPop);
+        showElement.call(this, 'Bottom', posOfParent, posOfWindow, posOfPop);
     }
 }
 
 const hideController = {
     outerBottom: function () {
-        hideElement.call(this,'Bottom');
+        hideElement.call(this, 'Bottom');
     }
 }
 
@@ -172,14 +169,16 @@ class PopLayer {
         this.id = layerCounter++;
         this.direction = this.config.direction;
         this.position = 'outerBottom';
+        this.showElement = null;
+        this.showShade = null;
     }
 
     /**
-     * 显示
+     * 显示弹出层
      */
     show() {
         const size = getSize(this.$parent);
-        const eleSize = getSize(showElement);
+        const eleSize = getSize(this.$element);
         const windowSize = getSize(null);
         showController[this.position].call(this, eleSize, size, windowSize);
         $(this.showElement).css({ 'display': 'block' });
@@ -188,6 +187,20 @@ class PopLayer {
         }
     }
 
+    /**
+     * 清理显示内容
+     */
+    clear() {
+        const body = getBody();
+        if (this.showElement) {
+            body.removeChild(this.showElement);
+            this.showElement = null;
+        }
+        if (this.showShade) {
+            body.removeChild(this.showShade);
+            this.showShade = null;
+        }
+    }
     /**
      * 获取动画时长
      */
@@ -199,7 +212,7 @@ class PopLayer {
      * 隐藏
      */
     hide() {
-        hideController[this.position].call(this);   
+        hideController[this.position].call(this);
     }
 }
 

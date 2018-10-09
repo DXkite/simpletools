@@ -129,17 +129,21 @@ DomElement.method.extend({
         return this;
     },
     on: function (type, listener, useCaptrue) {
-        this.each(function () {
-            eventOn(this, type, listener, useCaptrue);
+        type.split(/\s+/).forEach(subtype => {
+            this.each(function () {
+                eventOn(this, subtype, listener, useCaptrue);
+            });
         });
         return this;
     },
     off: function (type, listener, useCaptrue) {
-        this.each(function () {
-            eventOff(this, type, listener, useCaptrue);
+        type.split(/\s+/).forEach(subtype => {
+            this.each(function () {
+                eventOff(this, subtype, listener, useCaptrue);
+            });
         });
         return this;
     }
 });
-        
+
 export default DomElement

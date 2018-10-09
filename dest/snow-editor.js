@@ -1,4 +1,4 @@
-/*! snow-editor by dxkite 2018-10-08 */
+/*! snow-editor by dxkite 2018-10-09 */
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 'use strict';
 
@@ -70,7 +70,7 @@ _SnowEditor2.default.registerComponent(_Redo2.default);
 _SnowEditor2.default.registerComponent(_Emotion2.default);
 _SnowEditor2.default.registerComponent(_AttachmentManager2.default);
 
-},{"./snow/editor/SnowEditor":4,"./snow/editor/component/command/Redo":7,"./snow/editor/component/command/Undo":8,"./snow/editor/component/layout/Center":9,"./snow/editor/component/layout/Left":10,"./snow/editor/component/layout/Right":11,"./snow/editor/component/style/Bold":12,"./snow/editor/component/style/Italic":13,"./snow/editor/component/style/Underline":14,"./snow/editor/component/tool/AttachmentManager":15,"./snow/editor/component/tool/Emotion":16,"./snow/editor/config":19}],2:[function(require,module,exports){
+},{"./snow/editor/SnowEditor":4,"./snow/editor/component/command/Redo":8,"./snow/editor/component/command/Undo":9,"./snow/editor/component/layout/Center":10,"./snow/editor/component/layout/Left":11,"./snow/editor/component/layout/Right":12,"./snow/editor/component/style/Bold":13,"./snow/editor/component/style/Italic":14,"./snow/editor/component/style/Underline":15,"./snow/editor/component/tool/AttachmentManager":16,"./snow/editor/component/tool/Emotion":17,"./snow/editor/config":20}],2:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -228,14 +228,22 @@ DomElement.method.extend({
         return this;
     },
     on: function on(type, listener, useCaptrue) {
-        this.each(function () {
-            eventOn(this, type, listener, useCaptrue);
+        var _this = this;
+
+        type.split(/\s+/).forEach(function (subtype) {
+            _this.each(function () {
+                eventOn(this, subtype, listener, useCaptrue);
+            });
         });
         return this;
     },
     off: function off(type, listener, useCaptrue) {
-        this.each(function () {
-            eventOff(this, type, listener, useCaptrue);
+        var _this2 = this;
+
+        type.split(/\s+/).forEach(function (subtype) {
+            _this2.each(function () {
+                eventOff(this, subtype, listener, useCaptrue);
+            });
         });
         return this;
     }
@@ -243,7 +251,7 @@ DomElement.method.extend({
 
 exports.default = DomElement;
 
-},{"../util/fixCssPrefix":21,"../util/isArray":25}],4:[function(require,module,exports){
+},{"../util/fixCssPrefix":23,"../util/isArray":29}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -256,11 +264,23 @@ var _DomElement = require('../dom/DomElement');
 
 var _DomElement2 = _interopRequireDefault(_DomElement);
 
+var _printf = require('../util/printf');
+
+var _printf2 = _interopRequireDefault(_printf);
+
+var _Toast = require('../toast/Toast');
+
+var _Toast2 = _interopRequireDefault(_Toast);
+
+var _config = require('./config');
+
+var _config2 = _interopRequireDefault(_config);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var defaultConfig = null;
+var defaultConfig = _config2.default;
 var components = new Array();
 var editorCounter = 0;
 
@@ -368,6 +388,7 @@ var SnowEditor = function () {
         this._foucs = false;
         this.id = editorCounter++;
         this.$ = _DomElement2.default;
+        this.attachment = new Array();
         createEditorView(this);
         createToolBar(this);
     }
@@ -413,6 +434,11 @@ var SnowEditor = function () {
             }
 
             _exec.call(this, name, value);
+        }
+    }, {
+        key: 'alter',
+        value: function alter(message) {
+            (0, _Toast2.default)(message);
         }
     }, {
         key: 'name',
@@ -485,6 +511,19 @@ var SnowEditor = function () {
         value: function registerComponent(component) {
             components.push(component);
         }
+    }, {
+        key: '_',
+        value: function _(str) {
+            var langs = defaultConfig.language && defaultConfig.language.str || [];
+            var local = defaultConfig.language && defaultConfig.language.local || 'zh-CN';
+            var output = langs[local] || str;
+
+            for (var _len3 = arguments.length, arges = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
+                arges[_key3 - 1] = arguments[_key3];
+            }
+
+            return _printf2.default.apply(undefined, [output].concat(arges));
+        }
     }]);
 
     return SnowEditor;
@@ -492,7 +531,45 @@ var SnowEditor = function () {
 
 exports.default = SnowEditor;
 
-},{"../dom/DomElement":3}],5:[function(require,module,exports){
+},{"../dom/DomElement":3,"../toast/Toast":22,"../util/printf":30,"./config":20}],5:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Attachment = function () {
+    function Attachment(file, name) {
+        _classCallCheck(this, Attachment);
+
+        this.name = name;
+        this.file = file;
+    }
+
+    _createClass(Attachment, [{
+        key: "isImage",
+        value: function isImage() {
+            return (/^image\//.test(this.file.type)
+            );
+        }
+    }, {
+        key: "insertHtml",
+        get: function get() {}
+    }, {
+        key: "uploadFile",
+        get: function get() {}
+    }]);
+
+    return Attachment;
+}();
+
+exports.default = Attachment;
+
+},{}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -544,7 +621,7 @@ var Component = function () {
 
 exports.default = Component;
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -601,7 +678,7 @@ var RangeComponent = function (_Component) {
 
 exports.default = RangeComponent;
 
-},{"./Component":5}],7:[function(require,module,exports){
+},{"./Component":6}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -653,7 +730,7 @@ var RedoCommandComponent = function (_Component) {
 
 exports.default = RedoCommandComponent;
 
-},{"../Component":5}],8:[function(require,module,exports){
+},{"../Component":6}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -705,7 +782,7 @@ var UndoCommandComponent = function (_Component) {
 
 exports.default = UndoCommandComponent;
 
-},{"../Component":5}],9:[function(require,module,exports){
+},{"../Component":6}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -768,7 +845,7 @@ var CenterLayoutComponent = function (_RangeComponent) {
 
 exports.default = CenterLayoutComponent;
 
-},{"../Range":6}],10:[function(require,module,exports){
+},{"../Range":7}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -831,7 +908,7 @@ var LeftLayoutComponent = function (_RangeComponent) {
 
 exports.default = LeftLayoutComponent;
 
-},{"../Range":6}],11:[function(require,module,exports){
+},{"../Range":7}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -894,7 +971,7 @@ var RightLayoutComponent = function (_RangeComponent) {
 
 exports.default = RightLayoutComponent;
 
-},{"../Range":6}],12:[function(require,module,exports){
+},{"../Range":7}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -957,7 +1034,7 @@ var BoldStyleComponent = function (_RangeComponent) {
 
 exports.default = BoldStyleComponent;
 
-},{"../Range":6}],13:[function(require,module,exports){
+},{"../Range":7}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1020,7 +1097,7 @@ var ItalicStyleComponent = function (_RangeComponent) {
 
 exports.default = ItalicStyleComponent;
 
-},{"../Range":6}],14:[function(require,module,exports){
+},{"../Range":7}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1083,7 +1160,7 @@ var UnderlineStyleComponent = function (_RangeComponent) {
 
 exports.default = UnderlineStyleComponent;
 
-},{"../Range":6}],15:[function(require,module,exports){
+},{"../Range":7}],16:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1104,6 +1181,18 @@ var _DomElement = require('../../../dom/DomElement');
 
 var _DomElement2 = _interopRequireDefault(_DomElement);
 
+var _getDropFiles2 = require('../../../util/getDropFiles');
+
+var _getDropFiles3 = _interopRequireDefault(_getDropFiles2);
+
+var _getPasteFiles2 = require('../../../util/getPasteFiles');
+
+var _getPasteFiles3 = _interopRequireDefault(_getPasteFiles2);
+
+var _Attahment = require('../Attahment');
+
+var _Attahment2 = _interopRequireDefault(_Attahment);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1112,16 +1201,52 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+function getPasteImage(event) {
+    var files = (0, _getPasteFiles3.default)(event);
+    var images = new Array();
+    for (var i = 0; i < files.length; i++) {
+        var file = files[i].getAsFile();
+        if (/^image\//.test(file.type)) {
+            var attachment = new _Attahment2.default(file, file.name);
+            images.push(attachment);
+        }
+    }
+    return images;
+}
+
+function getDropFiles(event) {
+    var files = (0, _getDropFiles3.default)(event);
+    var images = new Array();
+    for (var i = 0; i < files.length; i++) {
+        var file = files[i];
+        var attachment = new _Attahment2.default(file, file.name);
+        images.push(attachment);
+    }
+    return images;
+}
+
 /**
- * 表情处理
+ * 附件处理
  */
+
 var AttachmentManager = function (_RangeComponent) {
     _inherits(AttachmentManager, _RangeComponent);
 
-    function AttachmentManager() {
+    function AttachmentManager(editor) {
         _classCallCheck(this, AttachmentManager);
 
-        return _possibleConstructorReturn(this, (AttachmentManager.__proto__ || Object.getPrototypeOf(AttachmentManager)).apply(this, arguments));
+        var _this = _possibleConstructorReturn(this, (AttachmentManager.__proto__ || Object.getPrototypeOf(AttachmentManager)).call(this, editor));
+
+        (0, _DomElement2.default)(editor.$content).on('paste', function (event) {
+            console.log('paste file', getPasteImage(event));
+        });
+        (0, _DomElement2.default)(window).on('drop', function (event) {
+            event.preventDefault();
+            if (event.target === editor.$content) {
+                console.log('drop file', getDropFiles(event)[0]);
+            }
+        });
+        return _this;
     }
 
     _createClass(AttachmentManager, [{
@@ -1155,7 +1280,7 @@ var AttachmentManager = function (_RangeComponent) {
 
 exports.default = AttachmentManager;
 
-},{"../../../dom/DomElement":3,"../../../poplayer/PopLayer":20,"../Range":6}],16:[function(require,module,exports){
+},{"../../../dom/DomElement":3,"../../../poplayer/PopLayer":21,"../../../util/getDropFiles":24,"../../../util/getPasteFiles":25,"../Attahment":5,"../Range":7}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1261,7 +1386,7 @@ var EmotionComponent = function (_RangeComponent) {
 
 exports.default = EmotionComponent;
 
-},{"../../../dom/DomElement":3,"../../../poplayer/PopLayer":20,"../Range":6,"./emotion/Text":18}],17:[function(require,module,exports){
+},{"../../../dom/DomElement":3,"../../../poplayer/PopLayer":21,"../Range":7,"./emotion/Text":19}],18:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1280,7 +1405,7 @@ var EmotionObj = function EmotionObj(title, html, view) {
 
 exports.default = EmotionObj;
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1320,12 +1445,15 @@ var TextEmotions = function () {
 
 exports.default = TextEmotions;
 
-},{"./Object":17}],19:[function(require,module,exports){
+},{"./Object":18}],20:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+/**
+ * 基础默认配置
+ */
 var config = {
     height: '10rem',
     editable: true,
@@ -1342,12 +1470,40 @@ var config = {
         name: 'Emoji',
         type: 'text',
         content: '😀 😃 😄 😁 😆 😅 😂 😊 😇 🙂 🙃 😉 😓 😪 😴 🙄 🤔 😬 🤐 😭'.split(/\s/)
-    }]
+    }],
+
+    upload: {
+        // 适配器
+        adapter: {
+            // base64 适配器
+            local: {
+                resovle: function resovle(uploaded) {
+                    return uploaded;
+                },
+                reject: function reject(error) {
+                    return error;
+                }
+            },
+            // ajax 适配器
+            server: {
+                resovle: function resovle(uploaded) {
+                    return uploaded;
+                },
+                reject: function reject(error) {
+                    return error;
+                }
+            }
+        },
+        // 使用默认 (base64)
+        uploader: null,
+        // 上传配置
+        config: null
+    }
 };
 
 exports.default = config;
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1416,15 +1572,12 @@ function hideElement(defaultDirection) {
         (0, _DomElement2.default)(this.showShade).css({ animation: STR.fadeOut + ' ease ' + animationTime + 's forwards' });
     }
     setTimeout(function () {
-        getBody().removeChild(showElement);
-        if (_this.showShade) {
-            getBody().removeChild(_this.showShade);
-        }
+        _this.clear();
     }, timeout);
 }
 
 function showElement(defaultDirection, posOfParent, posOfWindow, posOfPop) {
-
+    this.clear();
     var initDisplayInWindow = function initDisplayInWindow(showElement) {
         var shade = this.config.shade || true;
         var hideInShadeClick = this.config.shadeClickHide || true;
@@ -1545,10 +1698,12 @@ var PopLayer = function () {
         this.id = layerCounter++;
         this.direction = this.config.direction;
         this.position = 'outerBottom';
+        this.showElement = null;
+        this.showShade = null;
     }
 
     /**
-     * 显示
+     * 显示弹出层
      */
 
 
@@ -1556,7 +1711,7 @@ var PopLayer = function () {
         key: 'show',
         value: function show() {
             var size = (0, _getSize2.default)(this.$parent);
-            var eleSize = (0, _getSize2.default)(showElement);
+            var eleSize = (0, _getSize2.default)(this.$element);
             var windowSize = (0, _getSize2.default)(null);
             showController[this.position].call(this, eleSize, size, windowSize);
             (0, _DomElement2.default)(this.showElement).css({ 'display': 'block' });
@@ -1565,6 +1720,23 @@ var PopLayer = function () {
             }
         }
 
+        /**
+         * 清理显示内容
+         */
+
+    }, {
+        key: 'clear',
+        value: function clear() {
+            var body = getBody();
+            if (this.showElement) {
+                body.removeChild(this.showElement);
+                this.showElement = null;
+            }
+            if (this.showShade) {
+                body.removeChild(this.showShade);
+                this.showShade = null;
+            }
+        }
         /**
          * 获取动画时长
          */
@@ -1591,7 +1763,94 @@ var PopLayer = function () {
 
 exports.default = PopLayer;
 
-},{"../config":2,"../dom/DomElement":3,"../util/getPlatform":22,"../util/getSize":23}],21:[function(require,module,exports){
+},{"../config":2,"../dom/DomElement":3,"../util/getPlatform":26,"../util/getSize":27}],22:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _DomElement = require('../dom/DomElement');
+
+var _DomElement2 = _interopRequireDefault(_DomElement);
+
+var _config = require('../config');
+
+var _config2 = _interopRequireDefault(_config);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// 常量
+var TOAST_PARENT_ID = 'Toast-Parent';
+var TOAST_SHOW_ID = 'Toast-Show';
+var TOAST_DEFAULT_STYLE = 'toast';
+var TOAST_POP_LEVEL = _config2.default.toastLayerLevel || 10000;
+
+var Toast = function Toast(text, time, style) {
+    return new Toast.create(text, time, style);
+};
+
+// Toast队列
+Toast.Queue = new Array();
+// 构造函数
+Toast.create = function (message, time, style) {
+    Toast.Parent = document.getElementById(TOAST_PARENT_ID);
+
+    if (!Toast.Parent) {
+        Toast.Parent = _DomElement2.default.element('div', { id: TOAST_PARENT_ID }, { pointerEvents: 'none' });
+        document.body.appendChild(Toast.Parent);
+    }
+    Toast.Queue.push({
+        message: message,
+        timeout: time,
+        style: style ? TOAST_DEFAULT_STYLE + '-' + style : TOAST_DEFAULT_STYLE
+    });
+    Toast.show();
+};
+
+Toast.show = function () {
+    // 一个时刻只能显示一个Toast
+    if (document.getElementById(TOAST_SHOW_ID)) return;
+    var show = Toast.Queue.shift();
+    var toastdiv = _DomElement2.default.element('div', {
+        id: TOAST_SHOW_ID,
+        class: show.style
+    });
+    toastdiv.innerHTML = show.message;
+    Toast.Parent.appendChild(toastdiv);
+    var width = Toast.Parent.scrollWidth || window.innerWidth;
+    var margin = width / 2 - toastdiv.scrollWidth / 2;
+    var bottom = window.innerHeight - toastdiv.scrollHeight * 2;
+    toastdiv.style.marginLeft = margin + 'px';
+    toastdiv.style.top = bottom + 'px';
+    var timeout = show.timeout || 2000;
+    var close = function close() {
+        (0, _DomElement2.default)(toastdiv).css({
+            transition: 'opacity 0.3s ease-out',
+            opacity: 0
+        });
+
+        setTimeout(function () {
+            Toast.Parent.removeChild(toastdiv);
+            if (Toast.Queue.length) {
+                Toast.show();
+            }
+        }, 300);
+    };
+
+    (0, _DomElement2.default)(toastdiv).css({
+        position: 'fixed',
+        opacity: 1,
+        zIndex: TOAST_POP_LEVEL,
+        pointerEvents: 'none',
+        transition: 'opacity 0.1s ease-in'
+    });
+    setTimeout(close, timeout);
+};
+
+exports.default = Toast;
+
+},{"../config":2,"../dom/DomElement":3}],23:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1614,7 +1873,37 @@ function fixCssPrefix(name) {
     return name;
 }
 
-},{}],22:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = getDropFiles;
+/**
+ * 获取拖入的文件（图片或者附件）
+ * @param {Event} event 拖拽事件
+ */
+function getDropFiles(event) {
+  return event.dataTransfer && event.dataTransfer.files ? event.dataTransfer.files : null;
+}
+
+},{}],25:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = getPasteFiles;
+/**
+ * 获取粘贴的文件（图片或者附件）
+ * @param {Event} event 拖拽事件
+ */
+function getPasteFiles(event) {
+  return event.clipboardData && event.clipboardData.items ? event.clipboardData.items : null;
+}
+
+},{}],26:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1634,7 +1923,7 @@ exports.default = function () {
     }
 };
 
-},{}],23:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1666,7 +1955,7 @@ function getSize(elem) {
     }
 }
 
-},{"./getWindowSize":24}],24:[function(require,module,exports){
+},{"./getWindowSize":28}],28:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1687,7 +1976,7 @@ function getWindowSizes() {
     };
 }
 
-},{}],25:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1700,6 +1989,32 @@ exports.default = isArray;
  */
 function isArray(obj) {
   return obj instanceof Array;
+}
+
+},{}],30:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = printf;
+/**
+ * 格式化输出
+ * @param {String} format 格式化字符串
+ * @param  {...any} args 
+ */
+function printf(format) {
+    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+    }
+
+    return format.replace(/(?<!\$)\$(\d+|\w+?\b)/g, function (target, name) {
+        if (args.length === 1 && args[0] instanceof Object) {
+            return args[0][name] || target;
+        } else {
+            return args[name];
+        }
+    });
 }
 
 },{}]},{},[1]);
