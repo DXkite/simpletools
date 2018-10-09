@@ -90,7 +90,13 @@ function createToolBar(editor) {
 }
 
 const commands = {
-    // for browser
+    insertHTML: function (value) {
+        if (this.range) {
+            document.execCommand('insertHTML', null, value);
+        } else {
+            this.alert('no range can insert');
+        }
+    }
 };
 
 

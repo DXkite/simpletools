@@ -14,6 +14,10 @@
     outline: none;
 }
 
+.snow-content.drop {
+    background-color: $toolbar-color;
+}
+
 .snow-tool-item {
     cursor: pointer;
     user-select: none;

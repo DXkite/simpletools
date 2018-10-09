@@ -3,8 +3,10 @@ import Layer from '../../../poplayer/PopLayer'
 import $ from '../../../dom/DomElement'
 import _getDropFiles from '../../../util/getDropFiles'
 import _getPasteFiles from '../../../util/getPasteFiles'
+import _isChildOf from '../../../util/isChildOf'
 import Attachment from '../Attahment'
 import upload from './uploader'
+import isChildOf from '../../../util/isChildOf';
 
 function getPasteImage(event) {
     const files = _getPasteFiles(event);
@@ -50,12 +52,24 @@ class AttachmentManager extends RangeComponent {
                 attachmentHandler(editor, attachment);
             })
         });
+        
         $(window).on('drop', event => {
             event.preventDefault();
-            if (event.target === editor.$content) {
-                getDropFiles(event).forEach(attachment => {
-                    attachmentHandler(editor, attachment);
-                })
+            $(editor.$content).removeClass('drop');
+            getDropFiles(event).forEach(attachment => {
+                attachmentHandler(editor, attachment);
+            });
+        });
+        
+        $(editor.$content).on('dragenter', event => {
+            if (isChildOf(event.target, editor.$content)) {
+                $(editor.$content).addClass('drop');
+            }
+        });
+
+        $(editor.$content).on('dragleave', event => {
+            if (!isChildOf(event.target, editor.$content)) {
+                $(editor.$content).removeClass('drop');
             }
         });
     }

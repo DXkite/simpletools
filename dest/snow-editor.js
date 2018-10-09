@@ -366,7 +366,13 @@ function createToolBar(editor) {
 }
 
 var commands = {
-    // for browser
+    insertHTML: function insertHTML(value) {
+        if (this.range) {
+            document.execCommand('insertHTML', null, value);
+        } else {
+            this.alert('no range can insert');
+        }
+    }
 };
 
 function _exec(name, value) {
@@ -535,7 +541,7 @@ var SnowEditor = function () {
 
 exports.default = SnowEditor;
 
-},{"../dom/DomElement":3,"../toast/Toast":25,"../util/printf":33,"./config":23}],5:[function(require,module,exports){
+},{"../dom/DomElement":3,"../toast/Toast":25,"../util/printf":34,"./config":23}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1206,6 +1212,10 @@ var _getPasteFiles2 = require('../../../util/getPasteFiles');
 
 var _getPasteFiles3 = _interopRequireDefault(_getPasteFiles2);
 
+var _isChildOf2 = require('../../../util/isChildOf');
+
+var _isChildOf3 = _interopRequireDefault(_isChildOf2);
+
 var _Attahment = require('../Attahment');
 
 var _Attahment2 = _interopRequireDefault(_Attahment);
@@ -1271,12 +1281,24 @@ var AttachmentManager = function (_RangeComponent) {
                 attachmentHandler(editor, attachment);
             });
         });
+
         (0, _DomElement2.default)(window).on('drop', function (event) {
             event.preventDefault();
-            if (event.target === editor.$content) {
-                getDropFiles(event).forEach(function (attachment) {
-                    attachmentHandler(editor, attachment);
-                });
+            (0, _DomElement2.default)(editor.$content).removeClass('drop');
+            getDropFiles(event).forEach(function (attachment) {
+                attachmentHandler(editor, attachment);
+            });
+        });
+
+        (0, _DomElement2.default)(editor.$content).on('dragenter', function (event) {
+            if ((0, _isChildOf3.default)(event.target, editor.$content)) {
+                (0, _DomElement2.default)(editor.$content).addClass('drop');
+            }
+        });
+
+        (0, _DomElement2.default)(editor.$content).on('dragleave', function (event) {
+            if (!(0, _isChildOf3.default)(event.target, editor.$content)) {
+                (0, _DomElement2.default)(editor.$content).removeClass('drop');
             }
         });
         return _this;
@@ -1313,7 +1335,7 @@ var AttachmentManager = function (_RangeComponent) {
 
 exports.default = AttachmentManager;
 
-},{"../../../dom/DomElement":3,"../../../poplayer/PopLayer":24,"../../../util/getDropFiles":27,"../../../util/getPasteFiles":28,"../Attahment":5,"../Range":7,"./uploader":20}],17:[function(require,module,exports){
+},{"../../../dom/DomElement":3,"../../../poplayer/PopLayer":24,"../../../util/getDropFiles":27,"../../../util/getPasteFiles":28,"../../../util/isChildOf":33,"../Attahment":5,"../Range":7,"./uploader":20}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2126,6 +2148,20 @@ function isArray(obj) {
 }
 
 },{}],33:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = isChildOf;
+function isChildOf(elem, parent) {
+    while (elem != parent) {
+        elem = elem.parentNode;
+    }
+    return elem === parent;
+}
+
+},{}],34:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

@@ -105,6 +105,9 @@
   word-break: break-all;
   outline: none; }
 
+.snow-content.drop {
+  background-color: #dee2e6; }
+
 .snow-tool-item, .snow-tool-emotions-item {
   cursor: pointer;
   -webkit-user-select: none;
