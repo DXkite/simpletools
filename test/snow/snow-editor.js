@@ -1224,6 +1224,14 @@ var _uploader = require('./uploader');
 
 var _uploader2 = _interopRequireDefault(_uploader);
 
+var _getSize = require('../../../util/getSize');
+
+var _getSize2 = _interopRequireDefault(_getSize);
+
+var _SnowEditor = require('../../../editor/SnowEditor');
+
+var _SnowEditor2 = _interopRequireDefault(_SnowEditor);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1231,6 +1239,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var n = _DomElement2.default.element;
+var _ = _SnowEditor2.default._;
 
 function getPasteImage(event) {
     var files = (0, _getPasteFiles3.default)(event);
@@ -1264,6 +1275,45 @@ function attachmentHandler(editor, attachment) {
     });
 }
 
+function showDropFilePanel() {
+    hideDropFilePanel.call(this);
+    var editor = this;
+    var size = (0, _getSize2.default)(this.$content);
+    var shade = n('div', {
+        id: 'snow-' + this.id + '-drop',
+        ondrop: function ondrop(event) {
+            event.preventDefault();
+            editor.dropEnter = false;
+            hideDropFilePanel.call(editor);
+            getDropFiles(event).forEach(function (attachment) {
+                attachmentHandler(editor, attachment);
+            });
+        }
+    }, {
+        position: 'fixed',
+        backgroundColor: 'rgba(0,0,0,0.3)',
+        textAlign: 'center',
+        lineHeight: size.height + 'px',
+        top: size.top + 'px',
+        left: size.left + 'px',
+        height: size.height + 'px',
+        width: size.width + 'px',
+        color: '#fff',
+        fointSize: '2em'
+    }, _('拖入文件'));
+    this.$content.parentNode.appendChild(shade);
+    this.dropElement = shade;
+    window.getSelection().removeAllRanges();
+    editor.range = null;
+}
+
+function hideDropFilePanel() {
+    if (this.dropElement) {
+        this.$content.parentNode.removeChild(this.dropElement);
+        this.dropElement = null;
+    }
+}
+
 /**
  * 附件处理
  */
@@ -1276,29 +1326,43 @@ var AttachmentManager = function (_RangeComponent) {
 
         var _this = _possibleConstructorReturn(this, (AttachmentManager.__proto__ || Object.getPrototypeOf(AttachmentManager)).call(this, editor));
 
+        editor.dropEnter = false;
+
         (0, _DomElement2.default)(editor.$content).on('paste', function (event) {
             getPasteImage(event).forEach(function (attachment) {
                 attachmentHandler(editor, attachment);
             });
         });
 
-        (0, _DomElement2.default)(window).on('drop', function (event) {
+        (0, _DomElement2.default)(window).on('dragenter', function (event) {
             event.preventDefault();
-            (0, _DomElement2.default)(editor.$content).removeClass('drop');
-            getDropFiles(event).forEach(function (attachment) {
-                attachmentHandler(editor, attachment);
-            });
-        });
-
-        (0, _DomElement2.default)(editor.$content).on('dragenter', function (event) {
-            if ((0, _isChildOf3.default)(event.target, editor.$content)) {
-                (0, _DomElement2.default)(editor.$content).addClass('drop');
+            if (editor.dropEnter === false) {
+                showDropFilePanel.call(editor);
+                editor.dropEnter = true;
             }
         });
 
-        (0, _DomElement2.default)(editor.$content).on('dragleave', function (event) {
-            if (!(0, _isChildOf3.default)(event.target, editor.$content)) {
-                (0, _DomElement2.default)(editor.$content).removeClass('drop');
+        (0, _DomElement2.default)(window).on('drop', function (event) {
+            // console.log('window', event.type, _getDropFiles(event));
+            event.preventDefault();
+            hideDropFilePanel.call(editor);
+        });
+
+        (0, _DomElement2.default)(window).on('dragover', function (event) {
+            event.preventDefault();
+            event.dataTransfer.dropEffect = 'copy';
+            if (editor.dropEnter === false) {
+                showDropFilePanel.call(editor);
+                editor.dropEnter = true;
+            }
+        });
+
+        (0, _DomElement2.default)(window).on('dragleave', function (event) {
+            event.preventDefault();
+            if (event.screenX === 0 && event.screenY === 0) {
+                // console.log('window', event.type);
+                hideDropFilePanel.call(editor);
+                editor.dropEnter = false;
             }
         });
         return _this;
@@ -1335,7 +1399,7 @@ var AttachmentManager = function (_RangeComponent) {
 
 exports.default = AttachmentManager;
 
-},{"../../../dom/DomElement":3,"../../../poplayer/PopLayer":24,"../../../util/getDropFiles":27,"../../../util/getPasteFiles":28,"../../../util/isChildOf":33,"../Attahment":5,"../Range":7,"./uploader":20}],17:[function(require,module,exports){
+},{"../../../dom/DomElement":3,"../../../editor/SnowEditor":4,"../../../poplayer/PopLayer":24,"../../../util/getDropFiles":27,"../../../util/getPasteFiles":28,"../../../util/getSize":30,"../../../util/isChildOf":33,"../Attahment":5,"../Range":7,"./uploader":20}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2155,7 +2219,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = isChildOf;
 function isChildOf(elem, parent) {
-    while (elem != parent) {
+    while (elem && elem != parent) {
         elem = elem.parentNode;
     }
     return elem === parent;

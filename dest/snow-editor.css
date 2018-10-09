@@ -103,7 +103,8 @@
   padding: .2em;
   border: 1px solid #dee2e6;
   word-break: break-all;
-  outline: none; }
+  outline: none;
+  overflow: auto; }
 
 .snow-content.drop {
   background-color: #dee2e6; }
