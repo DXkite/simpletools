@@ -211,15 +211,15 @@ class SnowEditor {
         _exec.call(this, name, value);
     }
 
-    alter(message) {
-        toast(message);
+    alter(message, ...args) {
+        toast(SnowEditor._(message, ...args));
     }
 
-    static _(str, ...arges) {
+    static _(str, ...args) {
         const langs = defaultConfig.language && defaultConfig.language.str || [];
         const local = defaultConfig.language && defaultConfig.language.local || 'zh-CN';
         const output = langs[local] || str;
-        return printf(output, ...arges);
+        return printf(output, ...args);
     }
 }
 

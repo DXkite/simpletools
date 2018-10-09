@@ -438,7 +438,11 @@ var SnowEditor = function () {
     }, {
         key: 'alter',
         value: function alter(message) {
-            (0, _Toast2.default)(message);
+            for (var _len3 = arguments.length, args = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
+                args[_key3 - 1] = arguments[_key3];
+            }
+
+            (0, _Toast2.default)(SnowEditor._.apply(SnowEditor, [message].concat(args)));
         }
     }, {
         key: 'name',
@@ -518,11 +522,11 @@ var SnowEditor = function () {
             var local = defaultConfig.language && defaultConfig.language.local || 'zh-CN';
             var output = langs[local] || str;
 
-            for (var _len3 = arguments.length, arges = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
-                arges[_key3 - 1] = arguments[_key3];
+            for (var _len4 = arguments.length, args = Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
+                args[_key4 - 1] = arguments[_key4];
             }
 
-            return _printf2.default.apply(undefined, [output].concat(arges));
+            return _printf2.default.apply(undefined, [output].concat(args));
         }
     }]);
 
@@ -2012,7 +2016,7 @@ function printf(format) {
         if (args.length === 1 && args[0] instanceof Object) {
             return args[0][name] || target;
         } else {
-            return args[name];
+            return args[name] || target;
         }
     });
 }
