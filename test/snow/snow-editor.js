@@ -1247,7 +1247,7 @@ function getPasteImage(event) {
     var files = (0, _getPasteFiles3.default)(event);
     var images = new Array();
     for (var i = 0; i < files.length; i++) {
-        var file = files[i].getAsFile();
+        var file = files[i];
         if (/^image\//.test(file.type)) {
             var attachment = new _Attahment2.default(file, file.name);
             images.push(attachment);
@@ -1329,6 +1329,7 @@ var AttachmentManager = function (_RangeComponent) {
         editor.dropEnter = false;
 
         (0, _DomElement2.default)(editor.$content).on('paste', function (event) {
+            console.log(event.clipboardData.items, event.clipboardData.files);
             getPasteImage(event).forEach(function (attachment) {
                 attachmentHandler(editor, attachment);
             });
@@ -2120,7 +2121,7 @@ exports.default = getPasteFiles;
  * @param {Event} event 拖拽事件
  */
 function getPasteFiles(event) {
-  return event.clipboardData && event.clipboardData.items ? event.clipboardData.items : null;
+  return event.clipboardData && event.clipboardData.files ? event.clipboardData.files : null;
 }
 
 },{}],29:[function(require,module,exports){
@@ -2226,14 +2227,23 @@ function isChildOf(elem, parent) {
 }
 
 },{}],34:[function(require,module,exports){
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.default = printf;
+var exp = null;
+try {
+    // firefox make this error
+    exp = new RegExp('(?<!\\$)\\$(\\d+|\\w+?\\b)', 'g');
+} catch (error) {
+    exp = new RegExp('\\$(\\d+|\\w+?\\b)', 'g');
+}
+
 /**
- * 格式化输出
+ * 格式化输出字符
+ * 
  * @param {String} format 格式化字符串
  * @param  {...any} args 
  */
@@ -2242,7 +2252,7 @@ function printf(format) {
         args[_key - 1] = arguments[_key];
     }
 
-    return format.replace(/(?<!\$)\$(\d+|\w+?\b)/g, function (target, name) {
+    return format.replace(exp, function (target, name) {
         if (args.length === 1 && args[0] instanceof Object) {
             return args[0][name] || target;
         } else {

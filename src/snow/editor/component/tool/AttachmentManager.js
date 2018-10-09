@@ -17,7 +17,7 @@ function getPasteImage(event) {
     const files = _getPasteFiles(event);
     const images = new Array;
     for (var i = 0; i < files.length; i++) {
-        const file = files[i].getAsFile()
+        const file = files[i]
         if (/^image\//.test(file.type)) {
             const attachment = new Attachment(file, file.name);
             images.push(attachment);
@@ -98,6 +98,7 @@ class AttachmentManager extends RangeComponent {
         editor.dropEnter = false;
 
         $(editor.$content).on('paste', event => {
+            console.log(event.clipboardData.items,event.clipboardData.files);
             getPasteImage(event).forEach(attachment => {
                 attachmentHandler(editor, attachment);
             })
