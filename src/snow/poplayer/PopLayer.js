@@ -52,15 +52,16 @@ function hideElement(defaultDirection) {
 }
 
 function showElement(defaultDirection, posOfParent, posOfWindow, posOfPop) {
-    this.clear();
-    const initDisplayInWindow = function (showElement) {
+    const showElem = this.showElement;
+    const initDisplayInWindow = function (showElem) {
         const shade = this.config.shade || true;
         const hideInShadeClick = this.config.shadeClickHide || true;
         const layerPop = this.config.pop || getPlatform() === 'pc';
         const layer = this;
         const animationTime = this.animationTime;
         if (shade) {
-            var style = window.getComputedStyle(showElement);
+            
+            var style = window.getComputedStyle(showElem);
             this.showShade = n('div', {
                 id: STR.layerId,
                 onclick: () => {
@@ -82,12 +83,12 @@ function showElement(defaultDirection, posOfParent, posOfWindow, posOfPop) {
         }
 
         if (layerPop) {
-            $(showElement).css(posOfPop).css({
+            $(showElem).css(posOfPop).css({
                 animation: STR.fadeIn + ' ease ' + animationTime + 's forwards',
             });
             this.showState = STR.windowPop;
         } else {
-            $(showElement).css(posOfWindow).css({
+            $(showElem).css(posOfWindow).css({
                 animation: getAnimtion(this.direction, defaultDirection, 'In') + ' ease ' + animationTime + 's forwards',
             });
             this.showState = STR.windowSide;
@@ -95,25 +96,22 @@ function showElement(defaultDirection, posOfParent, posOfWindow, posOfPop) {
     }
 
 
-    const initDisplayAfterParent = function (showElement) {
+    const initDisplayAfterParent = function (showElem) {
         const animationTime = this.animationTime;
         this.showState = STR.parentSide;
         this.showShade = null;
-        $(showElement).css(posOfParent).css({
+        $(showElem).css(posOfParent).css({
             animation: getAnimtion(this.direction, defaultDirection, 'In') + ' ease ' + animationTime + 's forwards',
         });
     }
 
-    const showElement = n('div', { id: 'pop-layer-' + this.id, }, { display: 'block', position: 'fixed', zIndex: defaultZIndexLevel, }, this.$element);
-    getBody().appendChild(showElement);
-    this.showElement = showElement;
     const size = getSize(this.$parent);
-    const eleSize = getSize(showElement);
+    const elemSize = getSize(showElem);
     const windowSize = getSize(null);
-    if (size.left + eleSize.width > windowSize.width) {
-        initDisplayInWindow.call(this, showElement, windowSize, eleSize);
+    if (size.left + elemSize.width > windowSize.width) {
+        initDisplayInWindow.call(this, showElem, windowSize, elemSize);
     } else {
-        initDisplayAfterParent.call(this, showElement, size);
+        initDisplayAfterParent.call(this, showElem, size);
     }
 }
 
@@ -139,6 +137,7 @@ const showController = {
             maxHeight: '100%',
             maxWidth: '100%',
         };
+        
         showElement.call(this, 'Bottom', posOfParent, posOfWindow, posOfPop);
     }
 }
@@ -191,10 +190,14 @@ class PopLayer {
      * 显示弹出层
      */
     show() {
+        this.clear();
+        const showElement = n('div', { id: 'pop-layer-' + this.id, }, { display: 'block', position: 'fixed', zIndex: defaultZIndexLevel, }, this.$element);
+        getBody().appendChild(showElement);
+        this.showElement = showElement;
         const size = getSize(this.$parent);
-        const eleSize = getSize(this.$element);
+        const elemSize = getSize(this.$element);
         const windowSize = getSize(null);
-        showController[this.position].call(this, eleSize, size, windowSize);
+        showController[this.position].call(this, elemSize, size, windowSize);
         $(this.showElement).css({ 'display': 'block' });
         this.showed = true;
         if (this.clickOutListener) {
@@ -205,7 +208,6 @@ class PopLayer {
             if (!this.clickOutListener) {
                 this.clickOutListener = () => {
                     if (this.showed) {
-                        // console.log('window close');
                         this.hide();
                     }
                 };

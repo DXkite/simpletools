@@ -212,7 +212,9 @@
 .snow-attachment-item {
   cursor: pointer;
   transition: .2s;
-  padding: .2em; }
+  padding: .2em;
+  word-break: break-all;
+  word-wrap: break-word; }
 
 .snow-attachment-item:hover {
   cursor: pointer;

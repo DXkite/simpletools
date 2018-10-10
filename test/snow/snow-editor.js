@@ -1837,15 +1837,16 @@ function hideElement(defaultDirection) {
 }
 
 function showElement(defaultDirection, posOfParent, posOfWindow, posOfPop) {
-    this.clear();
-    var initDisplayInWindow = function initDisplayInWindow(showElement) {
+    var showElem = this.showElement;
+    var initDisplayInWindow = function initDisplayInWindow(showElem) {
         var shade = this.config.shade || true;
         var hideInShadeClick = this.config.shadeClickHide || true;
         var layerPop = this.config.pop || (0, _getPlatform2.default)() === 'pc';
         var layer = this;
         var animationTime = this.animationTime;
         if (shade) {
-            var style = window.getComputedStyle(showElement);
+
+            var style = window.getComputedStyle(showElem);
             this.showShade = n('div', {
                 id: STR.layerId,
                 onclick: function onclick() {
@@ -1865,37 +1866,34 @@ function showElement(defaultDirection, posOfParent, posOfWindow, posOfPop) {
         }
 
         if (layerPop) {
-            (0, _DomElement2.default)(showElement).css(posOfPop).css({
+            (0, _DomElement2.default)(showElem).css(posOfPop).css({
                 animation: STR.fadeIn + ' ease ' + animationTime + 's forwards'
             });
             this.showState = STR.windowPop;
         } else {
-            (0, _DomElement2.default)(showElement).css(posOfWindow).css({
+            (0, _DomElement2.default)(showElem).css(posOfWindow).css({
                 animation: getAnimtion(this.direction, defaultDirection, 'In') + ' ease ' + animationTime + 's forwards'
             });
             this.showState = STR.windowSide;
         }
     };
 
-    var initDisplayAfterParent = function initDisplayAfterParent(showElement) {
+    var initDisplayAfterParent = function initDisplayAfterParent(showElem) {
         var animationTime = this.animationTime;
         this.showState = STR.parentSide;
         this.showShade = null;
-        (0, _DomElement2.default)(showElement).css(posOfParent).css({
+        (0, _DomElement2.default)(showElem).css(posOfParent).css({
             animation: getAnimtion(this.direction, defaultDirection, 'In') + ' ease ' + animationTime + 's forwards'
         });
     };
 
-    var showElement = n('div', { id: 'pop-layer-' + this.id }, { display: 'block', position: 'fixed', zIndex: defaultZIndexLevel }, this.$element);
-    getBody().appendChild(showElement);
-    this.showElement = showElement;
     var size = (0, _getSize2.default)(this.$parent);
-    var eleSize = (0, _getSize2.default)(showElement);
+    var elemSize = (0, _getSize2.default)(showElem);
     var windowSize = (0, _getSize2.default)(null);
-    if (size.left + eleSize.width > windowSize.width) {
-        initDisplayInWindow.call(this, showElement, windowSize, eleSize);
+    if (size.left + elemSize.width > windowSize.width) {
+        initDisplayInWindow.call(this, showElem, windowSize, elemSize);
     } else {
-        initDisplayAfterParent.call(this, showElement, size);
+        initDisplayAfterParent.call(this, showElem, size);
     }
 }
 
@@ -1921,6 +1919,7 @@ var showController = {
             maxHeight: '100%',
             maxWidth: '100%'
         };
+
         showElement.call(this, 'Bottom', posOfParent, posOfWindow, posOfPop);
     }
 };
@@ -1973,10 +1972,14 @@ var PopLayer = function () {
         value: function show() {
             var _this2 = this;
 
+            this.clear();
+            var showElement = n('div', { id: 'pop-layer-' + this.id }, { display: 'block', position: 'fixed', zIndex: defaultZIndexLevel }, this.$element);
+            getBody().appendChild(showElement);
+            this.showElement = showElement;
             var size = (0, _getSize2.default)(this.$parent);
-            var eleSize = (0, _getSize2.default)(this.$element);
+            var elemSize = (0, _getSize2.default)(this.$element);
             var windowSize = (0, _getSize2.default)(null);
-            showController[this.position].call(this, eleSize, size, windowSize);
+            showController[this.position].call(this, elemSize, size, windowSize);
             (0, _DomElement2.default)(this.showElement).css({ 'display': 'block' });
             this.showed = true;
             if (this.clickOutListener) {
@@ -1987,7 +1990,6 @@ var PopLayer = function () {
                 if (!_this2.clickOutListener) {
                     _this2.clickOutListener = function () {
                         if (_this2.showed) {
-                            // console.log('window close');
                             _this2.hide();
                         }
                     };
