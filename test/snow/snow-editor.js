@@ -1781,9 +1781,9 @@ var _getPlatform = require('../util/getPlatform');
 
 var _getPlatform2 = _interopRequireDefault(_getPlatform);
 
-var _isChildOf = require('../util/isChildOf');
+var _pointInBox = require('../util/pointInBox');
 
-var _isChildOf2 = _interopRequireDefault(_isChildOf);
+var _pointInBox2 = _interopRequireDefault(_pointInBox);
 
 var _onMouseHover = require('../util/onMouseHover');
 
@@ -1992,8 +1992,12 @@ var PopLayer = function () {
             }
             (0, _onMouseHover2.default)(this.showElement, null, function () {
                 if (!_this2.clickOutListener) {
-                    _this2.clickOutListener = function () {
-                        if (_this2.showed) {
+                    _this2.clickOutListener = function (event) {
+                        var x = event.pageX || event.clientX || event.x;
+                        var y = event.pageY || event.clientY || event.y;
+                        var box = (0, _getSize2.default)(showElement);
+                        var point = { x: x, y: y };
+                        if (!(0, _pointInBox2.default)(point, box) && _this2.showed) {
                             _this2.hide();
                         }
                     };
@@ -2058,7 +2062,7 @@ var PopLayer = function () {
 
 exports.default = PopLayer;
 
-},{"../config":2,"../dom/DomElement":3,"../util/getPlatform":29,"../util/getSize":30,"../util/isChildOf":33,"../util/onMouseHover":34}],25:[function(require,module,exports){
+},{"../config":2,"../dom/DomElement":3,"../util/getPlatform":29,"../util/getSize":30,"../util/onMouseHover":34,"../util/pointInBox":35}],25:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {

@@ -2,7 +2,7 @@ import config from '../config'
 import getSize from '../util/getSize'
 import $ from '../dom/DomElement'
 import getPlatform from '../util/getPlatform'
-import isChildOf from '../util/isChildOf'
+import pointInBox from '../util/pointInBox'
 import hover from '../util/onMouseHover'
 
 const defaultZIndexLevel = config.popLayerLevel || 9000;
@@ -60,7 +60,7 @@ function showElement(defaultDirection, posOfParent, posOfWindow, posOfPop) {
         const layer = this;
         const animationTime = this.animationTime;
         if (shade) {
-            
+
             var style = window.getComputedStyle(showElem);
             this.showShade = n('div', {
                 id: STR.layerId,
@@ -137,7 +137,7 @@ const showController = {
             maxHeight: '100%',
             maxWidth: '100%',
         };
-        
+
         showElement.call(this, 'Bottom', posOfParent, posOfWindow, posOfPop);
     }
 }
@@ -206,8 +206,12 @@ class PopLayer {
         }
         hover(this.showElement, null, () => {
             if (!this.clickOutListener) {
-                this.clickOutListener = () => {
-                    if (this.showed) {
+                this.clickOutListener = (event) => {
+                    const x = event.pageX || event.clientX || event.x;
+                    const y = event.pageY || event.clientY || event.y;
+                    var box = getSize(showElement);
+                    const point = { x: x, y: y };
+                    if (!pointInBox(point, box) && this.showed) {
                         this.hide();
                     }
                 };
