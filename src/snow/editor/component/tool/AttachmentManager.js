@@ -39,7 +39,7 @@ function attachmentHandler(editor, attachment) {
     upload(editor, attachment.file).then(function (data) {
         attachment.data = data;
         editor.exec('insertHTML', attachment.html);
-        editor.attachment.push(attachment);
+        editor.addAttachment(attachment);
     });
 }
 
@@ -50,7 +50,6 @@ function menuElement(editor, attachment) {
             title: attachment.name,
             class: 'snow-attachment-item',
             onclick: () => {
-                console.log(editor.range);
                 editor.exec('insertHTML', attachment.html);
                 layer.hide();
             }

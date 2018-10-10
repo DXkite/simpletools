@@ -94,7 +94,7 @@ function createToolBar(editor) {
 const commands = {
     insertHTML: function (value) {
         if (this.range) {
-            console.log(this.range, this.range.commonAncestorContainer);
+            // console.log(this.range, this.range.commonAncestorContainer);
             document.execCommand('insertHTML', null, value);
         } else {
             this.range = this.createDefaultRange();
@@ -124,7 +124,7 @@ class SnowEditor {
         this._range = false;
         this.id = editorCounter++;
         this.$ = Dom;
-        this.attachment = new Array;
+        this.attachment = new Map;
         createEditorView(this);
         createToolBar(this);
     }
@@ -206,6 +206,10 @@ class SnowEditor {
 
     get editable() {
         return this.$content.getAttribute('contenteditable') == 'true';
+    }
+
+    addAttachment(attachment) {
+        this.attachment.set(attachment.name,attachment);
     }
 
     on(name, callback) {

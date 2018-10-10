@@ -373,7 +373,7 @@ function createToolBar(editor) {
 var commands = {
     insertHTML: function insertHTML(value) {
         if (this.range) {
-            console.log(this.range, this.range.commonAncestorContainer);
+            // console.log(this.range, this.range.commonAncestorContainer);
             document.execCommand('insertHTML', null, value);
         } else {
             this.range = this.createDefaultRange();
@@ -402,7 +402,7 @@ var SnowEditor = function () {
         this._range = false;
         this.id = editorCounter++;
         this.$ = _DomElement2.default;
-        this.attachment = new Array();
+        this.attachment = new Map();
         createEditorView(this);
         createToolBar(this);
     }
@@ -424,6 +424,11 @@ var SnowEditor = function () {
                     return range;
                 }
             }
+        }
+    }, {
+        key: 'addAttachment',
+        value: function addAttachment(attachment) {
+            this.attachment.set(attachment.name, attachment);
         }
     }, {
         key: 'on',
@@ -604,9 +609,9 @@ var Attachment = function () {
         get: function get() {
             var data = this.data;
             if (this.isImage) {
-                return "<img title=\"" + data.name + "\" alt=\"" + data.name + "\" src=\"" + data.link + "\">";
+                return "<img title=\"" + data.name + "\" attachment-id=\"" + data.name + "\" alt=\"" + data.name + "\" src=\"" + data.link + "\">";
             } else {
-                return "<a title=\"" + data.name + "\" href=\"" + data.link + "\">" + data.name + "</a>";
+                return "<a title=\"" + data.name + "\" attachment-id=\"" + data.name + "\" href=\"" + data.link + "\">" + data.name + "</a>";
             }
         }
     }]);
@@ -1291,7 +1296,7 @@ function attachmentHandler(editor, attachment) {
     (0, _uploader2.default)(editor, attachment.file).then(function (data) {
         attachment.data = data;
         editor.exec('insertHTML', attachment.html);
-        editor.attachment.push(attachment);
+        editor.addAttachment(attachment);
     });
 }
 
@@ -1301,7 +1306,6 @@ function menuElement(editor, attachment) {
         title: attachment.name,
         class: 'snow-attachment-item',
         onclick: function onclick() {
-            console.log(editor.range);
             editor.exec('insertHTML', attachment.html);
             layer.hide();
         }

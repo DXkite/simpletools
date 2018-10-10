@@ -17,10 +17,10 @@ export default class Attachment {
     get html() {
         const data = this.data;
         if (this.isImage) {
-            return `<img title="${data.name}" alt="${data.name}" src="${data.link}">`;
+            return `<img title="${data.name}" attachment-id="${data.name}" alt="${data.name}" src="${data.link}">`;
         }
         else {
-            return `<a title="${data.name}" href="${data.link}">${data.name}</a>`;
+            return `<a title="${data.name}" attachment-id="${data.name}" href="${data.link}">${data.name}</a>`;
         }
     }
 
