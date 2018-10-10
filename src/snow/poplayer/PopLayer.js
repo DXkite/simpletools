@@ -4,6 +4,7 @@ import $ from '../dom/DomElement'
 import getPlatform from '../util/getPlatform'
 import pointInBox from '../util/pointInBox'
 import hover from '../util/onMouseHover'
+import timeLimit from '../util/timeLimitCallback'
 
 const defaultZIndexLevel = config.popLayerLevel || 9000;
 const n = $.element;
@@ -51,7 +52,7 @@ function hideElement(defaultDirection) {
     }, timeout);
 }
 
-function showElement(defaultDirection, posOfParent, posOfWindow, posOfPop) {
+function showElement(defaultDirection, posOfParent, posOfWindow, posOfPop, calcPosOfParent) {
     const showElem = this.showElement;
     const initDisplayInWindow = function (showElem) {
         const shade = this.config.shade || true;
@@ -103,6 +104,10 @@ function showElement(defaultDirection, posOfParent, posOfWindow, posOfPop) {
         $(showElem).css(posOfParent).css({
             animation: getAnimtion(this.direction, defaultDirection, 'In') + ' ease ' + animationTime + 's forwards',
         });
+        $(window).on('resize scroll', timeLimit(function (event) {
+            const pos = calcPosOfParent();
+            $(showElem).css(pos);
+        }).run);
     }
 
     const size = getSize(this.$parent);
@@ -137,8 +142,14 @@ const showController = {
             maxHeight: '100%',
             maxWidth: '100%',
         };
-
-        showElement.call(this, 'Bottom', posOfParent, posOfWindow, posOfPop);
+        const calcPosOfParent = () => {
+            const ps = getSize(this.$parent);
+            return {
+                left: ps.left + 'px',
+                top: (ps.top + ps.height) + 'px',
+            };
+        };
+        showElement.call(this, 'Bottom', posOfParent, posOfWindow, posOfPop, calcPosOfParent);
     }
 }
 

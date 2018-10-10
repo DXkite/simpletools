@@ -1771,6 +1771,10 @@ var _onMouseHover = require('../util/onMouseHover');
 
 var _onMouseHover2 = _interopRequireDefault(_onMouseHover);
 
+var _timeLimitCallback = require('../util/timeLimitCallback');
+
+var _timeLimitCallback2 = _interopRequireDefault(_timeLimitCallback);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1822,7 +1826,7 @@ function hideElement(defaultDirection) {
     }, timeout);
 }
 
-function showElement(defaultDirection, posOfParent, posOfWindow, posOfPop) {
+function showElement(defaultDirection, posOfParent, posOfWindow, posOfPop, calcPosOfParent) {
     var showElem = this.showElement;
     var initDisplayInWindow = function initDisplayInWindow(showElem) {
         var shade = this.config.shade || true;
@@ -1871,6 +1875,10 @@ function showElement(defaultDirection, posOfParent, posOfWindow, posOfPop) {
         (0, _DomElement2.default)(showElem).css(posOfParent).css({
             animation: getAnimtion(this.direction, defaultDirection, 'In') + ' ease ' + animationTime + 's forwards'
         });
+        (0, _DomElement2.default)(window).on('resize scroll', (0, _timeLimitCallback2.default)(function (event) {
+            var pos = calcPosOfParent();
+            (0, _DomElement2.default)(showElem).css(pos);
+        }).run);
     };
 
     var size = (0, _getSize2.default)(this.$parent);
@@ -1885,6 +1893,8 @@ function showElement(defaultDirection, posOfParent, posOfWindow, posOfPop) {
 
 var showController = {
     outerBottom: function outerBottom(elemSize, parentSize, windowSize) {
+        var _this2 = this;
+
         var posOfParent = {
             left: parentSize.left + 'px',
             top: parentSize.top + parentSize.height + 'px'
@@ -1905,8 +1915,14 @@ var showController = {
             maxHeight: '100%',
             maxWidth: '100%'
         };
-
-        showElement.call(this, 'Bottom', posOfParent, posOfWindow, posOfPop);
+        var calcPosOfParent = function calcPosOfParent() {
+            var ps = (0, _getSize2.default)(_this2.$parent);
+            return {
+                left: ps.left + 'px',
+                top: ps.top + ps.height + 'px'
+            };
+        };
+        showElement.call(this, 'Bottom', posOfParent, posOfWindow, posOfPop, calcPosOfParent);
     }
 };
 
@@ -1956,7 +1972,7 @@ var PopLayer = function () {
          * 显示弹出层
          */
         value: function show() {
-            var _this2 = this;
+            var _this3 = this;
 
             this.clear();
             var showElement = n('div', { id: 'pop-layer-' + this.id }, { display: 'block', position: 'fixed', zIndex: defaultZIndexLevel }, this.$element);
@@ -1973,17 +1989,17 @@ var PopLayer = function () {
                 this.clickOutListener = null;
             }
             (0, _onMouseHover2.default)(this.showElement, null, function () {
-                if (!_this2.clickOutListener) {
-                    _this2.clickOutListener = function (event) {
+                if (!_this3.clickOutListener) {
+                    _this3.clickOutListener = function (event) {
                         var x = event.pageX || event.clientX || event.x;
                         var y = event.pageY || event.clientY || event.y;
                         var box = (0, _getSize2.default)(showElement);
                         var point = { x: x, y: y };
-                        if (!(0, _pointInBox2.default)(point, box) && _this2.showed) {
-                            _this2.hide();
+                        if (!(0, _pointInBox2.default)(point, box) && _this3.showed) {
+                            _this3.hide();
                         }
                     };
-                    (0, _DomElement2.default)(window).on('click', _this2.clickOutListener);
+                    (0, _DomElement2.default)(window).on('click', _this3.clickOutListener);
                 }
             });
             if (this.showShade) {
@@ -2044,7 +2060,7 @@ var PopLayer = function () {
 
 exports.default = PopLayer;
 
-},{"../config":2,"../dom/DomElement":3,"../util/getPlatform":29,"../util/getSize":30,"../util/onMouseHover":34,"../util/pointInBox":35}],25:[function(require,module,exports){
+},{"../config":2,"../dom/DomElement":3,"../util/getPlatform":29,"../util/getSize":30,"../util/onMouseHover":34,"../util/pointInBox":35,"../util/timeLimitCallback":37}],25:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2392,6 +2408,37 @@ function printf(format) {
             return args[name] || target;
         }
     });
+}
+
+},{}],37:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = timeLimitCallback;
+/**
+ * 基于时间的节流
+ * @param {callback} callback 回调函数
+ * @param {Object} target 回调对象
+ * @param {Integer} time 节流时间
+ */
+function timeLimitCallback(callback, target, time) {
+    var time = time | 10;
+    var lastTime = new Date().getTime();
+    return {
+        run: function run() {
+            for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+                args[_key] = arguments[_key];
+            }
+
+            var curTime = new Date().getTime();
+            if (curTime - lastTime >= time) {
+                callback.apply(target || callback, args);
+                lastTime = curTime;
+            }
+        }
+    };
 }
 
 },{}]},{},[1]);
