@@ -42,6 +42,7 @@ function createEditorView(editor) {
         },
         onblur: function () {
             editor._foucs = false;
+            editor.range = editor.range;
             onStateChange.call(editor);
             editor.fire('blur');
         },

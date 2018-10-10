@@ -6,12 +6,12 @@ export default class Attachment {
         this.data = null;
     }
 
-    isImage() {
+    get isImage() {
         return /^image\//.test(this.file.type);
     }
 
-    get lcoal() {
-        return this.data.lcoal || true;
+    get local() {
+        return this.data.local || true;
     }
 
     get html() {
@@ -20,7 +20,7 @@ export default class Attachment {
             return `<img title="${data.name}" alt="${data.name}" src="${data.link}">`;
         }
         else {
-            return `<a title="${data.name}" herf="${data.link}">${data.name}</a>`;
+            return `<a title="${data.name}" href="${data.link}">${data.name}</a>`;
         }
     }
 

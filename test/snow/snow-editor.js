@@ -322,6 +322,7 @@ function createEditorView(editor) {
         },
         onblur: function onblur() {
             editor._foucs = false;
+            editor.range = editor.range;
             onStateChange.call(editor);
             editor.fire('blur');
         }
@@ -569,18 +570,18 @@ var Attachment = function () {
     }
 
     _createClass(Attachment, [{
+        key: "upload",
+        value: function upload() {}
+    }, {
         key: "isImage",
-        value: function isImage() {
+        get: function get() {
             return (/^image\//.test(this.file.type)
             );
         }
     }, {
-        key: "upload",
-        value: function upload() {}
-    }, {
-        key: "lcoal",
+        key: "local",
         get: function get() {
-            return this.data.lcoal || true;
+            return this.data.local || true;
         }
     }, {
         key: "html",
@@ -589,7 +590,7 @@ var Attachment = function () {
             if (this.isImage) {
                 return "<img title=\"" + data.name + "\" alt=\"" + data.name + "\" src=\"" + data.link + "\">";
             } else {
-                return "<a title=\"" + data.name + "\" herf=\"" + data.link + "\">" + data.name + "</a>";
+                return "<a title=\"" + data.name + "\" href=\"" + data.link + "\">" + data.name + "</a>";
             }
         }
     }]);
