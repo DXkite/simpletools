@@ -43,47 +43,6 @@ function attachmentHandler(editor, attachment) {
     });
 }
 
-function showDropFilePanel() {
-    hideDropFilePanel.call(this);
-    const editor = this;
-    const size = getSize(this.$content);
-    const shade = n('div',
-        {
-            id: 'snow-' + this.id + '-drop',
-            ondrop: (event) => {
-                event.preventDefault();
-                editor.dropEnter = false;
-                hideDropFilePanel.call(editor);
-                getDropFiles(event).forEach(attachment => {
-                    attachmentHandler(editor, attachment);
-                });
-            }
-        }, {
-            position: 'fixed',
-            backgroundColor: 'rgba(0,0,0,0.3)',
-            textAlign: 'center',
-            lineHeight: size.height + 'px',
-            top: size.top + 'px',
-            left: size.left + 'px',
-            height: size.height + 'px',
-            width: size.width + 'px',
-            color: '#fff',
-            fointSize: '2em',
-        }, _('拖入文件'));
-    this.$content.parentNode.appendChild(shade);
-    this.dropElement = shade;
-    window.getSelection().removeAllRanges();
-    editor.range = null;
-}
-
-
-function hideDropFilePanel() {
-    if (this.dropElement) {
-        this.$content.parentNode.removeChild(this.dropElement);
-        this.dropElement = null;
-    }
-}
-
 function menuElement(editor, attachment) {
     const layer = this.layer;
     return n('div',
@@ -112,7 +71,6 @@ function getAttachmentList(editor) {
     attahments.forEach(attach => {
         childs.push(menuElement.call(this, editor, attach));
     })
-    // console.log(attahments);
     const ele = $.element('div', { class: 'snow-attachment-menu' }, null, childs.length <= 0 ? '<div class="snow-attachment-item">' + _('没有附件') + '</div>' : childs);
     return ele;
 }
@@ -128,7 +86,7 @@ class AttachmentManager extends Component {
         editor.dropEnter = false;
 
         $(editor.$content).on('paste', event => {
-            console.log(event.clipboardData.items, event.clipboardData.files);
+            editor.fire('paste',event);
             getPasteImage(event).forEach(attachment => {
                 attachmentHandler(editor, attachment);
             })
@@ -136,33 +94,35 @@ class AttachmentManager extends Component {
 
         $(window).on('dragenter', event => {
             event.preventDefault();
-            console.log(event.dataTransfer);
             if (editor.dropEnter === false) {
-                showDropFilePanel.call(editor);
                 editor.dropEnter = true;
+                editor.fire('dragenter',event);
             }
         });
 
         $(window).on('drop', event => {
             event.preventDefault();
-            hideDropFilePanel.call(editor);
+            editor.dropEnter = false;
+            editor.fire('drop',event);
+            getDropFiles(event).forEach(attachment => {
+                attachmentHandler(editor, attachment);
+            });
         });
 
         $(window).on('dragover', event => {
             event.preventDefault();
             event.dataTransfer.dropEffect = 'copy';
             if (editor.dropEnter === false) {
-                showDropFilePanel.call(editor);
                 editor.dropEnter = true;
+                editor.fire('dragenter',event);
             }
         });
 
         $(window).on('dragleave', event => {
             event.preventDefault();
             if (event.screenX === 0 && event.screenY === 0) {
-                // console.log('window', event.type);
-                hideDropFilePanel.call(editor);
                 editor.dropEnter = false;
+                editor.fire('dragleave',event);
             }
         });
     }

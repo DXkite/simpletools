@@ -1295,45 +1295,6 @@ function attachmentHandler(editor, attachment) {
     });
 }
 
-function showDropFilePanel() {
-    hideDropFilePanel.call(this);
-    var editor = this;
-    var size = (0, _getSize2.default)(this.$content);
-    var shade = n('div', {
-        id: 'snow-' + this.id + '-drop',
-        ondrop: function ondrop(event) {
-            event.preventDefault();
-            editor.dropEnter = false;
-            hideDropFilePanel.call(editor);
-            getDropFiles(event).forEach(function (attachment) {
-                attachmentHandler(editor, attachment);
-            });
-        }
-    }, {
-        position: 'fixed',
-        backgroundColor: 'rgba(0,0,0,0.3)',
-        textAlign: 'center',
-        lineHeight: size.height + 'px',
-        top: size.top + 'px',
-        left: size.left + 'px',
-        height: size.height + 'px',
-        width: size.width + 'px',
-        color: '#fff',
-        fointSize: '2em'
-    }, _('拖入文件'));
-    this.$content.parentNode.appendChild(shade);
-    this.dropElement = shade;
-    window.getSelection().removeAllRanges();
-    editor.range = null;
-}
-
-function hideDropFilePanel() {
-    if (this.dropElement) {
-        this.$content.parentNode.removeChild(this.dropElement);
-        this.dropElement = null;
-    }
-}
-
 function menuElement(editor, attachment) {
     var layer = this.layer;
     return n('div', {
@@ -1357,7 +1318,6 @@ function getAttachmentList(editor) {
     attahments.forEach(function (attach) {
         childs.push(menuElement.call(_this, editor, attach));
     });
-    // console.log(attahments);
     var ele = _DomElement2.default.element('div', { class: 'snow-attachment-menu' }, null, childs.length <= 0 ? '<div class="snow-attachment-item">' + _('没有附件') + '</div>' : childs);
     return ele;
 }
@@ -1377,7 +1337,7 @@ var AttachmentManager = function (_Component) {
         editor.dropEnter = false;
 
         (0, _DomElement2.default)(editor.$content).on('paste', function (event) {
-            console.log(event.clipboardData.items, event.clipboardData.files);
+            editor.fire('paste', event);
             getPasteImage(event).forEach(function (attachment) {
                 attachmentHandler(editor, attachment);
             });
@@ -1385,33 +1345,35 @@ var AttachmentManager = function (_Component) {
 
         (0, _DomElement2.default)(window).on('dragenter', function (event) {
             event.preventDefault();
-            console.log(event.dataTransfer);
             if (editor.dropEnter === false) {
-                showDropFilePanel.call(editor);
                 editor.dropEnter = true;
+                editor.fire('dragenter', event);
             }
         });
 
         (0, _DomElement2.default)(window).on('drop', function (event) {
             event.preventDefault();
-            hideDropFilePanel.call(editor);
+            editor.dropEnter = false;
+            editor.fire('drop', event);
+            getDropFiles(event).forEach(function (attachment) {
+                attachmentHandler(editor, attachment);
+            });
         });
 
         (0, _DomElement2.default)(window).on('dragover', function (event) {
             event.preventDefault();
             event.dataTransfer.dropEffect = 'copy';
             if (editor.dropEnter === false) {
-                showDropFilePanel.call(editor);
                 editor.dropEnter = true;
+                editor.fire('dragenter', event);
             }
         });
 
         (0, _DomElement2.default)(window).on('dragleave', function (event) {
             event.preventDefault();
             if (event.screenX === 0 && event.screenY === 0) {
-                // console.log('window', event.type);
-                hideDropFilePanel.call(editor);
                 editor.dropEnter = false;
+                editor.fire('dragleave', event);
             }
         });
         return _this2;
