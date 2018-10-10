@@ -1,0 +1,17 @@
+.snow-attachment-menu {
+    background-color: #fff;
+    padding: .2em 0;
+    box-shadow: 0 .2em .2em .2em $toolbar-color;
+}
+
+.snow-attachment-item {
+    cursor: pointer;
+    transition: .2s;
+    padding: .2em;
+}
+
+
+.snow-attachment-item:hover {
+    cursor: pointer;
+    background-color: $toolbar-color;
+}

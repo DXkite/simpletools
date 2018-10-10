@@ -1,4 +1,4 @@
-/*! snow-editor by dxkite 2018-10-09 */
+/*! snow-editor by dxkite 2018-10-10 */
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 'use strict';
 
@@ -541,7 +541,7 @@ var SnowEditor = function () {
 
 exports.default = SnowEditor;
 
-},{"../dom/DomElement":3,"../toast/Toast":25,"../util/printf":34,"./config":23}],5:[function(require,module,exports){
+},{"../dom/DomElement":3,"../toast/Toast":25,"../util/printf":36,"./config":23}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1192,9 +1192,9 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _Range = require('../Range');
+var _Component2 = require('../Component');
 
-var _Range2 = _interopRequireDefault(_Range);
+var _Component3 = _interopRequireDefault(_Component2);
 
 var _PopLayer = require('../../../poplayer/PopLayer');
 
@@ -1314,17 +1314,45 @@ function hideDropFilePanel() {
     }
 }
 
+function menuElement(editor, attachment) {
+    var layer = this.layer;
+    return n('div', {
+        title: attachment.name,
+        class: 'snow-attachment-item',
+        onclick: function onclick() {
+            console.log(editor.range);
+            editor.exec('insertHTML', attachment.html);
+            layer.hide();
+        }
+    }, null, [n('i', {
+        class: 'iconfont snow-icon-' + (attachment.isImage ? 'image' : 'attachment')
+    }), n('span', null, null, attachment.name)]);
+}
+
+function getAttachmentList(editor) {
+    var _this = this;
+
+    var attahments = editor.attachment;
+    var childs = new Array();
+    attahments.forEach(function (attach) {
+        childs.push(menuElement.call(_this, editor, attach));
+    });
+    // console.log(attahments);
+    var ele = _DomElement2.default.element('div', { class: 'snow-attachment-menu' }, null, childs.length <= 0 ? '<div class="snow-attachment-item">' + _('没有附件') + '</div>' : childs);
+    return ele;
+}
+
 /**
  * 附件处理
  */
 
-var AttachmentManager = function (_RangeComponent) {
-    _inherits(AttachmentManager, _RangeComponent);
+var AttachmentManager = function (_Component) {
+    _inherits(AttachmentManager, _Component);
 
     function AttachmentManager(editor) {
         _classCallCheck(this, AttachmentManager);
 
-        var _this = _possibleConstructorReturn(this, (AttachmentManager.__proto__ || Object.getPrototypeOf(AttachmentManager)).call(this, editor));
+        var _this2 = _possibleConstructorReturn(this, (AttachmentManager.__proto__ || Object.getPrototypeOf(AttachmentManager)).call(this, editor));
 
         editor.dropEnter = false;
 
@@ -1366,21 +1394,21 @@ var AttachmentManager = function (_RangeComponent) {
                 editor.dropEnter = false;
             }
         });
-        return _this;
+        return _this2;
     }
 
     _createClass(AttachmentManager, [{
         key: 'init',
         value: function init(node) {
-            var ele = _DomElement2.default.element('div', {}, { 'width': '10em', 'display': 'flex', 'flex-wrap': 'wrap' }, '<b>Attachment</b>');
-            this.layer = new _PopLayer2.default(ele, node);
+            this.layer = new _PopLayer2.default(getAttachmentList.call(this, this.editor), node);
         }
     }, {
         key: 'onStatusChange',
         value: function onStatusChange() {}
     }, {
-        key: 'onRangeAction',
-        value: function onRangeAction(range, event) {
+        key: 'onClick',
+        value: function onClick(event) {
+            this.layer.content = getAttachmentList.call(this, this.editor);
             this.layer.show();
         }
     }, {
@@ -1396,11 +1424,11 @@ var AttachmentManager = function (_RangeComponent) {
     }]);
 
     return AttachmentManager;
-}(_Range2.default);
+}(_Component3.default);
 
 exports.default = AttachmentManager;
 
-},{"../../../dom/DomElement":3,"../../../editor/SnowEditor":4,"../../../poplayer/PopLayer":24,"../../../util/getDropFiles":27,"../../../util/getPasteFiles":28,"../../../util/getSize":30,"../../../util/isChildOf":33,"../Attahment":5,"../Range":7,"./uploader":20}],17:[function(require,module,exports){
+},{"../../../dom/DomElement":3,"../../../editor/SnowEditor":4,"../../../poplayer/PopLayer":24,"../../../util/getDropFiles":27,"../../../util/getPasteFiles":28,"../../../util/getSize":30,"../../../util/isChildOf":33,"../Attahment":5,"../Component":6,"./uploader":20}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1409,9 +1437,9 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _Range = require('../Range');
+var _Component2 = require('../Component');
 
-var _Range2 = _interopRequireDefault(_Range);
+var _Component3 = _interopRequireDefault(_Component2);
 
 var _PopLayer = require('../../../poplayer/PopLayer');
 
@@ -1436,8 +1464,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * 表情处理
  */
-var EmotionComponent = function (_RangeComponent) {
-    _inherits(EmotionComponent, _RangeComponent);
+var EmotionComponent = function (_Component) {
+    _inherits(EmotionComponent, _Component);
 
     function EmotionComponent() {
         _classCallCheck(this, EmotionComponent);
@@ -1485,8 +1513,8 @@ var EmotionComponent = function (_RangeComponent) {
             }
         }
     }, {
-        key: 'onRangeAction',
-        value: function onRangeAction(range, event) {
+        key: 'onClick',
+        value: function onClick(event) {
             this.layer.show();
         }
     }, {
@@ -1502,11 +1530,11 @@ var EmotionComponent = function (_RangeComponent) {
     }]);
 
     return EmotionComponent;
-}(_Range2.default);
+}(_Component3.default);
 
 exports.default = EmotionComponent;
 
-},{"../../../dom/DomElement":3,"../../../poplayer/PopLayer":24,"../Range":7,"./emotion/Text":19}],18:[function(require,module,exports){
+},{"../../../dom/DomElement":3,"../../../poplayer/PopLayer":24,"../Component":6,"./emotion/Text":19}],18:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1749,6 +1777,14 @@ var _getPlatform = require('../util/getPlatform');
 
 var _getPlatform2 = _interopRequireDefault(_getPlatform);
 
+var _isChildOf = require('../util/isChildOf');
+
+var _isChildOf2 = _interopRequireDefault(_isChildOf);
+
+var _onMouseHover = require('../util/onMouseHover');
+
+var _onMouseHover2 = _interopRequireDefault(_onMouseHover);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1776,6 +1812,9 @@ function hideElement(defaultDirection) {
     var animationTime = this.animationTime;
     var timeout = animationTime * 1000;
     var showElement = this.showElement;
+    if (showElement === null) {
+        return;
+    }
     if (this.showState === STR.windowSide) {
         (0, _DomElement2.default)(showElement).css({
             animation: getAnimtion(this.direction, defaultDirection, 'Out') + ' ease ' + animationTime + 's forwards'
@@ -1921,21 +1960,40 @@ var PopLayer = function () {
         this.position = 'outerBottom';
         this.showElement = null;
         this.showShade = null;
+        this.showed = false;
     }
-
-    /**
-     * 显示弹出层
-     */
-
 
     _createClass(PopLayer, [{
         key: 'show',
+
+
+        /**
+         * 显示弹出层
+         */
         value: function show() {
+            var _this2 = this;
+
             var size = (0, _getSize2.default)(this.$parent);
             var eleSize = (0, _getSize2.default)(this.$element);
             var windowSize = (0, _getSize2.default)(null);
             showController[this.position].call(this, eleSize, size, windowSize);
             (0, _DomElement2.default)(this.showElement).css({ 'display': 'block' });
+            this.showed = true;
+            if (this.clickOutListener) {
+                (0, _DomElement2.default)(window).off('click', this.clickOutListener);
+                this.clickOutListener = null;
+            }
+            (0, _onMouseHover2.default)(this.showElement, null, function () {
+                if (!_this2.clickOutListener) {
+                    _this2.clickOutListener = function () {
+                        if (_this2.showed) {
+                            // console.log('window close');
+                            _this2.hide();
+                        }
+                    };
+                    (0, _DomElement2.default)(window).on('click', _this2.clickOutListener);
+                }
+            });
             if (this.showShade) {
                 (0, _DomElement2.default)(this.showShade).css({ 'display': 'block' });
             }
@@ -1948,6 +2006,7 @@ var PopLayer = function () {
     }, {
         key: 'clear',
         value: function clear() {
+            this.showed = false;
             var body = getBody();
             if (this.showElement) {
                 body.removeChild(this.showElement);
@@ -1971,6 +2030,15 @@ var PopLayer = function () {
          */
         value: function hide() {
             hideController[this.position].call(this);
+            this.showed = false;
+        }
+    }, {
+        key: 'content',
+        set: function set(element) {
+            this.$element = element;
+        },
+        get: function get() {
+            return this.$element;
         }
     }, {
         key: 'animationTime',
@@ -1984,7 +2052,7 @@ var PopLayer = function () {
 
 exports.default = PopLayer;
 
-},{"../config":2,"../dom/DomElement":3,"../util/getPlatform":29,"../util/getSize":30}],25:[function(require,module,exports){
+},{"../config":2,"../dom/DomElement":3,"../util/getPlatform":29,"../util/getSize":30,"../util/isChildOf":33,"../util/onMouseHover":34}],25:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2227,6 +2295,74 @@ function isChildOf(elem, parent) {
 }
 
 },{}],34:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = onMouseHover;
+
+var _getSize = require('./getSize');
+
+var _getSize2 = _interopRequireDefault(_getSize);
+
+var _pointInBox = require('./pointInBox');
+
+var _pointInBox2 = _interopRequireDefault(_pointInBox);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+检测鼠标是否覆盖某对象（含子元素）
+ * @param {Element} target 目标
+ * @param {Function} hover 覆盖回调
+ * @param {Function} outer 未覆盖回调
+ * @param {Integer} time 节流时间
+ */
+function onMouseHover(target, hover, outer, time) {
+    var time = time | 10;
+    var lastTime = new Date().getTime();
+    window.addEventListener('mousemove', function (event) {
+        event.hoverTarget = target;
+        var curTime = new Date().getTime();
+        if (curTime - lastTime >= time) {
+            var box = (0, _getSize2.default)(target);
+            var x = event.pageX || event.clientX || event.x;
+            var y = event.pageY || event.clientY || event.y;
+            if ((0, _pointInBox2.default)({ x: x, y: y }, box)) {
+                event.hoverAction = 'hover';
+                hover && hover(event);
+            } else {
+                event.hoverAction = 'outer';
+                outer && outer(event);
+            }
+            lastTime = curTime;
+        }
+    });
+}
+
+},{"./getSize":30,"./pointInBox":35}],35:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = pointInBox;
+/**
+ * 判断点在矩形内
+ * @param {Object} point 点，包含 x,y
+ * @param {Rect} box 矩形，top,left,width,height
+ */
+function pointInBox(point, box) {
+    var bottom = box.top + box.height;
+    var right = box.left + box.width;
+    if (point.y >= box.top && point.y <= bottom && point.x >= box.left && point.x <= right) {
+        return true;
+    }
+    return false;
+}
+
+},{}],36:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {

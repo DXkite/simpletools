@@ -1,4 +1,4 @@
-import RangeComponent from '../Range'
+import Component from '../Component'
 import Layer from '../../../poplayer/PopLayer'
 import $ from '../../../dom/DomElement'
 import TextEmotions from './emotion/Text'
@@ -6,7 +6,7 @@ import TextEmotions from './emotion/Text'
 /**
  * 表情处理
  */
-class EmotionComponent extends RangeComponent {
+class EmotionComponent extends Component {
     init(node) {
         var childs = new Array;
 
@@ -52,7 +52,7 @@ class EmotionComponent extends RangeComponent {
         }
     }
 
-    onRangeAction(range, event) {
+    onClick(event) {
         this.layer.show();
     }
 }

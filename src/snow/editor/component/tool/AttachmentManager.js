@@ -1,4 +1,4 @@
-import RangeComponent from '../Range'
+import Component from '../Component'
 import Layer from '../../../poplayer/PopLayer'
 import $ from '../../../dom/DomElement'
 import _getDropFiles from '../../../util/getDropFiles'
@@ -6,7 +6,6 @@ import _getPasteFiles from '../../../util/getPasteFiles'
 import _isChildOf from '../../../util/isChildOf'
 import Attachment from '../Attahment'
 import upload from './uploader'
-import isChildOf from '../../../util/isChildOf'
 import getSize from '../../../util/getSize'
 import SnowEditor from '../../../editor/SnowEditor'
 
@@ -86,11 +85,43 @@ function hideDropFilePanel() {
     }
 }
 
+function menuElement(editor, attachment) {
+    const layer = this.layer;
+    return n('div',
+        {
+            title: attachment.name,
+            class: 'snow-attachment-item',
+            onclick: () => {
+                console.log(editor.range);
+                editor.exec('insertHTML', attachment.html);
+                layer.hide();
+            }
+        },
+        null,
+        [
+            n('i', {
+                class: 'iconfont snow-icon-' + (attachment.isImage ? 'image' : 'attachment'),
+            }),
+            n('span', null, null, attachment.name)
+        ]
+    );
+}
+
+function getAttachmentList(editor) {
+    const attahments = editor.attachment;
+    const childs = new Array;
+    attahments.forEach(attach => {
+        childs.push(menuElement.call(this, editor, attach));
+    })
+    // console.log(attahments);
+    const ele = $.element('div', { class: 'snow-attachment-menu' }, null, childs.length <= 0 ? '<div class="snow-attachment-item">' + _('没有附件') + '</div>' : childs);
+    return ele;
+}
 
 /**
  * 附件处理
  */
-class AttachmentManager extends RangeComponent {
+class AttachmentManager extends Component {
 
     constructor(editor) {
         super(editor);
@@ -98,7 +129,7 @@ class AttachmentManager extends RangeComponent {
         editor.dropEnter = false;
 
         $(editor.$content).on('paste', event => {
-            console.log(event.clipboardData.items,event.clipboardData.files);
+            console.log(event.clipboardData.items, event.clipboardData.files);
             getPasteImage(event).forEach(attachment => {
                 attachmentHandler(editor, attachment);
             })
@@ -138,8 +169,7 @@ class AttachmentManager extends RangeComponent {
     }
 
     init(node) {
-        const ele = $.element('div', {}, { 'width': '10em', 'display': 'flex', 'flex-wrap': 'wrap' }, '<b>Attachment</b>');
-        this.layer = new Layer(ele, node);
+        this.layer = new Layer(getAttachmentList.call(this, this.editor), node);
     }
 
     get name() {
@@ -154,7 +184,8 @@ class AttachmentManager extends RangeComponent {
 
     }
 
-    onRangeAction(range, event) {
+    onClick(event) {
+        this.layer.content = getAttachmentList.call(this, this.editor);
         this.layer.show();
     }
 }

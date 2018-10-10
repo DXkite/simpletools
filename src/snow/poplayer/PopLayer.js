@@ -2,6 +2,8 @@ import config from '../config'
 import getSize from '../util/getSize'
 import $ from '../dom/DomElement'
 import getPlatform from '../util/getPlatform'
+import isChildOf from '../util/isChildOf'
+import hover from '../util/onMouseHover'
 
 const defaultZIndexLevel = config.popLayerLevel || 9000;
 const n = $.element;
@@ -25,6 +27,9 @@ function hideElement(defaultDirection) {
     const animationTime = this.animationTime;
     const timeout = animationTime * 1000;
     const showElement = this.showElement;
+    if (showElement === null) {
+        return;
+    }
     if (this.showState === STR.windowSide) {
         $(showElement).css({
             animation: getAnimtion(this.direction, defaultDirection, 'Out') + ' ease ' + animationTime + 's forwards'
@@ -171,6 +176,15 @@ class PopLayer {
         this.position = 'outerBottom';
         this.showElement = null;
         this.showShade = null;
+        this.showed = false;
+    }
+
+    set content(element) {
+        this.$element = element;
+    }
+
+    get content() {
+        return this.$element;
     }
 
     /**
@@ -182,6 +196,22 @@ class PopLayer {
         const windowSize = getSize(null);
         showController[this.position].call(this, eleSize, size, windowSize);
         $(this.showElement).css({ 'display': 'block' });
+        this.showed = true;
+        if (this.clickOutListener) {
+            $(window).off('click', this.clickOutListener);
+            this.clickOutListener = null;
+        }
+        hover(this.showElement, null, () => {
+            if (!this.clickOutListener) {
+                this.clickOutListener = () => {
+                    if (this.showed) {
+                        // console.log('window close');
+                        this.hide();
+                    }
+                };
+                $(window).on('click', this.clickOutListener);
+            }
+        });
         if (this.showShade) {
             $(this.showShade).css({ 'display': 'block' });
         }
@@ -191,6 +221,7 @@ class PopLayer {
      * 清理显示内容
      */
     clear() {
+        this.showed = false;
         const body = getBody();
         if (this.showElement) {
             body.removeChild(this.showElement);
@@ -213,6 +244,7 @@ class PopLayer {
      */
     hide() {
         hideController[this.position].call(this);
+        this.showed = false;
     }
 }
 

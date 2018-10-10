@@ -203,3 +203,17 @@
 
 .snow-icon-redo:before {
   content: "\ecc6"; }
+
+.snow-attachment-menu {
+  background-color: #fff;
+  padding: .2em 0;
+  box-shadow: 0 0.2em 0.2em 0.2em #dee2e6; }
+
+.snow-attachment-item {
+  cursor: pointer;
+  transition: .2s;
+  padding: .2em; }
+
+.snow-attachment-item:hover {
+  cursor: pointer;
+  background-color: #dee2e6; }
