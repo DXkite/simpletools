@@ -276,6 +276,10 @@ var _config = require('./config');
 
 var _config2 = _interopRequireDefault(_config);
 
+var _isChildOf2 = require('../util/isChildOf');
+
+var _isChildOf3 = _interopRequireDefault(_isChildOf2);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -493,7 +497,10 @@ var SnowEditor = function () {
         get: function get() {
             var selection = window.getSelection();
             if (selection.rangeCount > 0) {
-                return selection.getRangeAt(0);
+                var range = selection.getRangeAt(0);
+                if ((0, _isChildOf3.default)(range.commonAncestorContainer, this.$element)) {
+                    return range;
+                }
             }
         },
         set: function set(range) {
@@ -541,7 +548,7 @@ var SnowEditor = function () {
 
 exports.default = SnowEditor;
 
-},{"../dom/DomElement":3,"../toast/Toast":25,"../util/printf":36,"./config":23}],5:[function(require,module,exports){
+},{"../dom/DomElement":3,"../toast/Toast":25,"../util/isChildOf":33,"../util/printf":36,"./config":23}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1212,10 +1219,6 @@ var _getPasteFiles2 = require('../../../util/getPasteFiles');
 
 var _getPasteFiles3 = _interopRequireDefault(_getPasteFiles2);
 
-var _isChildOf2 = require('../../../util/isChildOf');
-
-var _isChildOf3 = _interopRequireDefault(_isChildOf2);
-
 var _Attahment = require('../Attahment');
 
 var _Attahment2 = _interopRequireDefault(_Attahment);
@@ -1428,7 +1431,7 @@ var AttachmentManager = function (_Component) {
 
 exports.default = AttachmentManager;
 
-},{"../../../dom/DomElement":3,"../../../editor/SnowEditor":4,"../../../poplayer/PopLayer":24,"../../../util/getDropFiles":27,"../../../util/getPasteFiles":28,"../../../util/getSize":30,"../../../util/isChildOf":33,"../Attahment":5,"../Component":6,"./uploader":20}],17:[function(require,module,exports){
+},{"../../../dom/DomElement":3,"../../../editor/SnowEditor":4,"../../../poplayer/PopLayer":24,"../../../util/getDropFiles":27,"../../../util/getPasteFiles":28,"../../../util/getSize":30,"../Attahment":5,"../Component":6,"./uploader":20}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2289,6 +2292,11 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.default = isChildOf;
+/**
+ * 判断elem节点是否是parent的子节点
+ * @param {Element} elem 子节点
+ * @param {Element} parent 父节点
+ */
 function isChildOf(elem, parent) {
     while (elem && elem != parent) {
         elem = elem.parentNode;

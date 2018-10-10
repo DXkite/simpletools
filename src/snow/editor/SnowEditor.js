@@ -2,6 +2,7 @@ import Dom from '../dom/DomElement'
 import printf from '../util/printf'
 import toast from '../toast/Toast'
 import _defaultConfig from './config'
+import _isChildOf from '../util/isChildOf'
 
 let defaultConfig = _defaultConfig;
 let components = new Array;
@@ -169,7 +170,10 @@ class SnowEditor {
     get range() {
         const selection = window.getSelection();
         if (selection.rangeCount > 0) {
-            return selection.getRangeAt(0);
+            const range = selection.getRangeAt(0);
+            if (_isChildOf(range.commonAncestorContainer, this.$element)) {
+                return range;
+            }
         }
     }
 
