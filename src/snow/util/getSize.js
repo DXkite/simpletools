@@ -1,11 +1,11 @@
-import getWindowSize from './getWindowSize'
+import getWindowsSize from './getWindowsSize'
 
 export default function getSize(elem) {
     if (elem instanceof Element) {
         return elem.getBoundingClientRect();
-    } else {
-
-        const { width, height } = getWindowSize();
+    } else /*if (elem instanceof Window)*/ {
+        const { width, height } = getWindowsSize();
+       
         let elementRect = {
             width,
             height,

@@ -41,7 +41,7 @@ function hideElement(defaultDirection) {
         });
     } else if (this.showState === STR.windowPop) {
         $(showElement).css({
-            animation: STR.fadeOut + ' ease ' + animationTime + 's forwards'
+            animation: getAnimtion(this.direction, defaultDirection, 'Out') + ' ease ' + animationTime + 's forwards'
         });
     }
     if (this.showShade) {
@@ -85,7 +85,7 @@ function showElement(defaultDirection, posOfParent, posOfWindow, posOfPop, calcP
 
         if (layerPop) {
             $(showElem).css(posOfPop).css({
-                animation: STR.fadeIn + ' ease ' + animationTime + 's forwards',
+                animation: getAnimtion(this.direction, defaultDirection, 'In') + ' ease ' + animationTime + 's forwards',
             });
             this.showState = STR.windowPop;
         } else {
@@ -208,6 +208,7 @@ class PopLayer {
         const size = getSize(this.$parent);
         const elemSize = getSize(this.$element);
         const windowSize = getSize(null);
+        
         showController[this.position].call(this, elemSize, size, windowSize);
         $(this.showElement).css({ 'display': 'block' });
         this.showed = true;

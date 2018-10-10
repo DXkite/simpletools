@@ -1815,7 +1815,7 @@ function hideElement(defaultDirection) {
         });
     } else if (this.showState === STR.windowPop) {
         (0, _DomElement2.default)(showElement).css({
-            animation: STR.fadeOut + ' ease ' + animationTime + 's forwards'
+            animation: getAnimtion(this.direction, defaultDirection, 'Out') + ' ease ' + animationTime + 's forwards'
         });
     }
     if (this.showShade) {
@@ -1857,7 +1857,7 @@ function showElement(defaultDirection, posOfParent, posOfWindow, posOfPop, calcP
 
         if (layerPop) {
             (0, _DomElement2.default)(showElem).css(posOfPop).css({
-                animation: STR.fadeIn + ' ease ' + animationTime + 's forwards'
+                animation: getAnimtion(this.direction, defaultDirection, 'In') + ' ease ' + animationTime + 's forwards'
             });
             this.showState = STR.windowPop;
         } else {
@@ -1981,6 +1981,7 @@ var PopLayer = function () {
             var size = (0, _getSize2.default)(this.$parent);
             var elemSize = (0, _getSize2.default)(this.$element);
             var windowSize = (0, _getSize2.default)(null);
+
             showController[this.position].call(this, elemSize, size, windowSize);
             (0, _DomElement2.default)(this.showElement).css({ 'display': 'block' });
             this.showed = true;
@@ -2228,48 +2229,54 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = getSize;
 
-var _getWindowSize2 = require('./getWindowSize');
+var _getWindowsSize2 = require('./getWindowsSize');
 
-var _getWindowSize3 = _interopRequireDefault(_getWindowSize2);
+var _getWindowsSize3 = _interopRequireDefault(_getWindowsSize2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function getSize(elem) {
     if (elem instanceof Element) {
         return elem.getBoundingClientRect();
-    } else {
-        var _getWindowSize = (0, _getWindowSize3.default)(),
-            width = _getWindowSize.width,
-            height = _getWindowSize.height;
+    } else /*if (elem instanceof Window)*/{
+            var _getWindowsSize = (0, _getWindowsSize3.default)(),
+                width = _getWindowsSize.width,
+                height = _getWindowsSize.height;
 
-        var elementRect = {
-            width: width,
-            height: height,
-            left: 0,
-            top: 0
-        };
-        return elementRect;
-    }
+            var elementRect = {
+                width: width,
+                height: height,
+                left: 0,
+                top: 0
+            };
+            return elementRect;
+        }
 }
 
-},{"./getWindowSize":31}],31:[function(require,module,exports){
+},{"./getWindowsSize":31}],31:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.default = getWindowSizes;
+exports.default = getWindowsSize;
 
-function getSize(axis, body, html) {
-    return Math.max(body['offset' + axis], body['scroll' + axis], html['client' + axis], html['offset' + axis], html['scroll' + axis]);
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function getAxisSize(axis, body, html) {
+    var max = screen[axis.toLowerCase()];
+    var array = [body['offset' + axis], body['scroll' + axis], html['client' + axis], html['offset' + axis], html['scroll' + axis]].filter(function (item) {
+        return item < max;
+    });
+    return Math.max.apply(Math, _toConsumableArray(array));
 }
 
-function getWindowSizes() {
+function getWindowsSize() {
     var body = window.document.body;
     var html = window.document.documentElement;
     return {
-        height: getSize('Height', body, html),
-        width: getSize('Width', body, html)
+        height: getAxisSize('Height', body, html),
+        width: getAxisSize('Width', body, html)
     };
 }
 
