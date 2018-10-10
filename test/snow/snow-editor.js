@@ -373,9 +373,11 @@ function createToolBar(editor) {
 var commands = {
     insertHTML: function insertHTML(value) {
         if (this.range) {
+            console.log(this.range, this.range.commonAncestorContainer);
             document.execCommand('insertHTML', null, value);
         } else {
-            this.alert('no range can insert');
+            this.range = this.createDefaultRange();
+            document.execCommand('insertHTML', null, '<div>' + value + '</div>');
         }
     }
 };
@@ -397,6 +399,7 @@ var SnowEditor = function () {
         this.$element = document.querySelector(config.target);
         this.listener = {};
         this._foucs = false;
+        this._range = false;
         this.id = editorCounter++;
         this.$ = _DomElement2.default;
         this.attachment = new Array();
@@ -405,6 +408,24 @@ var SnowEditor = function () {
     }
 
     _createClass(SnowEditor, [{
+        key: 'createDefaultRange',
+        value: function createDefaultRange() {
+            var defaultRange = document.createRange();
+            defaultRange.setStart(this.$content, this.$content.childNodes.length);
+            return defaultRange;
+        }
+    }, {
+        key: 'getCurrentRange',
+        value: function getCurrentRange() {
+            var selection = window.getSelection();
+            if (selection.rangeCount > 0) {
+                var range = selection.getRangeAt(0);
+                if ((0, _isChildOf3.default)(range.commonAncestorContainer, this.$element)) {
+                    return range;
+                }
+            }
+        }
+    }, {
         key: 'on',
         value: function on(name, callback) {
             var listener = this.listener[name] || new Array();
@@ -496,13 +517,7 @@ var SnowEditor = function () {
     }, {
         key: 'range',
         get: function get() {
-            var selection = window.getSelection();
-            if (selection.rangeCount > 0) {
-                var range = selection.getRangeAt(0);
-                if ((0, _isChildOf3.default)(range.commonAncestorContainer, this.$element)) {
-                    return range;
-                }
-            }
+            return this._range || this.getCurrentRange();
         },
         set: function set(range) {
             if (range) {
@@ -510,6 +525,7 @@ var SnowEditor = function () {
                 selection.removeAllRanges();
                 selection.addRange(range);
             }
+            this._range = range;
         }
     }, {
         key: 'editable',
@@ -1369,6 +1385,7 @@ var AttachmentManager = function (_Component) {
 
         (0, _DomElement2.default)(window).on('dragenter', function (event) {
             event.preventDefault();
+            console.log(event.dataTransfer);
             if (editor.dropEnter === false) {
                 showDropFilePanel.call(editor);
                 editor.dropEnter = true;
@@ -1376,7 +1393,6 @@ var AttachmentManager = function (_Component) {
         });
 
         (0, _DomElement2.default)(window).on('drop', function (event) {
-            // console.log('window', event.type, _getDropFiles(event));
             event.preventDefault();
             hideDropFilePanel.call(editor);
         });

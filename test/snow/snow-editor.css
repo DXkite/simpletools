@@ -100,11 +100,14 @@
       flex-wrap: wrap; }
 
 .snow-content {
-  padding: .2em;
+  padding: .5em;
   border: 1px solid #dee2e6;
   word-break: break-all;
   outline: none;
   overflow: auto; }
+
+.snow-content img {
+  max-width: 100%; }
 
 .snow-content.drop {
   background-color: #dee2e6; }

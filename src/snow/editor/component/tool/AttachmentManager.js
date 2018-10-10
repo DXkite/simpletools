@@ -136,6 +136,7 @@ class AttachmentManager extends Component {
 
         $(window).on('dragenter', event => {
             event.preventDefault();
+            console.log(event.dataTransfer);
             if (editor.dropEnter === false) {
                 showDropFilePanel.call(editor);
                 editor.dropEnter = true;
@@ -143,7 +144,6 @@ class AttachmentManager extends Component {
         });
 
         $(window).on('drop', event => {
-            // console.log('window', event.type, _getDropFiles(event));
             event.preventDefault();
             hideDropFilePanel.call(editor);
         });

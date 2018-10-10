@@ -8,11 +8,15 @@
 }
 
 .snow-content {
-    padding: .2em;
+    padding: .5em;
     border: 1px solid $toolbar-color;
     word-break: break-all;
     outline: none;
     overflow: auto;
+}
+
+.snow-content img {
+    max-width: 100%;
 }
 
 .snow-content.drop {

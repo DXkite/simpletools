@@ -94,9 +94,11 @@ function createToolBar(editor) {
 const commands = {
     insertHTML: function (value) {
         if (this.range) {
+            console.log(this.range, this.range.commonAncestorContainer);
             document.execCommand('insertHTML', null, value);
         } else {
-            this.alert('no range can insert');
+            this.range = this.createDefaultRange();
+            document.execCommand('insertHTML', null, '<div>' + value + '</div>');
         }
     }
 };
@@ -119,6 +121,7 @@ class SnowEditor {
         this.$element = document.querySelector(config.target);
         this.listener = {};
         this._foucs = false;
+        this._range = false;
         this.id = editorCounter++;
         this.$ = Dom;
         this.attachment = new Array;
@@ -169,6 +172,16 @@ class SnowEditor {
     }
 
     get range() {
+        return this._range || this.getCurrentRange();
+    }
+
+    createDefaultRange() {
+        var defaultRange = document.createRange();
+        defaultRange.setStart(this.$content, this.$content.childNodes.length);
+        return defaultRange;
+    }
+
+    getCurrentRange() {
         const selection = window.getSelection();
         if (selection.rangeCount > 0) {
             const range = selection.getRangeAt(0);
@@ -184,6 +197,7 @@ class SnowEditor {
             selection.removeAllRanges();
             selection.addRange(range);
         }
+        this._range = range;
     }
 
     set editable(editable) {
