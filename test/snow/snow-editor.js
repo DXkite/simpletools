@@ -1,4 +1,4 @@
-/*! snow-editor by dxkite 2018-10-10 */
+/*! snow-editor by dxkite 2018-10-11 */
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 'use strict';
 
@@ -309,11 +309,14 @@ function createEditorView(editor) {
         contenteditable: editor.config.editable || true,
         onfocus: function onfocus() {
             editor._foucs = true;
+            // editor.range = editor.range;
+            // console.log(editor._range);
             onStateChange.call(editor);
             editor.fire('focus');
         },
         onclick: function onclick() {
             editor._foucs = true;
+            // editor.range = editor.range || editor._range;
             onStateChange.call(editor);
             editor.fire('click');
         },
@@ -322,7 +325,8 @@ function createEditorView(editor) {
         },
         onblur: function onblur() {
             editor._foucs = false;
-            editor.range = editor.range;
+            // editor.range = editor.range;
+            // console.log(editor._range);
             onStateChange.call(editor);
             editor.fire('blur');
         }
@@ -376,6 +380,7 @@ var commands = {
             // console.log(this.range, this.range.commonAncestorContainer);
             document.execCommand('insertHTML', null, value);
         } else {
+            // console.log('create default range',this.range);
             this.range = this.createDefaultRange();
             document.execCommand('insertHTML', null, '<div>' + value + '</div>');
         }
@@ -1347,16 +1352,22 @@ var AttachmentManager = function (_Component) {
             });
         });
 
-        (0, _DomElement2.default)(window).on('dragenter', function (event) {
+        (0, _DomElement2.default)(editor.$content).on('dragenter', function (event) {
+            event = event || window.event;
             event.preventDefault();
+            event.stopPropagation();
+            console.log(event.type);
             if (editor.dropEnter === false) {
                 editor.dropEnter = true;
                 editor.fire('dragenter', event);
             }
         });
 
-        (0, _DomElement2.default)(window).on('drop', function (event) {
+        (0, _DomElement2.default)(editor.$content).on('drop', function (event) {
+            event = event || window.event;
             event.preventDefault();
+            event.stopPropagation();
+            console.log(event.type);
             editor.dropEnter = false;
             editor.fire('drop', event);
             getDropFiles(event).forEach(function (attachment) {
@@ -1364,8 +1375,11 @@ var AttachmentManager = function (_Component) {
             });
         });
 
-        (0, _DomElement2.default)(window).on('dragover', function (event) {
+        (0, _DomElement2.default)(editor.$content).on('dragover', function (event) {
+            event = event || window.event;
             event.preventDefault();
+            event.stopPropagation();
+            console.log(event.type);
             event.dataTransfer.dropEffect = 'copy';
             if (editor.dropEnter === false) {
                 editor.dropEnter = true;
@@ -1373,8 +1387,11 @@ var AttachmentManager = function (_Component) {
             }
         });
 
-        (0, _DomElement2.default)(window).on('dragleave', function (event) {
+        (0, _DomElement2.default)(editor.$content).on('dragleave', function (event) {
+            event = event || window.event;
             event.preventDefault();
+            event.stopPropagation();
+            console.log(event.type);
             if (event.screenX === 0 && event.screenY === 0) {
                 editor.dropEnter = false;
                 editor.fire('dragleave', event);

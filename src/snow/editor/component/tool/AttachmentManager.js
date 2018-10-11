@@ -91,16 +91,22 @@ class AttachmentManager extends Component {
             })
         });
 
-        $(window).on('dragenter', event => {
+        $(editor.$content).on('dragenter', event => {
+            event = event || window.event;
             event.preventDefault();
+            event.stopPropagation();
+            console.log(event.type);
             if (editor.dropEnter === false) {
                 editor.dropEnter = true;
                 editor.fire('dragenter',event);
             }
         });
 
-        $(window).on('drop', event => {
+        $(editor.$content).on('drop', event => {
+            event = event || window.event;
             event.preventDefault();
+            event.stopPropagation();
+            console.log(event.type);
             editor.dropEnter = false;
             editor.fire('drop',event);
             getDropFiles(event).forEach(attachment => {
@@ -108,8 +114,11 @@ class AttachmentManager extends Component {
             });
         });
 
-        $(window).on('dragover', event => {
+        $(editor.$content).on('dragover', event => {
+            event = event || window.event;
             event.preventDefault();
+            event.stopPropagation();
+            console.log(event.type);
             event.dataTransfer.dropEffect = 'copy';
             if (editor.dropEnter === false) {
                 editor.dropEnter = true;
@@ -117,8 +126,11 @@ class AttachmentManager extends Component {
             }
         });
 
-        $(window).on('dragleave', event => {
+        $(editor.$content).on('dragleave', event => {
+            event = event || window.event;
             event.preventDefault();
+            event.stopPropagation();
+            console.log(event.type);
             if (event.screenX === 0 && event.screenY === 0) {
                 editor.dropEnter = false;
                 editor.fire('dragleave',event);

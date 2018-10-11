@@ -29,11 +29,14 @@ function createEditorView(editor) {
         contenteditable: editor.config.editable || true,
         onfocus: function () {
             editor._foucs = true;
+            // editor.range = editor.range;
+            // console.log(editor._range);
             onStateChange.call(editor);
             editor.fire('focus');
         },
         onclick: function () {
             editor._foucs = true;
+            // editor.range = editor.range || editor._range;
             onStateChange.call(editor);
             editor.fire('click');
         },
@@ -42,7 +45,8 @@ function createEditorView(editor) {
         },
         onblur: function () {
             editor._foucs = false;
-            editor.range = editor.range;
+            // editor.range = editor.range;
+            // console.log(editor._range);
             onStateChange.call(editor);
             editor.fire('blur');
         },
@@ -97,6 +101,7 @@ const commands = {
             // console.log(this.range, this.range.commonAncestorContainer);
             document.execCommand('insertHTML', null, value);
         } else {
+            // console.log('create default range',this.range);
             this.range = this.createDefaultRange();
             document.execCommand('insertHTML', null, '<div>' + value + '</div>');
         }
