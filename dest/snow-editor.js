@@ -1,6 +1,8 @@
-/*! snow-editor by dxkite 2018-10-11 */
+/*! snow-editor by dxkite 2018-10-15 */
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 'use strict';
+
+require('./snow/tab/index');
 
 var _config = require('./snow/editor/config');
 
@@ -46,6 +48,10 @@ var _Emotion = require('./snow/editor/component/tool/Emotion');
 
 var _Emotion2 = _interopRequireDefault(_Emotion);
 
+var _Image = require('./snow/editor/component/tool/Image');
+
+var _Image2 = _interopRequireDefault(_Image);
+
 var _AttachmentManager = require('./snow/editor/component/tool/AttachmentManager');
 
 var _AttachmentManager2 = _interopRequireDefault(_AttachmentManager);
@@ -68,9 +74,10 @@ _SnowEditor2.default.registerComponent(_Undo2.default);
 _SnowEditor2.default.registerComponent(_Redo2.default);
 
 _SnowEditor2.default.registerComponent(_Emotion2.default);
+_SnowEditor2.default.registerComponent(_Image2.default);
 _SnowEditor2.default.registerComponent(_AttachmentManager2.default);
 
-},{"./snow/editor/SnowEditor":4,"./snow/editor/component/command/Redo":8,"./snow/editor/component/command/Undo":9,"./snow/editor/component/layout/Center":10,"./snow/editor/component/layout/Left":11,"./snow/editor/component/layout/Right":12,"./snow/editor/component/style/Bold":13,"./snow/editor/component/style/Italic":14,"./snow/editor/component/style/Underline":15,"./snow/editor/component/tool/AttachmentManager":16,"./snow/editor/component/tool/Emotion":17,"./snow/editor/config":23}],2:[function(require,module,exports){
+},{"./snow/editor/SnowEditor":4,"./snow/editor/component/command/Redo":8,"./snow/editor/component/command/Undo":9,"./snow/editor/component/layout/Center":10,"./snow/editor/component/layout/Left":11,"./snow/editor/component/layout/Right":12,"./snow/editor/component/style/Bold":13,"./snow/editor/component/style/Italic":14,"./snow/editor/component/style/Underline":15,"./snow/editor/component/tool/AttachmentManager":16,"./snow/editor/component/tool/Emotion":17,"./snow/editor/component/tool/Image":18,"./snow/editor/config":24,"./snow/tab/index":27}],2:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -109,8 +116,12 @@ DomElement.constructor = function (selecter, context) {
         this.elements = (context || document).querySelectorAll(selecter);
     } else if (selecter instanceof DomElement) {
         return selecter;
-    } else {
+    } else if (selecter instanceof Element) {
         this.elements = [selecter];
+    } else if (selecter instanceof Array) {
+        this.elements = selecter;
+    } else {
+        return this;
     }
     this.context = context;
     this.length = this.elements.length;
@@ -175,14 +186,16 @@ DomElement.method.extend({
         this.each(function () {
             if (attrs) {
                 for (var name in attrs) {
-                    if (/^on/.test(name)) {
-                        var type = name.replace(/^on(.+)$/, '$1');
-                        if (/[A-Z]/.test(type[0])) {
-                            type = type[0].toLowerCase() + type.substr(1);
+                    if (attrs[name]) {
+                        if (/^on/.test(name)) {
+                            var type = name.replace(/^on(.+)$/, '$1');
+                            if (/[A-Z]/.test(type[0])) {
+                                type = type[0].toLowerCase() + type.substr(1);
+                            }
+                            eventOn(this, type, attrs[name]);
+                        } else {
+                            this.setAttribute(name, attrs[name]);
                         }
-                        eventOn(this, type, attrs[name]);
-                    } else {
-                        this.setAttribute(name, attrs[name]);
                     }
                 }
             }
@@ -201,11 +214,13 @@ DomElement.method.extend({
     },
     addClass: function addClass(add) {
         this.each(function () {
-            var get = this.getAttribute('class');
-            if (get) {
-                this.setAttribute('class', get + ' ' + add);
-            } else {
-                this.setAttribute('class', add);
+            if (add) {
+                var get = this.getAttribute('class');
+                if (get) {
+                    this.setAttribute('class', get + ' ' + add);
+                } else {
+                    this.setAttribute('class', add);
+                }
             }
         });
         return this;
@@ -213,11 +228,13 @@ DomElement.method.extend({
     removeClass: function removeClass(remove) {
         this.each(function () {
             var get = this.getAttribute('class');
-            var oldClass = get.split(/\s+/);
-            var newClass = oldClass.filter(function (element) {
-                return element !== remove;
-            });
-            this.setAttribute('class', newClass.join(' '));
+            if (get) {
+                var oldClass = get.split(/\s+/);
+                var newClass = oldClass.filter(function (element) {
+                    return element !== remove;
+                });
+                this.setAttribute('class', newClass.join(' '));
+            }
         });
         return this;
     },
@@ -246,12 +263,16 @@ DomElement.method.extend({
             });
         });
         return this;
+    },
+
+    find: function find(selecter) {
+        return DomElement(selecter, this.elements[0]);
     }
 });
 
 exports.default = DomElement;
 
-},{"../util/fixCssPrefix":26,"../util/isArray":32}],4:[function(require,module,exports){
+},{"../util/fixCssPrefix":29,"../util/isArray":35}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -333,6 +354,7 @@ function createEditorView(editor) {
     }, {
         'min-height': editor.config['height']
     }, element.innerHTML);
+    (0, _DomElement2.default)(element).attr({ class: 'snow-editor-container' });
     element.innerText = '';
     element.appendChild(editor.$toolbar);
     element.appendChild(editor.$content);
@@ -575,7 +597,7 @@ var SnowEditor = function () {
 
 exports.default = SnowEditor;
 
-},{"../dom/DomElement":3,"../toast/Toast":25,"../util/isChildOf":33,"../util/printf":36,"./config":23}],5:[function(require,module,exports){
+},{"../dom/DomElement":3,"../toast/Toast":28,"../util/isChildOf":36,"../util/printf":39,"./config":24}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1369,7 +1391,7 @@ var AttachmentManager = function (_Component) {
             event.stopPropagation();
             console.log(event.type);
             editor.dropEnter = false;
-            editor.fire('drop', event);
+            // editor.fire('drop',event);
             getDropFiles(event).forEach(function (attachment) {
                 attachmentHandler(editor, attachment);
             });
@@ -1379,7 +1401,7 @@ var AttachmentManager = function (_Component) {
             event = event || window.event;
             event.preventDefault();
             event.stopPropagation();
-            console.log(event.type);
+            // console.log(event.type);
             event.dataTransfer.dropEffect = 'copy';
             if (editor.dropEnter === false) {
                 editor.dropEnter = true;
@@ -1391,7 +1413,7 @@ var AttachmentManager = function (_Component) {
             event = event || window.event;
             event.preventDefault();
             event.stopPropagation();
-            console.log(event.type);
+            // console.log(event.type);
             if (event.screenX === 0 && event.screenY === 0) {
                 editor.dropEnter = false;
                 editor.fire('dragleave', event);
@@ -1431,7 +1453,7 @@ var AttachmentManager = function (_Component) {
 
 exports.default = AttachmentManager;
 
-},{"../../../dom/DomElement":3,"../../../editor/SnowEditor":4,"../../../poplayer/PopLayer":24,"../../../util/getDropFiles":27,"../../../util/getPasteFiles":28,"../../../util/getSize":30,"../Attahment":5,"../Component":6,"./uploader":20}],17:[function(require,module,exports){
+},{"../../../dom/DomElement":3,"../../../editor/SnowEditor":4,"../../../poplayer/PopLayer":25,"../../../util/getDropFiles":30,"../../../util/getPasteFiles":31,"../../../util/getSize":33,"../Attahment":5,"../Component":6,"./uploader":21}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1456,6 +1478,10 @@ var _Text = require('./emotion/Text');
 
 var _Text2 = _interopRequireDefault(_Text);
 
+var _Tab = require('../../../tab/Tab');
+
+var _Tab2 = _interopRequireDefault(_Tab);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1464,9 +1490,12 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var n = _DomElement2.default.element;
+
 /**
  * 表情处理
  */
+
 var EmotionComponent = function (_Component) {
     _inherits(EmotionComponent, _Component);
 
@@ -1479,11 +1508,12 @@ var EmotionComponent = function (_Component) {
     _createClass(EmotionComponent, [{
         key: 'init',
         value: function init(node) {
-            var childs = new Array();
-
+            var buttons = new Array();
+            var views = new Array();
             var that = this;
             this.editor.config.emotions.forEach(function (element) {
                 var emotion = null;
+                var childs = new Array();
                 if (element.type === 'text') {
                     emotion = new _Text2.default(element);
                 }
@@ -1491,7 +1521,6 @@ var EmotionComponent = function (_Component) {
                     emotion.content.forEach(function (emotionObj) {
                         var item = _DomElement2.default.element('span', {
                             class: 'snow-tool-emotions-item',
-                            title: emotionObj.title,
                             onclick: function onclick() {
                                 editor.exec('insertHTML', emotionObj.html);
                                 that.layer.hide();
@@ -1500,9 +1529,14 @@ var EmotionComponent = function (_Component) {
                         childs.push(item);
                     });
                 }
+                var view = n('div', { class: 'snow-emotions-tab-view' }, {}, childs);
+                buttons.push(n('div', {}, {}, element.name));
+                views.push(view);
             });
-            var ele = _DomElement2.default.element('div', {}, { 'width': '10em', 'display': 'flex', 'flex-wrap': 'wrap' }, childs);
-            this.layer = new _PopLayer2.default(ele, node);
+
+            this.tab = new _Tab2.default({ target: { btns: buttons, views: views }, current: 0 });
+            this.content = n('div', { class: 'snow-emotions-menu' }, {}, this.tab.target);
+            this.layer = new _PopLayer2.default(this.content, node);
         }
     }, {
         key: 'onStatusChange',
@@ -1537,7 +1571,74 @@ var EmotionComponent = function (_Component) {
 
 exports.default = EmotionComponent;
 
-},{"../../../dom/DomElement":3,"../../../poplayer/PopLayer":24,"../Component":6,"./emotion/Text":19}],18:[function(require,module,exports){
+},{"../../../dom/DomElement":3,"../../../poplayer/PopLayer":25,"../../../tab/Tab":26,"../Component":6,"./emotion/Text":20}],18:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _Component2 = require('../Component');
+
+var _Component3 = _interopRequireDefault(_Component2);
+
+var _PopLayer = require('../../../poplayer/PopLayer');
+
+var _PopLayer2 = _interopRequireDefault(_PopLayer);
+
+var _DomElement = require('../../../dom/DomElement');
+
+var _DomElement2 = _interopRequireDefault(_DomElement);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/**
+ * 图片处理
+ */
+var ImageComponent = function (_Component) {
+    _inherits(ImageComponent, _Component);
+
+    function ImageComponent(editor) {
+        _classCallCheck(this, ImageComponent);
+
+        return _possibleConstructorReturn(this, (ImageComponent.__proto__ || Object.getPrototypeOf(ImageComponent)).call(this, editor));
+    }
+
+    _createClass(ImageComponent, [{
+        key: 'init',
+        value: function init(node) {}
+    }, {
+        key: 'onStatusChange',
+        value: function onStatusChange() {}
+    }, {
+        key: 'onClick',
+        value: function onClick(event) {}
+    }, {
+        key: 'name',
+        get: function get() {
+            return 'image';
+        }
+    }, {
+        key: 'view',
+        get: function get() {
+            return '<i class="iconfont snow-icon-' + this.name + '"></i>';
+        }
+    }]);
+
+    return ImageComponent;
+}(_Component3.default);
+
+exports.default = ImageComponent;
+
+},{"../../../dom/DomElement":3,"../../../poplayer/PopLayer":25,"../Component":6}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1556,7 +1657,7 @@ var EmotionObj = function EmotionObj(title, html, view) {
 
 exports.default = EmotionObj;
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1596,7 +1697,7 @@ var TextEmotions = function () {
 
 exports.default = TextEmotions;
 
-},{"./Object":18}],20:[function(require,module,exports){
+},{"./Object":19}],21:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1633,7 +1734,7 @@ function uploader(editor, file) {
     }
 }
 
-},{"../../../config":23,"./uploadToLocal":21,"./uploadToServer":22}],21:[function(require,module,exports){
+},{"../../../config":24,"./uploadToLocal":22,"./uploadToServer":23}],22:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1668,7 +1769,7 @@ function uploadToLocal(editor, file) {
     });
 }
 
-},{"../../../config":23}],22:[function(require,module,exports){
+},{"../../../config":24}],23:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1697,7 +1798,7 @@ function uploadToServer(editor, file) {
     });
 }
 
-},{"../../../config":23}],23:[function(require,module,exports){
+},{"../../../config":24}],24:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1715,7 +1816,7 @@ var config = {
     // 布局控制
     'align-left', 'align-center', 'align-right',
     // 表情
-    'emotion', 'attachment',
+    'emotion', 'image', 'attachment',
     // 撤销与重做
     'undo', 'redo'],
     emotions: [{
@@ -1755,7 +1856,7 @@ var config = {
 
 exports.default = config;
 
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2078,7 +2179,147 @@ var PopLayer = function () {
 
 exports.default = PopLayer;
 
-},{"../config":2,"../dom/DomElement":3,"../util/getPlatform":29,"../util/getSize":30,"../util/onMouseHover":34,"../util/pointInBox":35,"../util/timeLimitCallback":37}],25:[function(require,module,exports){
+},{"../config":2,"../dom/DomElement":3,"../util/getPlatform":32,"../util/getSize":33,"../util/onMouseHover":37,"../util/pointInBox":38,"../util/timeLimitCallback":40}],26:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _DomElement = require('../dom/DomElement');
+
+var _DomElement2 = _interopRequireDefault(_DomElement);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var n = _DomElement2.default.element;
+
+var defaultConfig = {
+    target: '#snow-tab', // 对象选择器
+    selector: {
+        title: '.snow-tab-title',
+        titleItem: '.snow-tab-title > li',
+        content: '.snow-tab-content',
+        contentItem: '.snow-tab-item'
+    },
+    class: {
+        title: 'snow-tab-title',
+        titleItem: null,
+        content: 'snow-tab-content',
+        contentItem: 'snow-tab-item'
+    },
+    classOnShow: {
+        title: 'snow-tab-current',
+        content: 'snow-tab-show'
+    }
+
+    /**
+     * target -> get dom -> bind event -> render -> show
+     */
+
+};function eventBinder() {
+    var _this = this;
+
+    var $btns = this.$btns.elements;
+    var $views = this.$views.elements;
+    var onshow = this.onshow;
+    var onhidden = this.onhidden;
+    var config = this.config;
+    if (config.current >= 0) {
+        this.current = config.current;
+        (0, _DomElement2.default)($views[this.current]).addClass(config.classOnShow.content);
+        (0, _DomElement2.default)($btns[this.current]).addClass(config.classOnShow.title);
+    }
+    $btns.forEach(function (btn, index) {
+        (0, _DomElement2.default)(btn).on('click', function () {
+            var current = _this.current || 0;
+            (0, _DomElement2.default)($views[current]).removeClass(config.classOnShow.content);
+            (0, _DomElement2.default)($views[index]).addClass(config.classOnShow.content);
+            (0, _DomElement2.default)(btn).addClass(config.classOnShow.title);
+            (0, _DomElement2.default)($btns[current]).removeClass(config.classOnShow.title);
+            _this.current = index;
+            if (onshow instanceof Function) {
+                onshow.call(_this, index);
+            }
+            if (onhidden instanceof Function) {
+                onhidden.call(_this, current);
+            }
+        });
+    });
+}
+
+function getTargetChilds() {
+    var target = this.config.target;
+    this.target = (0, _DomElement2.default)(target)[0];
+    this.$btns = (0, _DomElement2.default)(this.target).find(this.config.selector.titleItem);
+    this.$views = (0, _DomElement2.default)(this.target).find(this.config.selector.contentItem);
+}
+
+function buildTabViews() {
+    var config = this.config;
+    var btns = config.target.btns;
+    var views = config.target.views;
+    var vBtns = new Array();
+    var vViews = new Array();
+
+    btns.forEach(function (ele) {
+        var btn = n('li', { class: config.class.titleItem }, {}, ele);
+        vBtns.push(btn);
+    });
+
+    views.forEach(function (ele) {
+        var view = n('div', { class: config.class.contentItem }, {}, ele);
+        vViews.push(view);
+    });
+
+    var btnsParent = n('ul', { class: config.class.title }, {}, vBtns);
+    var viewsParent = n('div', { class: config.class.content }, {}, vViews);
+
+    this.target = n('div', {}, {}, [btnsParent, viewsParent]);
+    this.$btns = (0, _DomElement2.default)(vBtns);
+    this.$views = (0, _DomElement2.default)(vViews);
+}
+
+/**
+ *  Tab 控制器
+ *  button某个按钮选中，则contents的对应ID的display为block
+ */
+
+var Tab =
+
+/**
+ * 创建对象
+ * @param {Object} config 
+ */
+function Tab(config) {
+    _classCallCheck(this, Tab);
+
+    this.config = Object.assign(defaultConfig, config);
+    if (config.target instanceof Object) {
+        buildTabViews.call(this);
+    } else {
+        getTargetChilds.call(this);
+    }
+    eventBinder.call(this);
+};
+
+exports.default = Tab;
+
+},{"../dom/DomElement":3}],27:[function(require,module,exports){
+'use strict';
+
+var _Tab = require('./Tab');
+
+var _Tab2 = _interopRequireDefault(_Tab);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+window.snow = window.snow || {};
+window.snow.Tab = _Tab2.default;
+
+},{"./Tab":26}],28:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2165,7 +2406,7 @@ Toast.show = function () {
 
 exports.default = Toast;
 
-},{"../config":2,"../dom/DomElement":3}],26:[function(require,module,exports){
+},{"../config":2,"../dom/DomElement":3}],29:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2188,7 +2429,7 @@ function fixCssPrefix(name) {
     return name;
 }
 
-},{}],27:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2203,7 +2444,7 @@ function getDropFiles(event) {
   return event.dataTransfer && event.dataTransfer.files ? event.dataTransfer.files : null;
 }
 
-},{}],28:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2218,7 +2459,7 @@ function getPasteFiles(event) {
   return event.clipboardData && event.clipboardData.files ? event.clipboardData.files : null;
 }
 
-},{}],29:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2238,7 +2479,7 @@ exports.default = function () {
     }
 };
 
-},{}],30:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2270,7 +2511,7 @@ function getSize(elem) {
         }
 }
 
-},{"./getWindowsSize":31}],31:[function(require,module,exports){
+},{"./getWindowsSize":34}],34:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2297,7 +2538,7 @@ function getWindowsSize() {
     };
 }
 
-},{}],32:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2312,7 +2553,7 @@ function isArray(obj) {
   return obj instanceof Array;
 }
 
-},{}],33:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2331,7 +2572,7 @@ function isChildOf(elem, parent) {
     return elem === parent;
 }
 
-},{}],34:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2378,7 +2619,7 @@ function onMouseHover(target, hover, outer, time) {
     });
 }
 
-},{"./getSize":30,"./pointInBox":35}],35:[function(require,module,exports){
+},{"./getSize":33,"./pointInBox":38}],38:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2399,7 +2640,7 @@ function pointInBox(point, box) {
     return false;
 }
 
-},{}],36:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2434,7 +2675,7 @@ function printf(format) {
     });
 }
 
-},{}],37:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

@@ -1,18 +1,25 @@
+.snow-editor-container {
+    position: relative;
+    border: 1px solid $toolbar-color;
+    background-color: $white;
+}
+
 .snow-toolbar {
-    background-color: $toolbar-color;
+    background-color: $white;
     display: flex;
     align-content: center;
     border-bottom: none;
     padding: 0 .2em;
+    box-shadow: 0 2px 5px $toolbar-color-shadow;
     flex-wrap: wrap;
 }
 
 .snow-content {
     padding: .5em;
-    border: 1px solid $toolbar-color;
     word-break: break-all;
     outline: none;
     overflow: auto;
+    border: 0;
 }
 
 .snow-content img {
@@ -27,18 +34,23 @@
     cursor: pointer;
     user-select: none;
     padding: .2em .3em;
-    background-color: $toolbar-color;
+    background-color: $white;
     transition: .1s;
 }
 
 .snow-tool-item:hover,
 .snow-tool-item.active,
 .snow-tool-item.disable {
-    background-color: $toolbar-color-dark;
-    color: $toolbar-color-light;
+    background-color: $toolbar-color;
 }
 
 .snow-tool-item.disable {
     opacity: 0.8;
     pointer-events: none;
+}
+
+.snow-pop-menu {
+    border: 0;
+    box-shadow: 2px 2px 5px $toolbar-color-shadow;
+    background-color: $white;
 }

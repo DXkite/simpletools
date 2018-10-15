@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="./snow/snow-editor.css">
+    <link rel="stylesheet" href="style.css">
+    <title>Snow Editor Tab Test</title>
+</head>
+
+<body>
+    <div class="snow-tab">
+        <ul class="snow-tab-title">
+            <li class="snow-tab-current">默认</li>
+            <li>Tab1</li>
+            <li>Tab2</li>
+        </ul>
+        <div class="snow-tab-content">
+            <div class="snow-tab-item snow-tab-show">这是默认的Tab内容</div>
+            <div class="snow-tab-item">这是菜单 Tab1 的内容</div>
+            <div class="snow-tab-item">这是菜单 Tab2 的内容</div>
+        </div>
+    </div>
+</body>
+<script src="./snow/snow-editor.js"></script>
+<script>
+    var tab = new snow.Tab({
+        target: '.snow-tab',
+    });
+</script>
+
+</html>

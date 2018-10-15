@@ -1,3 +1,5 @@
+import './snow/tab/index'
+
 import config from './snow/editor/config'
 import SnowEditor from './snow/editor/SnowEditor'
 
@@ -10,6 +12,7 @@ import RightLayoutComponent from './snow/editor/component/layout/Right'
 import LeftLayoutComponent from './snow/editor/component/layout/Left'
 import CenterLayoutComponent from './snow/editor/component/layout/Center'
 import EmotionComponent from './snow/editor/component/tool/Emotion'
+import ImageComponent from './snow/editor/component/tool/Image'
 import AttachmentManager from './snow/editor/component/tool/AttachmentManager'
 
 
@@ -29,4 +32,5 @@ SnowEditor.registerComponent(UndoCommandComponent);
 SnowEditor.registerComponent(RedoCommandComponent);
 
 SnowEditor.registerComponent(EmotionComponent);
+SnowEditor.registerComponent(ImageComponent);
 SnowEditor.registerComponent(AttachmentManager);

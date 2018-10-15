@@ -208,7 +208,7 @@ class PopLayer {
         const size = getSize(this.$parent);
         const elemSize = getSize(this.$element);
         const windowSize = getSize(null);
-        
+
         showController[this.position].call(this, elemSize, size, windowSize);
         $(this.showElement).css({ 'display': 'block' });
         this.showed = true;

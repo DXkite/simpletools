@@ -10,8 +10,12 @@ DomElement.constructor = function (selecter, context) {
         this.elements = (context || document).querySelectorAll(selecter);
     } else if (selecter instanceof DomElement) {
         return selecter;
-    } else {
+    } else if (selecter instanceof Element) {
         this.elements = [selecter];
+    } else if (selecter instanceof Array) {
+        this.elements = selecter;
+    } else {
+        return this;
     }
     this.context = context;
     this.length = this.elements.length;
@@ -78,14 +82,16 @@ DomElement.method.extend({
         this.each(function () {
             if (attrs) {
                 for (var name in attrs) {
-                    if (/^on/.test(name)) {
-                        var type = name.replace(/^on(.+)$/, '$1');
-                        if (/[A-Z]/.test(type[0])) {
-                            type = type[0].toLowerCase() + type.substr(1);
+                    if (attrs[name]) {
+                        if (/^on/.test(name)) {
+                            var type = name.replace(/^on(.+)$/, '$1');
+                            if (/[A-Z]/.test(type[0])) {
+                                type = type[0].toLowerCase() + type.substr(1);
+                            }
+                            eventOn(this, type, attrs[name]);
+                        } else {
+                            this.setAttribute(name, attrs[name]);
                         }
-                        eventOn(this, type, attrs[name]);
-                    } else {
-                        this.setAttribute(name, attrs[name]);
                     }
                 }
             }
@@ -104,11 +110,13 @@ DomElement.method.extend({
     },
     addClass: function (add) {
         this.each(function () {
-            var get = this.getAttribute('class');
-            if (get) {
-                this.setAttribute('class', get + ' ' + add);
-            } else {
-                this.setAttribute('class', add);
+            if (add) {
+                var get = this.getAttribute('class');
+                if (get) {
+                    this.setAttribute('class', get + ' ' + add);
+                } else {
+                    this.setAttribute('class', add);
+                }
             }
         });
         return this;
@@ -116,9 +124,11 @@ DomElement.method.extend({
     removeClass: function (remove) {
         this.each(function () {
             var get = this.getAttribute('class');
-            var oldClass = get.split(/\s+/);
-            var newClass = oldClass.filter(element => element !== remove);
-            this.setAttribute('class', newClass.join(' '));
+            if (get) {
+                var oldClass = get.split(/\s+/);
+                var newClass = oldClass.filter(element => element !== remove);
+                this.setAttribute('class', newClass.join(' '));
+            }
         });
         return this;
     },
@@ -143,6 +153,10 @@ DomElement.method.extend({
             });
         });
         return this;
+    },
+
+    find: function (selecter) {
+        return DomElement(selecter, this.elements[0]);
     }
 });
 

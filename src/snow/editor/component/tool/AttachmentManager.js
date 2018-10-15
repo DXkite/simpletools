@@ -108,7 +108,7 @@ class AttachmentManager extends Component {
             event.stopPropagation();
             console.log(event.type);
             editor.dropEnter = false;
-            editor.fire('drop',event);
+            // editor.fire('drop',event);
             getDropFiles(event).forEach(attachment => {
                 attachmentHandler(editor, attachment);
             });
@@ -118,7 +118,7 @@ class AttachmentManager extends Component {
             event = event || window.event;
             event.preventDefault();
             event.stopPropagation();
-            console.log(event.type);
+            // console.log(event.type);
             event.dataTransfer.dropEffect = 'copy';
             if (editor.dropEnter === false) {
                 editor.dropEnter = true;
@@ -130,7 +130,7 @@ class AttachmentManager extends Component {
             event = event || window.event;
             event.preventDefault();
             event.stopPropagation();
-            console.log(event.type);
+            // console.log(event.type);
             if (event.screenX === 0 && event.screenY === 0) {
                 editor.dropEnter = false;
                 editor.fire('dragleave',event);

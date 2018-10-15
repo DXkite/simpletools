@@ -1,3 +1,8 @@
+.snow-emotions-menu {
+    @extend .snow-pop-menu;
+    max-width: 15em;
+}
+
 .snow-tool-emotions-item {
     @extend .snow-tool-item;
 }
@@ -5,3 +10,10 @@
 .snow-tool-emotions-item:hover {
     @extend .snow-tool-item:hover;
 }
+
+.snow-emotions-tab-view {
+    display: flex;
+    align-content: center;
+    flex-wrap: wrap;
+}
+ 

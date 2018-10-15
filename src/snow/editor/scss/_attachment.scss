@@ -1,7 +1,5 @@
 .snow-attachment-menu {
-    background-color: #fff;
-    padding: .2em 0;
-    box-shadow: 0 .1em .2em .1em $toolbar-color;
+    @extend .snow-pop-menu;
 }
 
 .snow-attachment-item {
@@ -10,6 +8,7 @@
     padding: .2em;
     word-break: break-all;
     word-wrap: break-word;
+    user-select: none;
 }
 
 

@@ -54,6 +54,7 @@ function createEditorView(editor) {
             'min-height': editor.config['height']
         },
         element.innerHTML);
+    Dom(element).attr({class:'snow-editor-container'});
     element.innerText = '';
     element.appendChild(editor.$toolbar);
     element.appendChild(editor.$content);

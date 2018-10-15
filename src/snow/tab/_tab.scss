@@ -1,0 +1,32 @@
+.snow-tab-title {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.snow-tab-title>li {
+    padding: .5em 1em;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.snow-tab-title>li.snow-tab-current,
+.snow-tab-title>li:hover {
+    color: $indigo;
+    border-bottom: .2em solid $indigo;
+    background-color: $light;
+    user-select: none;
+}
+
+.snow-tab-content {
+    padding: .2em;
+}
+
+.snow-tab-item {
+    display: none;
+}
+
+.snow-tab-item.snow-tab-show {
+    display: block;
+}

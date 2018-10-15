@@ -2,17 +2,20 @@ import Component from '../Component'
 import Layer from '../../../poplayer/PopLayer'
 import $ from '../../../dom/DomElement'
 import TextEmotions from './emotion/Text'
+import Tab from '../../../tab/Tab'
+const n = $.element;
 
 /**
  * 表情处理
  */
 class EmotionComponent extends Component {
     init(node) {
-        var childs = new Array;
-
+        const buttons = new Array;
+        const views = new Array;
         const that = this;
         this.editor.config.emotions.forEach(element => {
             var emotion = null;
+            var childs = new Array;
             if (element.type === 'text') {
                 emotion = new TextEmotions(element);
             }
@@ -20,7 +23,6 @@ class EmotionComponent extends Component {
                 emotion.content.forEach(emotionObj => {
                     const item = $.element('span', {
                         class: 'snow-tool-emotions-item',
-                        title: emotionObj.title,
                         onclick: function () {
                             editor.exec('insertHTML', emotionObj.html);
                             that.layer.hide();
@@ -29,9 +31,14 @@ class EmotionComponent extends Component {
                     childs.push(item);
                 });
             }
+            const view = n('div', { class: 'snow-emotions-tab-view' }, {}, childs);
+            buttons.push(n('div', {}, {}, element.name));
+            views.push(view);
         });
-        const ele = $.element('div', {}, { 'width': '10em', 'display': 'flex', 'flex-wrap': 'wrap' }, childs);
-        this.layer = new Layer(ele, node);
+
+        this.tab = new Tab({ target: { btns: buttons, views: views }, current: 0 });
+        this.content = n('div', { class: 'snow-emotions-menu' }, {}, this.tab.target);
+        this.layer = new Layer(this.content, node);
     }
 
     get name() {
