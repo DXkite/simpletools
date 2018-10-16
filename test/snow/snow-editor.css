@@ -1,4 +1,7 @@
 @charset "UTF-8";
+*, ::after, ::before {
+  box-sizing: border-box; }
+
 @keyframes fadeIn {
   from {
     opacity: 0; }
@@ -143,6 +146,32 @@
 
 .snow-upload-sm {
   padding: .25em .5em; }
+
+.snow-input-text {
+  display: block;
+  padding: .25em;
+  border: none;
+  outline: none;
+  border-bottom: 0.1em solid #dee2e6;
+  transition: .2s ease-in;
+  width: 100%; }
+
+.snow-input-text:focus {
+  border-bottom: 0.1em solid #6610f2; }
+
+.snow-btn {
+  color: #6610f2;
+  background-color: #fff;
+  padding: .5em 1em;
+  transition: .2s ease-in;
+  cursor: pointer;
+  text-align: center; }
+
+.snow-btn-sm {
+  padding: .25em 5em; }
+
+.snow-btn:hover {
+  background-color: #f8f9fa; }
 
 .snow-editor-container {
   position: relative;
@@ -303,5 +332,10 @@
   background-color: #dee2e6; }
 
 .snow-image-menu {
-  max-width: 15em;
-  width: 15em; }
+  max-width: 20em; }
+
+.snow-image-inputs {
+  padding: .5em; }
+
+.snow-image-button, .snow-image-input {
+  margin-top: .5em; }

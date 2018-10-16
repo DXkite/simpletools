@@ -1,0 +1,30 @@
+.snow-input-text {
+    display: block;
+    padding: .25em;
+    border: none;
+    outline: none;
+    border-bottom: .1em solid $gray-300;
+    transition: .2s ease-in;
+    width: 100%;
+}
+
+.snow-input-text:focus {
+    border-bottom: .1em solid $indigo;
+}
+
+.snow-btn {
+    color: $indigo;
+    background-color: $white;
+    padding: .5em 1em;
+    transition: .2s ease-in;
+    cursor: pointer;
+    text-align: center;
+}
+
+.snow-btn-sm {
+    padding: .25em 5em;
+}
+
+.snow-btn:hover {
+    background-color: $light;
+}

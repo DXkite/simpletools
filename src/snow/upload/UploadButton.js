@@ -5,6 +5,7 @@ const n = $.element;
 
 const defaultConfig = {
     target: '#snow-upload', // 对象选择器
+    accept: null,
     selector: {
         title: '.snow-upload-title',
         file: 'input[type=file]',
@@ -25,8 +26,9 @@ function getChilds() {
 function buildChilds() {
     const config = this.config;
     const sm = config.small || false;
+    const accept = config.accept;
     this.title = n('div', { class: sm ? config.class.title + ' ' + config.class.titleSmall : config.class.title }, null, '上传文件');
-    this.file = n('input', { class: config.class.file, hidden: true, type: 'file' });
+    this.file = n('input', { class: config.class.file, hidden: true, type: 'file', accept: accept });
     this.target = n('div', null, null, [this.file, this.title]);
 }
 
@@ -59,7 +61,8 @@ class UploadButton {
      * @param {Object} config 
      */
     constructor(config) {
-        this.config = Object.assign(defaultConfig, config);
+        this.config = {};
+        this.config = Object.assign(this.config, defaultConfig, config);
         if (config.target) {
             this.target = $(config.target)[0];
             getChilds.call(this);

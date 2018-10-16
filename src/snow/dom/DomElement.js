@@ -167,6 +167,9 @@ DomElement.method.extend({
     },
     find: function (selecter) {
         return DomElement(selecter, this[0]);
+    },
+    val: function () {
+        return this[0].value;
     }
 });
 

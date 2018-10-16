@@ -17,6 +17,7 @@ class ImageComponent extends Component {
         super(editor);
         this.upload = new UploadButton({
             small: true,
+            accept: 'image/*',
             upload: (files) => {
                 for (var i = 0; i < files.length; i++) {
                     const file = files[i]
@@ -32,10 +33,26 @@ class ImageComponent extends Component {
                 }
             }
         });
+        const input = n('input', { class: 'snow-input-text snow-image-input', placeholder: '请输入图片地址', type: 'text' });
+        const title = n('input', { class: 'snow-input-text snow-image-input', placeholder: '图片说明', type: 'text' });
+        this.input = n('div', { class: 'snow-image-inputs' }, {}, [
+            title,
+            input,
+            n('div', { class: 'snow-image-button' }, null, n('div', {
+                class: 'snow-btn snow-btn-sm', onclick: () => {
+                    const src = $(input).val();
+                    const alt = $(title).val() || src;
+                    if (src) {
+                        editor.exec('insertHTML', `<img title="${alt}"  alt="${alt}" src="${src}"/>`);
+                    }
+                    this.layer.hide();
+                }
+            }, null, '插入')),
+        ]);
     }
 
     init(node) {
-        this.tab = new Tab({ target: { btns: ['插入图片', '网络图片'], views: [this.upload.target, '使用网络图片'] }, current: 0, small: true });
+        this.tab = new Tab({ target: { btns: ['插入图片', '网络图片'], views: [this.upload.target, this.input] }, current: 0, small: true });
         this.content = n('div', { class: 'snow-image-menu' }, {}, this.tab.target);
         this.layer = new Layer(this.content, node);
     }

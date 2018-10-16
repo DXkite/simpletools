@@ -141,6 +141,7 @@ class AttachmentManager extends Component {
                 editor.fire('dragleave', event);
             }
         });
+
         this.upload = new UploadButton({
             small: true,
             upload: (files) => {

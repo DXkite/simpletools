@@ -279,6 +279,9 @@ DomElement.method.extend({
     },
     find: function find(selecter) {
         return DomElement(selecter, this[0]);
+    },
+    val: function val() {
+        return this[0].value;
     }
 });
 
@@ -1442,6 +1445,7 @@ var AttachmentManager = function (_Component) {
                 editor.fire('dragleave', event);
             }
         });
+
         _this2.upload = new _UploadButton2.default({
             small: true,
             upload: function upload(files) {
@@ -1676,6 +1680,7 @@ var ImageComponent = function (_Component) {
 
         _this.upload = new _UploadButton2.default({
             small: true,
+            accept: 'image/*',
             upload: function upload(files) {
                 var _loop = function _loop() {
                     var file = files[i];
@@ -1695,13 +1700,25 @@ var ImageComponent = function (_Component) {
                 }
             }
         });
+        var input = n('input', { class: 'snow-input-text snow-image-input', placeholder: '请输入图片地址', type: 'text' });
+        var title = n('input', { class: 'snow-input-text snow-image-input', placeholder: '图片说明', type: 'text' });
+        _this.input = n('div', { class: 'snow-image-inputs' }, {}, [title, input, n('div', { class: 'snow-image-button' }, null, n('div', {
+            class: 'snow-btn snow-btn-sm', onclick: function onclick() {
+                var src = (0, _DomElement2.default)(input).val();
+                var alt = (0, _DomElement2.default)(title).val() || src;
+                if (src) {
+                    editor.exec('insertHTML', '<img title="' + alt + '"  alt="' + alt + '" src="' + src + '"/>');
+                }
+                _this.layer.hide();
+            }
+        }, null, '插入'))]);
         return _this;
     }
 
     _createClass(ImageComponent, [{
         key: 'init',
         value: function init(node) {
-            this.tab = new _Tab2.default({ target: { btns: ['插入图片', '网络图片'], views: [this.upload.target, '使用网络图片'] }, current: 0, small: true });
+            this.tab = new _Tab2.default({ target: { btns: ['插入图片', '网络图片'], views: [this.upload.target, this.input] }, current: 0, small: true });
             this.content = n('div', { class: 'snow-image-menu' }, {}, this.tab.target);
             this.layer = new _PopLayer2.default(this.content, node);
         }
@@ -2529,6 +2546,7 @@ var n = _DomElement2.default.element;
 
 var defaultConfig = {
     target: '#snow-upload', // 对象选择器
+    accept: null,
     selector: {
         title: '.snow-upload-title',
         file: 'input[type=file]'
@@ -2549,8 +2567,9 @@ function getChilds() {
 function buildChilds() {
     var config = this.config;
     var sm = config.small || false;
+    var accept = config.accept;
     this.title = n('div', { class: sm ? config.class.title + ' ' + config.class.titleSmall : config.class.title }, null, '上传文件');
-    this.file = n('input', { class: config.class.file, hidden: true, type: 'file' });
+    this.file = n('input', { class: config.class.file, hidden: true, type: 'file', accept: accept });
     this.target = n('div', null, null, [this.file, this.title]);
 }
 
@@ -2587,7 +2606,8 @@ var UploadButton =
 function UploadButton(config) {
     _classCallCheck(this, UploadButton);
 
-    this.config = Object.assign(defaultConfig, config);
+    this.config = {};
+    this.config = Object.assign(this.config, defaultConfig, config);
     if (config.target) {
         this.target = (0, _DomElement2.default)(config.target)[0];
         getChilds.call(this);
