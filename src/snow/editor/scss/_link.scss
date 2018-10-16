@@ -1,0 +1,12 @@
+.snow-link-menu {
+    @extend .snow-pop-menu;
+    max-width: 20em;
+}
+
+.snow-link-inputs {
+    padding: .5em;
+}
+
+.snow-link-button,.snow-link-input {
+    margin-top: .5em;
+}

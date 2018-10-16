@@ -14,6 +14,7 @@ import LeftLayoutComponent from './snow/editor/component/layout/Left'
 import CenterLayoutComponent from './snow/editor/component/layout/Center'
 import EmotionComponent from './snow/editor/component/tool/Emotion'
 import ImageComponent from './snow/editor/component/tool/Image'
+import LinkComponent from './snow/editor/component/tool/Link'
 import AttachmentManager from './snow/editor/component/tool/AttachmentManager'
 
 
@@ -34,4 +35,5 @@ SnowEditor.registerComponent(RedoCommandComponent);
 
 SnowEditor.registerComponent(EmotionComponent);
 SnowEditor.registerComponent(ImageComponent);
+SnowEditor.registerComponent(LinkComponent);
 SnowEditor.registerComponent(AttachmentManager);

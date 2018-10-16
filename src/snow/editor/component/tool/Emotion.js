@@ -51,13 +51,7 @@ class EmotionComponent extends Component {
     }
 
     onStatusChange() {
-        if (this.editor.range) {
-            this._active = true;
-            this.editor.$(this.node).removeClass('disable');
-        } else {
-            this._active = false;
-            this.editor.$(this.node).addClass('disable');
-        }
+        
     }
 
     onClick(event) {

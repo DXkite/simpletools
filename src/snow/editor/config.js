@@ -16,6 +16,7 @@ const config = {
         // 表情
         'emotion',
         'image',
+        'link',
         'attachment',
         // 撤销与重做
         'undo',

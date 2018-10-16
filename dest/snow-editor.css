@@ -224,7 +224,7 @@
   opacity: 0.8;
   pointer-events: none; }
 
-.snow-pop-menu, .snow-emotions-menu, .snow-attachment-menu, .snow-image-menu {
+.snow-pop-menu, .snow-emotions-menu, .snow-attachment-menu, .snow-image-menu, .snow-link-menu {
   border: 0;
   box-shadow: 2px 2px 5px #adb5bd;
   background-color: #fff; }
@@ -338,4 +338,13 @@
   padding: .5em; }
 
 .snow-image-button, .snow-image-input {
+  margin-top: .5em; }
+
+.snow-link-menu {
+  max-width: 20em; }
+
+.snow-link-inputs {
+  padding: .5em; }
+
+.snow-link-button, .snow-link-input {
   margin-top: .5em; }

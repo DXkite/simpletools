@@ -45,8 +45,8 @@ function createEditorView(editor) {
         },
         onblur: function () {
             editor._foucs = false;
-            // editor.range = editor.range;
-            // console.log(editor._range);
+            editor.range = editor.getCurrentRange();
+            // console.log(editor.range);
             onStateChange.call(editor);
             editor.fire('blur');
         },
@@ -54,7 +54,7 @@ function createEditorView(editor) {
             'min-height': editor.config['height']
         },
         element.innerHTML);
-    Dom(element).attr({class:'snow-editor-container'});
+    Dom(element).attr({ class: 'snow-editor-container' });
     element.innerText = '';
     element.appendChild(editor.$toolbar);
     element.appendChild(editor.$content);
@@ -99,11 +99,10 @@ function createToolBar(editor) {
 const commands = {
     insertHTML: function (value) {
         if (this.range) {
-            // console.log(this.range, this.range.commonAncestorContainer);
+            this.setCurrentRange(this.range);
             document.execCommand('insertHTML', null, value);
         } else {
-            // console.log('create default range',this.range);
-            this.range = this.createDefaultRange();
+            this.setCurrentRange(this.createDefaultRange());
             document.execCommand('insertHTML', null, '<div>' + value + '</div>');
         }
     }
@@ -111,7 +110,6 @@ const commands = {
 
 
 function _exec(name, value) {
-    // console.log('_exec', name);
     if (commands[name]) {
         commands[name].apply(this, value);
     } else {
@@ -178,7 +176,7 @@ class SnowEditor {
     }
 
     get range() {
-        return this._range || this.getCurrentRange();
+        return this._range;
     }
 
     createDefaultRange() {
@@ -190,6 +188,7 @@ class SnowEditor {
     getCurrentRange() {
         const selection = window.getSelection();
         if (selection.rangeCount > 0) {
+            console.log(selection.rangeCount);
             const range = selection.getRangeAt(0);
             if (_isChildOf(range.commonAncestorContainer, this.$element)) {
                 return range;
@@ -197,12 +196,15 @@ class SnowEditor {
         }
     }
 
-    set range(range) {
+    setCurrentRange(range) {
         if (range) {
             const selection = window.getSelection();
             selection.removeAllRanges();
             selection.addRange(range);
         }
+    }
+
+    set range(range) {
         this._range = range;
     }
 
@@ -215,7 +217,7 @@ class SnowEditor {
     }
 
     addAttachment(attachment) {
-        this.attachment.set(attachment.name,attachment);
+        this.attachment.set(attachment.name, attachment);
     }
 
     on(name, callback) {

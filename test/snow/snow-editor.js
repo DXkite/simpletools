@@ -54,6 +54,10 @@ var _Image = require('./snow/editor/component/tool/Image');
 
 var _Image2 = _interopRequireDefault(_Image);
 
+var _Link = require('./snow/editor/component/tool/Link');
+
+var _Link2 = _interopRequireDefault(_Link);
+
 var _AttachmentManager = require('./snow/editor/component/tool/AttachmentManager');
 
 var _AttachmentManager2 = _interopRequireDefault(_AttachmentManager);
@@ -77,9 +81,10 @@ _SnowEditor2.default.registerComponent(_Redo2.default);
 
 _SnowEditor2.default.registerComponent(_Emotion2.default);
 _SnowEditor2.default.registerComponent(_Image2.default);
+_SnowEditor2.default.registerComponent(_Link2.default);
 _SnowEditor2.default.registerComponent(_AttachmentManager2.default);
 
-},{"./snow/editor/SnowEditor":4,"./snow/editor/component/command/Redo":8,"./snow/editor/component/command/Undo":9,"./snow/editor/component/layout/Center":10,"./snow/editor/component/layout/Left":11,"./snow/editor/component/layout/Right":12,"./snow/editor/component/style/Bold":13,"./snow/editor/component/style/Italic":14,"./snow/editor/component/style/Underline":15,"./snow/editor/component/tool/AttachmentManager":16,"./snow/editor/component/tool/Emotion":17,"./snow/editor/component/tool/Image":18,"./snow/editor/config":24,"./snow/tab/index":27,"./snow/upload/index":30}],2:[function(require,module,exports){
+},{"./snow/editor/SnowEditor":4,"./snow/editor/component/command/Redo":8,"./snow/editor/component/command/Undo":9,"./snow/editor/component/layout/Center":10,"./snow/editor/component/layout/Left":11,"./snow/editor/component/layout/Right":12,"./snow/editor/component/style/Bold":13,"./snow/editor/component/style/Italic":14,"./snow/editor/component/style/Underline":15,"./snow/editor/component/tool/AttachmentManager":16,"./snow/editor/component/tool/Emotion":17,"./snow/editor/component/tool/Image":18,"./snow/editor/component/tool/Link":19,"./snow/editor/config":25,"./snow/tab/index":28,"./snow/upload/index":31}],2:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -287,7 +292,7 @@ DomElement.method.extend({
 
 exports.default = DomElement;
 
-},{"../util/fixCssPrefix":31,"../util/isArray":37}],4:[function(require,module,exports){
+},{"../util/fixCssPrefix":32,"../util/isArray":38}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -361,8 +366,8 @@ function createEditorView(editor) {
         },
         onblur: function onblur() {
             editor._foucs = false;
-            // editor.range = editor.range;
-            // console.log(editor._range);
+            editor.range = editor.getCurrentRange();
+            // console.log(editor.range);
             onStateChange.call(editor);
             editor.fire('blur');
         }
@@ -414,18 +419,16 @@ function createToolBar(editor) {
 var commands = {
     insertHTML: function insertHTML(value) {
         if (this.range) {
-            // console.log(this.range, this.range.commonAncestorContainer);
+            this.setCurrentRange(this.range);
             document.execCommand('insertHTML', null, value);
         } else {
-            // console.log('create default range',this.range);
-            this.range = this.createDefaultRange();
+            this.setCurrentRange(this.createDefaultRange());
             document.execCommand('insertHTML', null, '<div>' + value + '</div>');
         }
     }
 };
 
 function _exec(name, value) {
-    // console.log('_exec', name);
     if (commands[name]) {
         commands[name].apply(this, value);
     } else {
@@ -461,10 +464,20 @@ var SnowEditor = function () {
         value: function getCurrentRange() {
             var selection = window.getSelection();
             if (selection.rangeCount > 0) {
+                console.log(selection.rangeCount);
                 var range = selection.getRangeAt(0);
                 if ((0, _isChildOf3.default)(range.commonAncestorContainer, this.$element)) {
                     return range;
                 }
+            }
+        }
+    }, {
+        key: 'setCurrentRange',
+        value: function setCurrentRange(range) {
+            if (range) {
+                var selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
             }
         }
     }, {
@@ -564,14 +577,9 @@ var SnowEditor = function () {
     }, {
         key: 'range',
         get: function get() {
-            return this._range || this.getCurrentRange();
+            return this._range;
         },
         set: function set(range) {
-            if (range) {
-                var selection = window.getSelection();
-                selection.removeAllRanges();
-                selection.addRange(range);
-            }
             this._range = range;
         }
     }, {
@@ -612,7 +620,7 @@ var SnowEditor = function () {
 
 exports.default = SnowEditor;
 
-},{"../dom/DomElement":3,"../toast/Toast":28,"../util/isChildOf":38,"../util/printf":41,"./config":24}],5:[function(require,module,exports){
+},{"../dom/DomElement":3,"../toast/Toast":29,"../util/isChildOf":39,"../util/printf":42,"./config":25}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -761,8 +769,7 @@ var RangeComponent = function (_Component) {
         key: 'onClick',
         value: function onClick(event) {
             if (this.editor.range) {
-                var range = this.onRangeAction(this.editor.range, event) || this.editor.range;
-                this.editor.range = range;
+                this.onRangeAction(this.editor.range, event);
             }
         }
     }]);
@@ -1501,7 +1508,7 @@ var AttachmentManager = function (_Component) {
 
 exports.default = AttachmentManager;
 
-},{"../../../dom/DomElement":3,"../../../editor/SnowEditor":4,"../../../poplayer/PopLayer":25,"../../../tab/Tab":26,"../../../upload/UploadButton":29,"../../../util/getDropFiles":32,"../../../util/getPasteFiles":33,"../../../util/getSize":35,"../Attahment":5,"../Component":6,"./uploader":21}],17:[function(require,module,exports){
+},{"../../../dom/DomElement":3,"../../../editor/SnowEditor":4,"../../../poplayer/PopLayer":26,"../../../tab/Tab":27,"../../../upload/UploadButton":30,"../../../util/getDropFiles":33,"../../../util/getPasteFiles":34,"../../../util/getSize":36,"../Attahment":5,"../Component":6,"./uploader":22}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1588,15 +1595,7 @@ var EmotionComponent = function (_Component) {
         }
     }, {
         key: 'onStatusChange',
-        value: function onStatusChange() {
-            if (this.editor.range) {
-                this._active = true;
-                this.editor.$(this.node).removeClass('disable');
-            } else {
-                this._active = false;
-                this.editor.$(this.node).addClass('disable');
-            }
-        }
+        value: function onStatusChange() {}
     }, {
         key: 'onClick',
         value: function onClick(event) {
@@ -1619,7 +1618,7 @@ var EmotionComponent = function (_Component) {
 
 exports.default = EmotionComponent;
 
-},{"../../../dom/DomElement":3,"../../../poplayer/PopLayer":25,"../../../tab/Tab":26,"../Component":6,"./emotion/Text":20}],18:[function(require,module,exports){
+},{"../../../dom/DomElement":3,"../../../poplayer/PopLayer":26,"../../../tab/Tab":27,"../Component":6,"./emotion/Text":21}],18:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1747,7 +1746,93 @@ var ImageComponent = function (_Component) {
 
 exports.default = ImageComponent;
 
-},{"../../../dom/DomElement":3,"../../../poplayer/PopLayer":25,"../../../tab/Tab":26,"../../../upload/UploadButton":29,"../Attahment":5,"../Component":6,"./uploader":21}],19:[function(require,module,exports){
+},{"../../../dom/DomElement":3,"../../../poplayer/PopLayer":26,"../../../tab/Tab":27,"../../../upload/UploadButton":30,"../Attahment":5,"../Component":6,"./uploader":22}],19:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _Component2 = require('../Component');
+
+var _Component3 = _interopRequireDefault(_Component2);
+
+var _PopLayer = require('../../../poplayer/PopLayer');
+
+var _PopLayer2 = _interopRequireDefault(_PopLayer);
+
+var _DomElement = require('../../../dom/DomElement');
+
+var _DomElement2 = _interopRequireDefault(_DomElement);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var n = _DomElement2.default.element;
+
+var LinkComponent = function (_Component) {
+    _inherits(LinkComponent, _Component);
+
+    function LinkComponent(editor) {
+        _classCallCheck(this, LinkComponent);
+
+        var _this = _possibleConstructorReturn(this, (LinkComponent.__proto__ || Object.getPrototypeOf(LinkComponent)).call(this, editor));
+
+        var input = n('input', { class: 'snow-input-text snow-link-input', placeholder: '链接地址', type: 'text' });
+        var title = n('input', { class: 'snow-input-text snow-link-input', placeholder: '连接说明', type: 'text' });
+        _this.input = n('div', { class: 'snow-link-inputs' }, {}, [title, input, n('div', { class: 'snow-link-button' }, null, n('div', {
+            class: 'snow-btn snow-btn-sm', onclick: function onclick() {
+                var href = (0, _DomElement2.default)(input).val();
+                var name = (0, _DomElement2.default)(title).val() || href;
+                if (href) {
+                    var html = '<a title="' + name + '" href="' + href + '">' + name + '</a>';
+                    _this.editor.exec('insertHTML', html);
+                }
+                _this.layer.hide();
+            }
+        }, null, '插入'))]);
+        return _this;
+    }
+
+    _createClass(LinkComponent, [{
+        key: 'init',
+        value: function init(node) {
+            this.content = n('div', { class: 'snow-link-menu' }, {}, this.input);
+            this.layer = new _PopLayer2.default(this.content, node);
+        }
+    }, {
+        key: 'onStatusChange',
+        value: function onStatusChange() {}
+    }, {
+        key: 'onClick',
+        value: function onClick(event) {
+            this.layer.show();
+        }
+    }, {
+        key: 'name',
+        get: function get() {
+            return 'link';
+        }
+    }, {
+        key: 'view',
+        get: function get() {
+            return '<i class="iconfont snow-icon-' + this.name + '"></i>';
+        }
+    }]);
+
+    return LinkComponent;
+}(_Component3.default);
+
+exports.default = LinkComponent;
+
+},{"../../../dom/DomElement":3,"../../../poplayer/PopLayer":26,"../Component":6}],20:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1766,7 +1851,7 @@ var EmotionObj = function EmotionObj(title, html, view) {
 
 exports.default = EmotionObj;
 
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1806,7 +1891,7 @@ var TextEmotions = function () {
 
 exports.default = TextEmotions;
 
-},{"./Object":19}],21:[function(require,module,exports){
+},{"./Object":20}],22:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1843,7 +1928,7 @@ function uploader(editor, file) {
     }
 }
 
-},{"../../../config":24,"./uploadToLocal":22,"./uploadToServer":23}],22:[function(require,module,exports){
+},{"../../../config":25,"./uploadToLocal":23,"./uploadToServer":24}],23:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1878,7 +1963,7 @@ function uploadToLocal(editor, file) {
     });
 }
 
-},{"../../../config":24}],23:[function(require,module,exports){
+},{"../../../config":25}],24:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1907,7 +1992,7 @@ function uploadToServer(editor, file) {
     });
 }
 
-},{"../../../config":24}],24:[function(require,module,exports){
+},{"../../../config":25}],25:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1925,7 +2010,7 @@ var config = {
     // 布局控制
     'align-left', 'align-center', 'align-right',
     // 表情
-    'emotion', 'image', 'attachment',
+    'emotion', 'image', 'link', 'attachment',
     // 撤销与重做
     'undo', 'redo'],
     emotions: [{
@@ -1965,7 +2050,7 @@ var config = {
 
 exports.default = config;
 
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2292,7 +2377,7 @@ var PopLayer = function () {
 
 exports.default = PopLayer;
 
-},{"../config":2,"../dom/DomElement":3,"../util/getPlatform":34,"../util/getSize":35,"../util/onMouseHover":39,"../util/pointInBox":40,"../util/timeLimitCallback":42}],26:[function(require,module,exports){
+},{"../config":2,"../dom/DomElement":3,"../util/getPlatform":35,"../util/getSize":36,"../util/onMouseHover":40,"../util/pointInBox":41,"../util/timeLimitCallback":43}],27:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2428,7 +2513,7 @@ function Tab(config) {
 
 exports.default = Tab;
 
-},{"../dom/DomElement":3}],27:[function(require,module,exports){
+},{"../dom/DomElement":3}],28:[function(require,module,exports){
 'use strict';
 
 var _Tab = require('./Tab');
@@ -2440,7 +2525,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 window.snow = window.snow || {};
 window.snow.Tab = _Tab2.default;
 
-},{"./Tab":26}],28:[function(require,module,exports){
+},{"./Tab":27}],29:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2527,7 +2612,7 @@ Toast.show = function () {
 
 exports.default = Toast;
 
-},{"../config":2,"../dom/DomElement":3}],29:[function(require,module,exports){
+},{"../config":2,"../dom/DomElement":3}],30:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2619,7 +2704,7 @@ function UploadButton(config) {
 
 exports.default = UploadButton;
 
-},{"../dom/DomElement":3}],30:[function(require,module,exports){
+},{"../dom/DomElement":3}],31:[function(require,module,exports){
 'use strict';
 
 var _UploadButton = require('./UploadButton');
@@ -2631,7 +2716,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 window.snow = window.snow || {};
 window.snow.UploadButton = _UploadButton2.default;
 
-},{"./UploadButton":29}],31:[function(require,module,exports){
+},{"./UploadButton":30}],32:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2654,7 +2739,7 @@ function fixCssPrefix(name) {
     return name;
 }
 
-},{}],32:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2669,7 +2754,7 @@ function getDropFiles(event) {
   return event.dataTransfer && event.dataTransfer.files ? event.dataTransfer.files : null;
 }
 
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2684,7 +2769,7 @@ function getPasteFiles(event) {
   return event.clipboardData && event.clipboardData.files ? event.clipboardData.files : null;
 }
 
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2704,7 +2789,7 @@ exports.default = function () {
     }
 };
 
-},{}],35:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2736,7 +2821,7 @@ function getSize(elem) {
         }
 }
 
-},{"./getWindowsSize":36}],36:[function(require,module,exports){
+},{"./getWindowsSize":37}],37:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2763,7 +2848,7 @@ function getWindowsSize() {
     };
 }
 
-},{}],37:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2778,7 +2863,7 @@ function isArray(obj) {
   return obj instanceof Array;
 }
 
-},{}],38:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2797,7 +2882,7 @@ function isChildOf(elem, parent) {
     return elem === parent;
 }
 
-},{}],39:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2844,7 +2929,7 @@ function onMouseHover(target, hover, outer, time) {
     });
 }
 
-},{"./getSize":35,"./pointInBox":40}],40:[function(require,module,exports){
+},{"./getSize":36,"./pointInBox":41}],41:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2865,7 +2950,7 @@ function pointInBox(point, box) {
     return false;
 }
 
-},{}],41:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2900,7 +2985,7 @@ function printf(format) {
     });
 }
 
-},{}],42:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
