@@ -3159,7 +3159,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 window.snow = window.snow || {};
 window.snow.Toast = _Toast2.default;
-window.taos;
+window.toast = _Toast2.default;
 
 },{"./Toast":34}],36:[function(require,module,exports){
 'use strict';
