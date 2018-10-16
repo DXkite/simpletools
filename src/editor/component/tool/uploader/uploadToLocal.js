@@ -13,9 +13,9 @@ export default function uploadToLocal(editor, file) {
             const result = { local: true, name: file.name, link: reader.result };
             const hasAdapter = config.upload && config.upload.adapter && config.upload.adapter.local && config.upload.adapter.local.resovle;
             if (hasAdapter) {
-                resolve(config.upload.adapter.local.resovle(result));
+                resolve(config.upload.adapter.local.resolve(result));
             } else {
-                resovle(result);
+                resolve(result);
             }
         });
     });

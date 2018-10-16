@@ -42,12 +42,12 @@
                 adapter: {
                     // base64 适配器
                     local: {
-                        resovle: uploaded => uploaded,
+                        resolve: uploaded => uploaded,
                         reject: error => error
                     },
                     // ajax 适配器
                     server: {
-                        resovle: uploaded => uploaded,
+                        resolve: uploaded => uploaded,
                         reject: error => error
                     }
                 },

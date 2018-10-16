@@ -1869,9 +1869,9 @@ function uploadToLocal(editor, file) {
             var result = { local: true, name: file.name, link: reader.result };
             var hasAdapter = _config2.default.upload && _config2.default.upload.adapter && _config2.default.upload.adapter.local && _config2.default.upload.adapter.local.resovle;
             if (hasAdapter) {
-                resolve(_config2.default.upload.adapter.local.resovle(result));
+                resolve(_config2.default.upload.adapter.local.resolve(result));
             } else {
-                resovle(result);
+                resolve(result);
             }
         });
     });
