@@ -1640,6 +1640,18 @@ var _Tab = require('../../../tab/Tab');
 
 var _Tab2 = _interopRequireDefault(_Tab);
 
+var _UploadButton = require('../../../upload/UploadButton');
+
+var _UploadButton2 = _interopRequireDefault(_UploadButton);
+
+var _Attahment = require('../Attahment');
+
+var _Attahment2 = _interopRequireDefault(_Attahment);
+
+var _uploader = require('./uploader');
+
+var _uploader2 = _interopRequireDefault(_uploader);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1660,14 +1672,36 @@ var ImageComponent = function (_Component) {
     function ImageComponent(editor) {
         _classCallCheck(this, ImageComponent);
 
-        return _possibleConstructorReturn(this, (ImageComponent.__proto__ || Object.getPrototypeOf(ImageComponent)).call(this, editor));
+        var _this = _possibleConstructorReturn(this, (ImageComponent.__proto__ || Object.getPrototypeOf(ImageComponent)).call(this, editor));
+
+        _this.upload = new _UploadButton2.default({
+            small: true,
+            upload: function upload(files) {
+                var _loop = function _loop() {
+                    var file = files[i];
+                    var attachment = new _Attahment2.default(file, file.name);
+                    (0, _uploader2.default)(editor, attachment.file).then(function (data) {
+                        attachment.data = data;
+                        editor.addAttachment(attachment);
+                        if (attachment.isImage) {
+                            editor.exec('insertHTML', attachment.html);
+                        }
+                    });
+                    _this.layer.hide();
+                };
+
+                for (var i = 0; i < files.length; i++) {
+                    _loop();
+                }
+            }
+        });
+        return _this;
     }
 
     _createClass(ImageComponent, [{
         key: 'init',
         value: function init(node) {
-
-            this.tab = new _Tab2.default({ target: { btns: ['上传图片', '网络图片'], views: ['上传一张图片', '使用网络图片'] }, current: 0, small: true });
+            this.tab = new _Tab2.default({ target: { btns: ['插入图片', '网络图片'], views: [this.upload.target, '使用网络图片'] }, current: 0, small: true });
             this.content = n('div', { class: 'snow-image-menu' }, {}, this.tab.target);
             this.layer = new _PopLayer2.default(this.content, node);
         }
@@ -1696,7 +1730,7 @@ var ImageComponent = function (_Component) {
 
 exports.default = ImageComponent;
 
-},{"../../../dom/DomElement":3,"../../../poplayer/PopLayer":25,"../../../tab/Tab":26,"../Component":6}],19:[function(require,module,exports){
+},{"../../../dom/DomElement":3,"../../../poplayer/PopLayer":25,"../../../tab/Tab":26,"../../../upload/UploadButton":29,"../Attahment":5,"../Component":6,"./uploader":21}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
