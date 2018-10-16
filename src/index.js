@@ -1,4 +1,5 @@
 import './snow/tab/index'
+import './snow/upload/index'
 
 import config from './snow/editor/config'
 import SnowEditor from './snow/editor/SnowEditor'

@@ -4,6 +4,8 @@
 
 require('./snow/tab/index');
 
+require('./snow/upload/index');
+
 var _config = require('./snow/editor/config');
 
 var _config2 = _interopRequireDefault(_config);
@@ -77,7 +79,7 @@ _SnowEditor2.default.registerComponent(_Emotion2.default);
 _SnowEditor2.default.registerComponent(_Image2.default);
 _SnowEditor2.default.registerComponent(_AttachmentManager2.default);
 
-},{"./snow/editor/SnowEditor":4,"./snow/editor/component/command/Redo":8,"./snow/editor/component/command/Undo":9,"./snow/editor/component/layout/Center":10,"./snow/editor/component/layout/Left":11,"./snow/editor/component/layout/Right":12,"./snow/editor/component/style/Bold":13,"./snow/editor/component/style/Italic":14,"./snow/editor/component/style/Underline":15,"./snow/editor/component/tool/AttachmentManager":16,"./snow/editor/component/tool/Emotion":17,"./snow/editor/component/tool/Image":18,"./snow/editor/config":24,"./snow/tab/index":27}],2:[function(require,module,exports){
+},{"./snow/editor/SnowEditor":4,"./snow/editor/component/command/Redo":8,"./snow/editor/component/command/Undo":9,"./snow/editor/component/layout/Center":10,"./snow/editor/component/layout/Left":11,"./snow/editor/component/layout/Right":12,"./snow/editor/component/style/Bold":13,"./snow/editor/component/style/Italic":14,"./snow/editor/component/style/Underline":15,"./snow/editor/component/tool/AttachmentManager":16,"./snow/editor/component/tool/Emotion":17,"./snow/editor/component/tool/Image":18,"./snow/editor/config":24,"./snow/tab/index":27,"./snow/upload/index":30}],2:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -112,7 +114,7 @@ var DomElement = function DomElement(selecter, context) {
 };
 
 DomElement.constructor = function (selecter, context) {
-    if (selecter instanceof String) {
+    if (typeof selecter === 'string') {
         this.elements = (context || document).querySelectorAll(selecter);
     } else if (selecter instanceof DomElement) {
         return selecter;
@@ -123,7 +125,7 @@ DomElement.constructor = function (selecter, context) {
     } else if (selecter instanceof Object) {
         this.elements = [selecter];
     } else {
-        console.error('DomElement:selector is invalid value', selecter);
+        console.error('DomElement:selector is invalid value:', selecter);
         return this;
     }
     this.context = context;
@@ -282,7 +284,7 @@ DomElement.method.extend({
 
 exports.default = DomElement;
 
-},{"../util/fixCssPrefix":29,"../util/isArray":35}],4:[function(require,module,exports){
+},{"../util/fixCssPrefix":31,"../util/isArray":37}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -607,7 +609,7 @@ var SnowEditor = function () {
 
 exports.default = SnowEditor;
 
-},{"../dom/DomElement":3,"../toast/Toast":28,"../util/isChildOf":36,"../util/printf":39,"./config":24}],5:[function(require,module,exports){
+},{"../dom/DomElement":3,"../toast/Toast":28,"../util/isChildOf":38,"../util/printf":41,"./config":24}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1298,6 +1300,10 @@ var _Tab = require('../../../tab/Tab');
 
 var _Tab2 = _interopRequireDefault(_Tab);
 
+var _UploadButton = require('../../../upload/UploadButton');
+
+var _UploadButton2 = _interopRequireDefault(_UploadButton);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1360,11 +1366,12 @@ function getAttachmentList(editor) {
 
     var attahments = editor.attachment;
     var childs = new Array();
-    attahments.forEach(function (attach) {
-        childs.push(menuElement.call(_this, editor, attach));
-    });
-    if (childs.length <= 0) {
-        childs.push(n('div', { class: 'snow-attachment-item' }, null, '无文件'));
+    if (attahments.size <= 0) {
+        childs.push(n('div', { class: 'snow-attachment-item' }, null, '暂无文件'));
+    } else {
+        attahments.forEach(function (attach) {
+            childs.push(menuElement.call(_this, editor, attach));
+        });
     }
     return childs;
 }
@@ -1435,14 +1442,31 @@ var AttachmentManager = function (_Component) {
                 editor.fire('dragleave', event);
             }
         });
+        _this2.upload = new _UploadButton2.default({
+            small: true,
+            upload: function upload(files) {
+                var _loop = function _loop() {
+                    var file = files[i];
+                    var attachment = new _Attahment2.default(file, file.name);
+                    (0, _uploader2.default)(editor, attachment.file).then(function (data) {
+                        attachment.data = data;
+                        editor.addAttachment(attachment);
+                    });
+                    _this2.layer.hide();
+                };
+
+                for (var i = 0; i < files.length; i++) {
+                    _loop();
+                }
+            }
+        });
         return _this2;
     }
 
     _createClass(AttachmentManager, [{
         key: 'init',
         value: function init(node) {
-
-            this.tab = new _Tab2.default({ target: { btns: ['文件列表'], views: [getAttachmentList.call(this, this.editor)] }, current: 0, small: true });
+            this.tab = new _Tab2.default({ target: { btns: ['文件列表', '上传文件'], views: [getAttachmentList.call(this, this.editor), this.upload.target] }, current: 0, small: true });
             var ele = _DomElement2.default.element('div', { class: 'snow-attachment-menu' }, null, this.tab.target);
             this.layer = new _PopLayer2.default(ele, node);
         }
@@ -1452,7 +1476,7 @@ var AttachmentManager = function (_Component) {
     }, {
         key: 'onClick',
         value: function onClick(event) {
-            this.tab = new _Tab2.default({ target: { btns: ['文件列表'], views: [getAttachmentList.call(this, this.editor)] }, current: 0, small: true });
+            this.tab = new _Tab2.default({ target: { btns: ['文件列表', '上传文件'], views: [getAttachmentList.call(this, this.editor), this.upload.target] }, current: 0, small: true });
             this.layer.content = _DomElement2.default.element('div', { class: 'snow-attachment-menu' }, null, this.tab.target);
             this.layer.show();
         }
@@ -1473,7 +1497,7 @@ var AttachmentManager = function (_Component) {
 
 exports.default = AttachmentManager;
 
-},{"../../../dom/DomElement":3,"../../../editor/SnowEditor":4,"../../../poplayer/PopLayer":25,"../../../tab/Tab":26,"../../../util/getDropFiles":30,"../../../util/getPasteFiles":31,"../../../util/getSize":33,"../Attahment":5,"../Component":6,"./uploader":21}],17:[function(require,module,exports){
+},{"../../../dom/DomElement":3,"../../../editor/SnowEditor":4,"../../../poplayer/PopLayer":25,"../../../tab/Tab":26,"../../../upload/UploadButton":29,"../../../util/getDropFiles":32,"../../../util/getPasteFiles":33,"../../../util/getSize":35,"../Attahment":5,"../Component":6,"./uploader":21}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2151,7 +2175,8 @@ var PopLayer = function () {
                         var y = event.pageY || event.clientY || event.y;
                         var box = (0, _getSize2.default)(_this3.showElement);
                         var point = { x: x, y: y };
-                        if (!(0, _pointInBox2.default)(point, box) && _this3.showed) {
+                        // 获取正常的事件
+                        if (event.isTrusted && !(0, _pointInBox2.default)(point, box) && _this3.showed) {
                             _this3.hide();
                         }
                     };
@@ -2216,7 +2241,7 @@ var PopLayer = function () {
 
 exports.default = PopLayer;
 
-},{"../config":2,"../dom/DomElement":3,"../util/getPlatform":32,"../util/getSize":33,"../util/onMouseHover":37,"../util/pointInBox":38,"../util/timeLimitCallback":40}],26:[function(require,module,exports){
+},{"../config":2,"../dom/DomElement":3,"../util/getPlatform":34,"../util/getSize":35,"../util/onMouseHover":39,"../util/pointInBox":40,"../util/timeLimitCallback":42}],26:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2457,6 +2482,107 @@ exports.default = Toast;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _DomElement = require('../dom/DomElement');
+
+var _DomElement2 = _interopRequireDefault(_DomElement);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var n = _DomElement2.default.element;
+
+var defaultConfig = {
+    target: '#snow-upload', // 对象选择器
+    selector: {
+        title: '.snow-upload-title',
+        file: 'input[type=file]'
+    },
+    class: {
+        title: 'snow-upload-title',
+        titleSmall: 'snow-upload-sm',
+        file: 'snow-upload-file'
+    }
+};
+
+function getChilds() {
+    var config = this.config;
+    this.file = (0, _DomElement2.default)(config.selector.file, this.target)[0];
+    this.title = (0, _DomElement2.default)(config.selector.title, this.target)[0];
+}
+
+function buildChilds() {
+    var config = this.config;
+    var sm = config.small || false;
+    this.title = n('div', { class: sm ? config.class.title + ' ' + config.class.titleSmall : config.class.title }, null, '上传文件');
+    this.file = n('input', { class: config.class.file, hidden: true, type: 'file' });
+    this.target = n('div', null, null, [this.file, this.title]);
+}
+
+function binderEvent() {
+    var _this = this;
+
+    var title = this.title;
+    var file = this.file;
+    var upload = this.config.upload;
+
+    (0, _DomElement2.default)(title).on('click', function (e) {
+        file.click();
+    });
+
+    (0, _DomElement2.default)(file).on('change', function () {
+        if (upload) {
+            upload.call(_this, file.files);
+        } else {
+            console.error('uploader is invalid for config.upload');
+        }
+    });
+}
+
+/**
+ * 创建文件上传按钮
+ */
+
+var UploadButton =
+
+/**
+ * 创建对象
+ * @param {Object} config 
+ */
+function UploadButton(config) {
+    _classCallCheck(this, UploadButton);
+
+    this.config = Object.assign(defaultConfig, config);
+    if (config.target) {
+        this.target = (0, _DomElement2.default)(config.target)[0];
+        getChilds.call(this);
+    } else {
+        buildChilds.call(this);
+    }
+    binderEvent.call(this);
+};
+
+exports.default = UploadButton;
+
+},{"../dom/DomElement":3}],30:[function(require,module,exports){
+'use strict';
+
+var _UploadButton = require('./UploadButton');
+
+var _UploadButton2 = _interopRequireDefault(_UploadButton);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+window.snow = window.snow || {};
+window.snow.UploadButton = _UploadButton2.default;
+
+},{"./UploadButton":29}],31:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 exports.default = fixCssPrefix;
 var cssPrefix = function () {
     var styles = window.getComputedStyle(document.documentElement, '');
@@ -2474,7 +2600,7 @@ function fixCssPrefix(name) {
     return name;
 }
 
-},{}],30:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2489,7 +2615,7 @@ function getDropFiles(event) {
   return event.dataTransfer && event.dataTransfer.files ? event.dataTransfer.files : null;
 }
 
-},{}],31:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2504,7 +2630,7 @@ function getPasteFiles(event) {
   return event.clipboardData && event.clipboardData.files ? event.clipboardData.files : null;
 }
 
-},{}],32:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2524,7 +2650,7 @@ exports.default = function () {
     }
 };
 
-},{}],33:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2556,7 +2682,7 @@ function getSize(elem) {
         }
 }
 
-},{"./getWindowsSize":34}],34:[function(require,module,exports){
+},{"./getWindowsSize":36}],36:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2583,7 +2709,7 @@ function getWindowsSize() {
     };
 }
 
-},{}],35:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2598,7 +2724,7 @@ function isArray(obj) {
   return obj instanceof Array;
 }
 
-},{}],36:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2617,7 +2743,7 @@ function isChildOf(elem, parent) {
     return elem === parent;
 }
 
-},{}],37:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2664,7 +2790,7 @@ function onMouseHover(target, hover, outer, time) {
     });
 }
 
-},{"./getSize":33,"./pointInBox":38}],38:[function(require,module,exports){
+},{"./getSize":35,"./pointInBox":40}],40:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2685,7 +2811,7 @@ function pointInBox(point, box) {
     return false;
 }
 
-},{}],39:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2720,7 +2846,7 @@ function printf(format) {
     });
 }
 
-},{}],40:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

@@ -99,11 +99,11 @@
 .snow-tab-title > li {
   padding: .5em 1em;
   background-color: #fff;
+  color: #6610f2;
   cursor: pointer; }
 
 .snow-tab-title > li.snow-tab-current,
 .snow-tab-title > li:hover {
-  color: #6610f2;
   border-bottom: 0.2em solid #6610f2;
   background-color: #f8f9fa;
   -webkit-user-select: none;
@@ -123,6 +123,26 @@
 .snow-tab-sm > li.snow-tab-current,
 .snow-tab-sm > li:hover {
   border-bottom: 0.1em solid #6610f2; }
+
+.snow-upload-file {
+  display: none; }
+
+.snow-upload-title {
+  padding: .5em 1em;
+  color: #6610f2;
+  cursor: pointer;
+  background-color: #fff;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  text-align: center; }
+
+.snow-upload-title:hover {
+  background-color: #f8f9fa; }
+
+.snow-upload-sm {
+  padding: .25em .5em; }
 
 .snow-editor-container {
   position: relative;
@@ -265,8 +285,7 @@
       flex-wrap: wrap; }
 
 .snow-attachment-menu {
-  max-width: 15em;
-  width: 15em; }
+  max-width: 15em; }
 
 .snow-attachment-item {
   cursor: pointer;

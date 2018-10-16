@@ -8,6 +8,7 @@ import upload from './uploader'
 import getSize from '../../../util/getSize'
 import SnowEditor from '../../../editor/SnowEditor'
 import Tab from '../../../tab/Tab'
+import UploadButton from '../../../upload/UploadButton'
 
 const n = $.element;
 const _ = SnowEditor._;
@@ -68,11 +69,12 @@ function menuElement(editor, attachment) {
 function getAttachmentList(editor) {
     const attahments = editor.attachment;
     const childs = new Array;
-    attahments.forEach(attach => {
-        childs.push(menuElement.call(this, editor, attach));
-    })
-    if (childs.length <= 0) {
-        childs.push(n('div', { class: 'snow-attachment-item' }, null, '无文件'));
+    if (attahments.size <= 0) {
+        childs.push(n('div', { class: 'snow-attachment-item' }, null, '暂无文件'));
+    } else {
+        attahments.forEach(attach => {
+            childs.push(menuElement.call(this, editor, attach));
+        });
     }
     return childs;
 }
@@ -139,11 +141,24 @@ class AttachmentManager extends Component {
                 editor.fire('dragleave', event);
             }
         });
+        this.upload = new UploadButton({
+            small: true,
+            upload: (files) => {
+                for (var i = 0; i < files.length; i++) {
+                    const file = files[i]
+                    const attachment = new Attachment(file, file.name);
+                    upload(editor, attachment.file).then((data) => {
+                        attachment.data = data;
+                        editor.addAttachment(attachment);
+                    });
+                    this.layer.hide();
+                }
+            }
+        });
     }
 
     init(node) {
-
-        this.tab = new Tab({ target: { btns: ['文件列表'], views: [getAttachmentList.call(this, this.editor)] }, current: 0, small: true });
+        this.tab = new Tab({ target: { btns: ['文件列表', '上传文件'], views: [getAttachmentList.call(this, this.editor), this.upload.target] }, current: 0, small: true });
         const ele = $.element('div', { class: 'snow-attachment-menu' }, null, this.tab.target);
         this.layer = new Layer(ele, node);
     }
@@ -161,7 +176,7 @@ class AttachmentManager extends Component {
     }
 
     onClick(event) {
-        this.tab = new Tab({ target: { btns: ['文件列表'], views: [getAttachmentList.call(this, this.editor)] }, current: 0, small: true });
+        this.tab = new Tab({ target: { btns: ['文件列表', '上传文件'], views: [getAttachmentList.call(this, this.editor), this.upload.target] }, current: 0, small: true });
         this.layer.content = $.element('div', { class: 'snow-attachment-menu' }, null, this.tab.target);
         this.layer.show();
     }

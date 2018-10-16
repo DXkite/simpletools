@@ -9,12 +9,12 @@
 .snow-tab-title>li {
     padding: .5em 1em;
     background-color: #fff;
+    color: $indigo;
     cursor: pointer;
 }
 
 .snow-tab-title>li.snow-tab-current,
 .snow-tab-title>li:hover {
-    color: $indigo;
     border-bottom: .2em solid $indigo;
     background-color: $light;
     user-select: none;

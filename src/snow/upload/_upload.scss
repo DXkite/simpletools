@@ -1,0 +1,20 @@
+.snow-upload-file {
+    display: none;
+}
+
+.snow-upload-title {
+    padding: .5em 1em;
+    color: $indigo;
+    cursor: pointer;
+    background-color: $white;
+    user-select: none;
+    text-align: center;
+}
+
+.snow-upload-title:hover {
+    background-color: $light;
+}
+
+.snow-upload-sm  {
+    padding: .25em .5em;
+}
