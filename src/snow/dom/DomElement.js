@@ -92,6 +92,8 @@ DomElement.method.extend({
                         } else {
                             this.setAttribute(name, attrs[name]);
                         }
+                    } else {
+                        this.removeAttribute(name);
                     }
                 }
             }
@@ -113,7 +115,9 @@ DomElement.method.extend({
             if (add) {
                 var get = this.getAttribute('class');
                 if (get) {
-                    this.setAttribute('class', get + ' ' + add);
+                    if (!get.match(new RegExp(add))) {
+                        this.setAttribute('class', get + ' ' + add);
+                    }
                 } else {
                     this.setAttribute('class', add);
                 }
@@ -127,7 +131,11 @@ DomElement.method.extend({
             if (get) {
                 var oldClass = get.split(/\s+/);
                 var newClass = oldClass.filter(element => element !== remove);
-                this.setAttribute('class', newClass.join(' '));
+                if (newClass.length > 0) {
+                    this.setAttribute('class', newClass.join(' '));
+                } else {
+                    this.removeAttribute('class');
+                }
             }
         });
         return this;
@@ -154,9 +162,8 @@ DomElement.method.extend({
         });
         return this;
     },
-
     find: function (selecter) {
-        return DomElement(selecter, this.elements[0]);
+        return DomElement(selecter, this[0]);
     }
 });
 

@@ -1,4 +1,4 @@
-/*! snow-editor by dxkite 2018-10-15 */
+/*! snow-editor by dxkite 2018-10-16 */
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 'use strict';
 
@@ -196,6 +196,8 @@ DomElement.method.extend({
                         } else {
                             this.setAttribute(name, attrs[name]);
                         }
+                    } else {
+                        this.removeAttribute(name);
                     }
                 }
             }
@@ -217,7 +219,9 @@ DomElement.method.extend({
             if (add) {
                 var get = this.getAttribute('class');
                 if (get) {
-                    this.setAttribute('class', get + ' ' + add);
+                    if (!get.match(new RegExp(add))) {
+                        this.setAttribute('class', get + ' ' + add);
+                    }
                 } else {
                     this.setAttribute('class', add);
                 }
@@ -233,7 +237,11 @@ DomElement.method.extend({
                 var newClass = oldClass.filter(function (element) {
                     return element !== remove;
                 });
-                this.setAttribute('class', newClass.join(' '));
+                if (newClass.length > 0) {
+                    this.setAttribute('class', newClass.join(' '));
+                } else {
+                    this.removeAttribute('class');
+                }
             }
         });
         return this;
@@ -264,9 +272,8 @@ DomElement.method.extend({
         });
         return this;
     },
-
     find: function find(selecter) {
-        return DomElement(selecter, this.elements[0]);
+        return DomElement(selecter, this[0]);
     }
 });
 
