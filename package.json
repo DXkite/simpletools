@@ -1,13 +1,14 @@
 {
-  "name": "snow-editor",
+  "name": "snow",
   "version": "1.0.0",
-  "description": "a light rich text editor",
+  "description": "a light rich text editor and some ui tools",
   "main": "index.js",
   "scripts": {
     "build": "grunt default",
     "watcher": "grunt watcher"
   },
   "keywords": [
+    "ui-tools",
     "editor",
     "rich"
   ],

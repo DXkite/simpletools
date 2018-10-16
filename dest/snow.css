@@ -91,6 +91,98 @@
 .toast-danger {
   background-color: theme-color("danger"); }
 
+*, ::after, ::before {
+  box-sizing: border-box; }
+
+@keyframes fadeIn {
+  from {
+    opacity: 0; }
+  to {
+    opacity: 1; } }
+.animation-fade-in {
+  animation: fadeIn ease .3s forwards; }
+
+@keyframes fadeOut {
+  from {
+    opacity: 1; }
+  to {
+    opacity: 0; } }
+.animation-fade-out {
+  animation: fadeOut ease .3s forwards; }
+
+@keyframes slideTopIn {
+  from {
+    transform: translateY(100%);
+    opacity: 0; }
+  to {
+    transform: translateY(0);
+    opacity: 1; } }
+@keyframes slideTopOut {
+  from {
+    transform: translateY(0);
+    opacity: 1; }
+  to {
+    transform: translateY(100%);
+    pointer-events: none;
+    opacity: 0; } }
+@keyframes slideBottomIn {
+  from {
+    transform: translateY(100%);
+    opacity: 0; }
+  to {
+    transform: translateY(0);
+    opacity: 1; } }
+@keyframes slideBottomOut {
+  from {
+    transform: translateY(0);
+    opacity: 1; }
+  to {
+    transform: translateY(100%);
+    pointer-events: none;
+    opacity: 0; } }
+@keyframes slideLeftIn {
+  from {
+    transform: translateX(-100%);
+    opacity: 0; }
+  to {
+    transform: translateX(0);
+    opacity: 1; } }
+@keyframes slideLeftOut {
+  from {
+    transform: translateX(0);
+    opacity: 1; }
+  to {
+    transform: translateX(-100%);
+    pointer-events: none;
+    opacity: 0; } }
+@keyframes slideRightIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0; }
+  to {
+    transform: translateX(0);
+    opacity: 1; } }
+@keyframes slideRightOut {
+  from {
+    transform: translateX(0);
+    opacity: 1; }
+  to {
+    transform: translateX(100%);
+    pointer-events: none;
+    opacity: 0; } }
+.toast, .toast-danger {
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  display: inline-block;
+  padding: 0.8em;
+  cursor: pointer;
+  opacity: 1;
+  border: 0px; }
+
+/* 扩展样式 主样式名-扩展样式名 */
+.toast-danger {
+  background-color: theme-color("danger"); }
+
 .snow-tab-title {
   display: -ms-flexbox;
   display: flex;

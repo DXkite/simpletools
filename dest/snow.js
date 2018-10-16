@@ -1,90 +1,5 @@
-/*! snow-editor by dxkite 2018-10-16 */
+/*! snow by dxkite 2018-10-16 */
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
-'use strict';
-
-require('./snow/tab/index');
-
-require('./snow/upload/index');
-
-var _config = require('./snow/editor/config');
-
-var _config2 = _interopRequireDefault(_config);
-
-var _SnowEditor = require('./snow/editor/SnowEditor');
-
-var _SnowEditor2 = _interopRequireDefault(_SnowEditor);
-
-var _Bold = require('./snow/editor/component/style/Bold');
-
-var _Bold2 = _interopRequireDefault(_Bold);
-
-var _Italic = require('./snow/editor/component/style/Italic');
-
-var _Italic2 = _interopRequireDefault(_Italic);
-
-var _Underline = require('./snow/editor/component/style/Underline');
-
-var _Underline2 = _interopRequireDefault(_Underline);
-
-var _Redo = require('./snow/editor/component/command/Redo');
-
-var _Redo2 = _interopRequireDefault(_Redo);
-
-var _Undo = require('./snow/editor/component/command/Undo');
-
-var _Undo2 = _interopRequireDefault(_Undo);
-
-var _Right = require('./snow/editor/component/layout/Right');
-
-var _Right2 = _interopRequireDefault(_Right);
-
-var _Left = require('./snow/editor/component/layout/Left');
-
-var _Left2 = _interopRequireDefault(_Left);
-
-var _Center = require('./snow/editor/component/layout/Center');
-
-var _Center2 = _interopRequireDefault(_Center);
-
-var _Emotion = require('./snow/editor/component/tool/Emotion');
-
-var _Emotion2 = _interopRequireDefault(_Emotion);
-
-var _Image = require('./snow/editor/component/tool/Image');
-
-var _Image2 = _interopRequireDefault(_Image);
-
-var _Link = require('./snow/editor/component/tool/Link');
-
-var _Link2 = _interopRequireDefault(_Link);
-
-var _AttachmentManager = require('./snow/editor/component/tool/AttachmentManager');
-
-var _AttachmentManager2 = _interopRequireDefault(_AttachmentManager);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-window.SnowEditor = _SnowEditor2.default;
-
-_SnowEditor2.default.applyDefaultConfig(_config2.default);
-
-_SnowEditor2.default.registerComponent(_Bold2.default);
-_SnowEditor2.default.registerComponent(_Italic2.default);
-_SnowEditor2.default.registerComponent(_Underline2.default);
-
-_SnowEditor2.default.registerComponent(_Right2.default);
-_SnowEditor2.default.registerComponent(_Center2.default);
-_SnowEditor2.default.registerComponent(_Left2.default);
-
-_SnowEditor2.default.registerComponent(_Undo2.default);
-_SnowEditor2.default.registerComponent(_Redo2.default);
-
-_SnowEditor2.default.registerComponent(_Emotion2.default);
-_SnowEditor2.default.registerComponent(_Image2.default);
-_SnowEditor2.default.registerComponent(_Link2.default);
-_SnowEditor2.default.registerComponent(_AttachmentManager2.default);
-
-},{"./snow/editor/SnowEditor":4,"./snow/editor/component/command/Redo":8,"./snow/editor/component/command/Undo":9,"./snow/editor/component/layout/Center":10,"./snow/editor/component/layout/Left":11,"./snow/editor/component/layout/Right":12,"./snow/editor/component/style/Bold":13,"./snow/editor/component/style/Italic":14,"./snow/editor/component/style/Underline":15,"./snow/editor/component/tool/AttachmentManager":16,"./snow/editor/component/tool/Emotion":17,"./snow/editor/component/tool/Image":18,"./snow/editor/component/tool/Link":19,"./snow/editor/config":25,"./snow/tab/index":28,"./snow/upload/index":31}],2:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -97,7 +12,7 @@ var config = {
 
 exports.default = config;
 
-},{}],3:[function(require,module,exports){
+},{}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -292,7 +207,19 @@ DomElement.method.extend({
 
 exports.default = DomElement;
 
-},{"../util/fixCssPrefix":32,"../util/isArray":38}],4:[function(require,module,exports){
+},{"../util/fixCssPrefix":38,"../util/isArray":44}],3:[function(require,module,exports){
+'use strict';
+
+var _DomElement = require('./DomElement');
+
+var _DomElement2 = _interopRequireDefault(_DomElement);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+window.snow = window.snow || {};
+window.snow.DomElement = _DomElement2.default;
+
+},{"./DomElement":2}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -620,7 +547,7 @@ var SnowEditor = function () {
 
 exports.default = SnowEditor;
 
-},{"../dom/DomElement":3,"../toast/Toast":29,"../util/isChildOf":39,"../util/printf":42,"./config":25}],5:[function(require,module,exports){
+},{"../dom/DomElement":2,"../toast/Toast":34,"../util/isChildOf":45,"../util/printf":48,"./config":25}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1508,7 +1435,7 @@ var AttachmentManager = function (_Component) {
 
 exports.default = AttachmentManager;
 
-},{"../../../dom/DomElement":3,"../../../editor/SnowEditor":4,"../../../poplayer/PopLayer":26,"../../../tab/Tab":27,"../../../upload/UploadButton":30,"../../../util/getDropFiles":33,"../../../util/getPasteFiles":34,"../../../util/getSize":36,"../Attahment":5,"../Component":6,"./uploader":22}],17:[function(require,module,exports){
+},{"../../../dom/DomElement":2,"../../../editor/SnowEditor":4,"../../../poplayer/PopLayer":28,"../../../tab/Tab":30,"../../../upload/UploadButton":36,"../../../util/getDropFiles":39,"../../../util/getPasteFiles":40,"../../../util/getSize":42,"../Attahment":5,"../Component":6,"./uploader":22}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1618,7 +1545,7 @@ var EmotionComponent = function (_Component) {
 
 exports.default = EmotionComponent;
 
-},{"../../../dom/DomElement":3,"../../../poplayer/PopLayer":26,"../../../tab/Tab":27,"../Component":6,"./emotion/Text":21}],18:[function(require,module,exports){
+},{"../../../dom/DomElement":2,"../../../poplayer/PopLayer":28,"../../../tab/Tab":30,"../Component":6,"./emotion/Text":21}],18:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1746,7 +1673,7 @@ var ImageComponent = function (_Component) {
 
 exports.default = ImageComponent;
 
-},{"../../../dom/DomElement":3,"../../../poplayer/PopLayer":26,"../../../tab/Tab":27,"../../../upload/UploadButton":30,"../Attahment":5,"../Component":6,"./uploader":22}],19:[function(require,module,exports){
+},{"../../../dom/DomElement":2,"../../../poplayer/PopLayer":28,"../../../tab/Tab":30,"../../../upload/UploadButton":36,"../Attahment":5,"../Component":6,"./uploader":22}],19:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1832,7 +1759,7 @@ var LinkComponent = function (_Component) {
 
 exports.default = LinkComponent;
 
-},{"../../../dom/DomElement":3,"../../../poplayer/PopLayer":26,"../Component":6}],20:[function(require,module,exports){
+},{"../../../dom/DomElement":2,"../../../poplayer/PopLayer":28,"../Component":6}],20:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2051,6 +1978,109 @@ var config = {
 exports.default = config;
 
 },{}],26:[function(require,module,exports){
+'use strict';
+
+require('../tab/index');
+
+require('../upload/index');
+
+var _config = require('./config');
+
+var _config2 = _interopRequireDefault(_config);
+
+var _SnowEditor = require('./SnowEditor');
+
+var _SnowEditor2 = _interopRequireDefault(_SnowEditor);
+
+var _Bold = require('./component/style/Bold');
+
+var _Bold2 = _interopRequireDefault(_Bold);
+
+var _Italic = require('./component/style/Italic');
+
+var _Italic2 = _interopRequireDefault(_Italic);
+
+var _Underline = require('./component/style/Underline');
+
+var _Underline2 = _interopRequireDefault(_Underline);
+
+var _Redo = require('./component/command/Redo');
+
+var _Redo2 = _interopRequireDefault(_Redo);
+
+var _Undo = require('./component/command/Undo');
+
+var _Undo2 = _interopRequireDefault(_Undo);
+
+var _Right = require('./component/layout/Right');
+
+var _Right2 = _interopRequireDefault(_Right);
+
+var _Left = require('./component/layout/Left');
+
+var _Left2 = _interopRequireDefault(_Left);
+
+var _Center = require('./component/layout/Center');
+
+var _Center2 = _interopRequireDefault(_Center);
+
+var _Emotion = require('./component/tool/Emotion');
+
+var _Emotion2 = _interopRequireDefault(_Emotion);
+
+var _Image = require('./component/tool/Image');
+
+var _Image2 = _interopRequireDefault(_Image);
+
+var _Link = require('./component/tool/Link');
+
+var _Link2 = _interopRequireDefault(_Link);
+
+var _AttachmentManager = require('./component/tool/AttachmentManager');
+
+var _AttachmentManager2 = _interopRequireDefault(_AttachmentManager);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_SnowEditor2.default.applyDefaultConfig(_config2.default);
+
+_SnowEditor2.default.registerComponent(_Bold2.default);
+_SnowEditor2.default.registerComponent(_Italic2.default);
+_SnowEditor2.default.registerComponent(_Underline2.default);
+
+_SnowEditor2.default.registerComponent(_Right2.default);
+_SnowEditor2.default.registerComponent(_Center2.default);
+_SnowEditor2.default.registerComponent(_Left2.default);
+
+_SnowEditor2.default.registerComponent(_Undo2.default);
+_SnowEditor2.default.registerComponent(_Redo2.default);
+
+_SnowEditor2.default.registerComponent(_Emotion2.default);
+_SnowEditor2.default.registerComponent(_Image2.default);
+_SnowEditor2.default.registerComponent(_Link2.default);
+_SnowEditor2.default.registerComponent(_AttachmentManager2.default);
+
+window.snow = window.snow || {};
+window.snow.Editor = _SnowEditor2.default;
+
+},{"../tab/index":31,"../upload/index":37,"./SnowEditor":4,"./component/command/Redo":8,"./component/command/Undo":9,"./component/layout/Center":10,"./component/layout/Left":11,"./component/layout/Right":12,"./component/style/Bold":13,"./component/style/Italic":14,"./component/style/Underline":15,"./component/tool/AttachmentManager":16,"./component/tool/Emotion":17,"./component/tool/Image":18,"./component/tool/Link":19,"./config":25}],27:[function(require,module,exports){
+'use strict';
+
+require('./dom/index');
+
+require('./editor/index');
+
+require('./poplayer/index');
+
+require('./tab/index');
+
+require('./template/index');
+
+require('./toast/index');
+
+require('./upload/index');
+
+},{"./dom/index":3,"./editor/index":26,"./poplayer/index":29,"./tab/index":31,"./template/index":33,"./toast/index":35,"./upload/index":37}],28:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2377,7 +2407,19 @@ var PopLayer = function () {
 
 exports.default = PopLayer;
 
-},{"../config":2,"../dom/DomElement":3,"../util/getPlatform":35,"../util/getSize":36,"../util/onMouseHover":40,"../util/pointInBox":41,"../util/timeLimitCallback":43}],27:[function(require,module,exports){
+},{"../config":1,"../dom/DomElement":2,"../util/getPlatform":41,"../util/getSize":42,"../util/onMouseHover":46,"../util/pointInBox":47,"../util/timeLimitCallback":49}],29:[function(require,module,exports){
+'use strict';
+
+var _PopLayer = require('./PopLayer');
+
+var _PopLayer2 = _interopRequireDefault(_PopLayer);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+window.snow = window.snow || {};
+window.snow.PopLayer = _PopLayer2.default;
+
+},{"./PopLayer":28}],30:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2513,7 +2555,7 @@ function Tab(config) {
 
 exports.default = Tab;
 
-},{"../dom/DomElement":3}],28:[function(require,module,exports){
+},{"../dom/DomElement":2}],31:[function(require,module,exports){
 'use strict';
 
 var _Tab = require('./Tab');
@@ -2525,7 +2567,501 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 window.snow = window.snow || {};
 window.snow.Tab = _Tab2.default;
 
-},{"./Tab":27}],29:[function(require,module,exports){
+},{"./Tab":30}],32:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+//  缓存查找节点可能会耗时较多 
+var default_config = {
+    cache: true, // 是否开启缓存
+    tagstart: '{',
+    tagend: '}', //控制标签
+    compress: true,
+    strict: true
+};
+
+// 关键字
+var KEYWORD = 'if,else,each,include,while,for';
+var KEYWORD_PREG = '^\\s*((?:\/)?(?:' + KEYWORD.split(',').join('|') + '))(.*)';
+
+// @artTemplate:https://github.com/aui/artTemplate
+var ENGINE = ''.trim ? ["$_tpl_=''", "$_tpl_+=", ";", "$_tpl_"] : ["$_tpl_=[]", "$_tpl_.push(", ");", "$_tpl_.join('')"];
+
+var escape = {
+    "<": "&#60;",
+    ">": "&#62;",
+    '"': "&#34;",
+    "'": "&#39;",
+    "&": "&#38;"
+};
+
+/*  --------------------  静态内部函数 protected ------------------------*/
+
+/**
+ * 测试模板语句的可行性
+ * 
+ * @param {any} test
+ * @param {any} code
+ * @returns
+ */
+function statmentTest(test, code) {
+    try {
+        new Function(test);
+    } catch (e) {
+        return 'throw ' + e.name + '(' + _string(e.message) + ');{';
+    }
+    return code;
+}
+
+/**
+ * 处理HTML部分
+ * 
+ * @param {any} html
+ * @param {any} compress 是否压缩
+ * @returns
+ */
+function parserHTML(html, compress) {
+    // console.log('HTML:', html);
+    var out = '';
+    if (html.match(/(?!^)\n/)) {
+        _each(html.split('\n'), function (html) {
+            if (html) {
+                // 压缩多余空白与注释
+                if (compress) {
+                    html = html.replace(/\s+/g, ' ').replace(/<!--.*?-->/g, '');
+                }
+                if (html) {
+                    out += ENGINE[1] + _string(html) + ENGINE[2];
+                    out += '\n';
+                }
+            }
+        });
+    } else if (html) {
+        out += ENGINE[1] + _string(html) + ENGINE[2];
+    }
+    return out;
+}
+
+/**
+ * 处理代码
+ * 
+ * @param {any} code
+ * @returns
+ */
+function parserCode(code) {
+    var match;
+    // console.log(new RegExp(KEYWORD_PREG));
+    if (match = code.match(new RegExp(KEYWORD_PREG))) {
+        // console.log(code,':',match);
+        var command = match[1];
+        var param = match[2];
+
+        switch (command) {
+            case 'include':
+                // 编译时包含
+                param = param.trim().split(' ');
+                if (param.length === 1) {
+                    param.push("$_unit.value");
+                }
+                param = param.join(',');
+                return ENGINE[1] + '$_unit._include(' + param + ')' + ENGINE[2];
+            case 'if':
+                return statmentTest('if(' + param + '){}', 'if (' + param + ') {');
+            case 'else':
+                // console.log(param,param.match(/^\s*if\s+(.*)/));
+                if (match = param.match(/^\s*if\s+(.*)/)) {
+                    return '} else if (' + match[1] + '){';
+                }
+                return '}else{';
+            case '/if':
+            case '/while':
+            case '/for':
+                return '}';
+            case 'while':
+                return statmentTest('while(' + param + '){}', 'while (' + param + ') {');
+            case 'for':
+                return statmentTest('for(' + param + '){}', 'for (' + param + ') {');
+            case 'each':
+                var match = param.match(/\s*(.+?)\s+(?:(?:as(?:\s+(\w+)))?(?:\s*:\s*(\w+))?)?/);
+                if (match) {
+                    var value = match[1];
+                    var each_param;
+                    if (match[2]) {
+                        if (match[3]) {
+                            each_param = match[3] + ',' + match[2];
+                        } else {
+                            each_param = match[2];
+                        }
+                    } else {
+                        each_param = 'value,index';
+                    }
+                    return '$_unit._each(' + value + ',function(' + each_param + '){';
+                }
+                return 'throw SyntaxError("Null Each Value");$_unit._each(null,function(){';
+            case '/each':
+                return '});';
+        }
+    }
+    // 非转义
+    else if (match = code.match(/^!.*$/)) {
+            return ENGINE[1] + '$_unit._echo(' + match[1] + ')' + ENGINE[2];
+        }
+        // 转义输出
+        else {
+                return ENGINE[1] + '$_unit._escape(' + code + ')' + ENGINE[2];
+            }
+}
+
+var _echo = function _echo(value) {
+    return new String(value);
+};
+
+var _escape = function _escape(content) {
+    return _echo(content).replace(/&(?![\w#]+;)|[<>"']/g, function (s) {
+        return escape[s];
+    });
+};
+
+var _each = function _each(value, callback) {
+    if (is_array(value)) {
+        _arrayEach(value, callback);
+    } else {
+        for (var index in value) {
+            callback.call(value[index], value[index], index);
+        }
+    }
+};
+var _arrayEach = function _arrayEach(value, callback) {
+    for (var index = 0; index < value.length; ++index) {
+        callback.call(value[index], value[index], index);
+    }
+};
+var _objectCopy = function _objectCopy(arrays) {
+    var object = {};
+    for (var i = 0; i < arguments.length; i++) {
+        for (var index in arguments[i]) {
+            object[index] = arguments[i][index];
+        }
+    }
+    return object;
+};
+
+var _include = function _include(id, value) {
+    return new Template(id).render(value);
+};
+
+/**
+ * 生成可显示字符串
+ * 
+ * @param {any} code
+ * @returns
+ */
+function _string(code) {
+    return "'" + code
+    // 单引号与反斜杠转义
+    .replace(/('|\\)/g, '\\$1').replace(/\r/g, '\\r').replace(/\n/g, '\\n') + "'";
+}
+
+/**
+ * 判断是否是数组
+ * 
+ * @param {any} obj
+ * @returns
+ */
+function is_array(obj) {
+    return Object.prototype.toString.call(obj) === '[object Array]';
+}
+
+/**
+ * 提示代码错误
+ * 
+ * @param {any} name
+ * @param {any} content
+ * @param {any} line
+ * @param {any} e
+ */
+function reportError(name, content, line, e) {
+    var name = name || 'anonymous';
+    var report = 'DxTPL Error:';
+    console.group(report);
+    if (content) {
+
+        var codes = content.replace(/^\n/, '').split('\n');
+        var start = line - 5 > 0 ? line - 5 : 1;
+        var end = line + 5 > codes.length ? codes.length : line + 5;
+        console.error(e);
+        // console.log(codes);
+        for (var i = start; i < end; i++) {
+            if (i == line) {
+                console.log(i + '|%c' + codes[line - 1] + '\t\t%c->\t\t%c' + e.name + ':' + e.message, 'color:red;', 'color:green;', 'color:red;');
+            } else {
+                console.log(i + '|' + codes[i - 1]);
+            }
+        }
+    } else {
+        console.log(content);
+        console.log('%c' + report + e.message + '\t\t@' + name + ':' + line, 'color:red;');
+    }
+    console.groupEnd(report);
+}
+
+/**
+ * 编译模板
+ * 
+ * @param {any} text
+ * @param {any} config
+ * @returns
+ */
+function compileTemplate(text, config) {
+    var tpl = '';
+    // console.log('code',text);
+    text = text.replace(/^\n/, '');
+    // console.log(tagstart);
+    _each(text.split(config.tagstart), function (value) {
+        // console.log('split',value);
+        var split = value.split(config.tagend);
+        if (split.length === 1) {
+            tpl += parserHTML(split[0], config.compress);
+        } else {
+            tpl += parserCode(split[0]);
+            tpl += parserHTML(split[1]);
+        }
+    });
+    return tpl;
+}
+
+/**
+ * 给模板压入变量
+ * 
+ * @param {any} source
+ * @param {any} value
+ * @param {any} strict
+ * @returns
+ */
+function linkValue(source, value, strict) {
+    var use_strict = strict === undefined ? true : strict;
+    var ext = [];
+    ext.push('var $_unit=this,' + ENGINE[0]);
+    for (var index in value) {
+        ext.push(index + '=this.value.' + index);
+    }
+    var link_str = '';
+    if (use_strict) {
+        link_str = '"use strict";';
+    }
+    link_str += ext.join(',');
+    link_str += ';';
+    link_str += source + 'return new String(' + ENGINE[3] + ');';
+    return link_str;
+}
+
+/**
+ * 渲染模板代码
+ * 
+ * @param {any} name
+ * @param {any} source
+ * @param {any} compiled_code
+ * @param {any} value
+ * @returns
+ */
+function _render(name, source, compiled_code, value, strict) {
+    // console.time('render ' + name);
+    var runcode = linkValue(compiled_code, value, strict);
+    // console.log(runcode);
+    var caller = {
+        _each: _each,
+        _echo: _echo,
+        _escape: _escape,
+        _include: _include,
+        value: value
+    };
+
+    var html;
+    try {
+        var render = new Function(runcode);
+        html = render.call(caller);
+    } catch (e) {
+        // For Chrome
+        var match = new String(e.stack).match(/<anonymous>:(\d+):\d+/);
+        // console.log(source);
+        // console.log(e);
+        if (match) {
+            var line = match[1] - 1;
+            reportError(name, source, line, e);
+        } else {
+            var name = name || 'anonymous';
+            // For Edge
+            var match = new String(e.stack).match(/Function code:(\d+):\d+/);
+            if (match) {
+                console.error('DxTPL:Compile Error@' + name + ' Line ' + match[1]);
+            } else {
+                console.error('DxTPL:Compile Error@' + name);
+            }
+        }
+    }
+    // console.timeEnd('render ' + name);
+    return html;
+}
+
+function getDOMcache(name, config) {
+    // console.time('getcache:' + name);
+    var cache_parent = document.getElementById('template_caches');
+    if (!cache_parent) {
+        cache_parent = document.createElement('div');
+        cache_parent.id = 'template_caches';
+        cache_parent.style.display = 'none';
+        document.body.appendChild(cache_parent);
+    }
+    var cache_name = 'template_cache_' + name;
+
+    var tpl_cache = document.getElementById('template_cache_' + name);
+    if (!tpl_cache) {
+        tpl_cache = document.createElement('div');
+        tpl_cache.id = cache_name;
+        tpl_cache.innerText = compileTemplate(document.getElementById(name).innerHTML, config || default_config);
+        cache_parent.appendChild(tpl_cache);
+    }
+    // console.timeEnd('getcache:' + name);
+    return tpl_cache.innerText;
+}
+
+/* ----  编译DOM对象 ----*/
+function _compile(id, config) {
+    var tplId = id || config.id;
+    var anonymous = false;
+    if (typeof tplId !== 'string') throw Error('Unsupport Template ID');
+    var tpl = document.getElementById(tplId);
+    if (tpl) {
+        // 获取源码
+        config.source = tpl.innerHTML;
+    } else {
+        // 无法获取，将ID作为源码解析
+        config.source = tplId;
+        config.id = 'anonymous';
+        anonymous = true;
+    }
+    if (config.code) {
+        // 代码已经编译
+    } else if (config.cache && !anonymous) {
+        config.code = getDOMcache(tplId, config);
+    } else {
+        config.code = compileTemplate(config.source, config);
+    }
+    return config;
+}
+
+var Template = function () {
+    function Template(name, config) {
+        _classCallCheck(this, Template);
+
+        this.version = '1.0.43';
+        var conf = default_config;
+        if (typeof name === 'string') {
+            // 适配对象
+            conf = _objectCopy(conf, config);
+            conf.id = name;
+        } else {
+            // 适配对象
+            conf = _objectCopy(conf, name);
+        }
+        this.config(conf);
+    }
+
+    _createClass(Template, [{
+        key: 'config',
+        value: function config(_config) {
+            for (var index in _config) {
+                this[index] = _config[index];
+            }
+            return this;
+        }
+    }, {
+        key: 'assign',
+        value: function assign(name, value) {
+            this.value[name] = _objectCopy(this.value[name], value);
+            return this;
+        }
+    }, {
+        key: 'value',
+        value: function value(_value) {
+            this.value = _objectCopy(this.value, _value);
+            return this;
+        }
+    }, {
+        key: 'compile',
+        value: function compile(id) {
+            var config = _objectCopy(this, _compile(id, this));
+            return new Template(config);
+        }
+    }, {
+        key: 'render',
+        value: function render(value) {
+            // 未编译
+            if (!(this.source && this.code)) {
+                var val = _compile(this.id, this);
+                this.config(val);
+            }
+            return _render(this.id, this.source, this.code, value, this.strict);
+        }
+    }], [{
+        key: 'renderFor',
+        value: function renderFor(selector, glovalue) {
+            var nodes = document.querySelectorAll(selector);
+            _arrayEach(nodes, function (node, index) {
+                var source = node.innerHTML;
+                var value;
+                var config = default_config;
+
+                if (node.dataset.init) {
+                    try {
+                        var json = new Function('return ' + node.dataset.init + ';');
+                        value = json();
+                    } catch (e) {
+                        reportError(selector + '[' + index + ']', null, 0, new Error('Unsupport json'));
+                    }
+                }
+                if (node.dataset.config) {
+                    try {
+                        var json = new Function('return ' + node.dataset.config + ';');
+                        var conf = json();
+                        config = _objectCopy(config, conf);
+                    } catch (e) {
+                        reportError(selector + '[' + index + ']', null, 0, new Error('Unsupport json'));
+                    }
+                }
+
+                value = _objectCopy(value, glovalue);
+                var code = compileTemplate(source, config);
+                node.innerHTML = _render(selector, source, code, value, config.strict);
+            });
+        }
+    }]);
+
+    return Template;
+}();
+
+exports.default = Template;
+
+},{}],33:[function(require,module,exports){
+'use strict';
+
+var _Template = require('./Template');
+
+var _Template2 = _interopRequireDefault(_Template);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+window.snow = window.snow || {};
+window.snow.Template = _Template2.default;
+
+},{"./Template":32}],34:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2612,7 +3148,20 @@ Toast.show = function () {
 
 exports.default = Toast;
 
-},{"../config":2,"../dom/DomElement":3}],30:[function(require,module,exports){
+},{"../config":1,"../dom/DomElement":2}],35:[function(require,module,exports){
+'use strict';
+
+var _Toast = require('./Toast');
+
+var _Toast2 = _interopRequireDefault(_Toast);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+window.snow = window.snow || {};
+window.snow.Toast = _Toast2.default;
+window.taos;
+
+},{"./Toast":34}],36:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2704,7 +3253,7 @@ function UploadButton(config) {
 
 exports.default = UploadButton;
 
-},{"../dom/DomElement":3}],31:[function(require,module,exports){
+},{"../dom/DomElement":2}],37:[function(require,module,exports){
 'use strict';
 
 var _UploadButton = require('./UploadButton');
@@ -2716,7 +3265,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 window.snow = window.snow || {};
 window.snow.UploadButton = _UploadButton2.default;
 
-},{"./UploadButton":30}],32:[function(require,module,exports){
+},{"./UploadButton":36}],38:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2739,7 +3288,7 @@ function fixCssPrefix(name) {
     return name;
 }
 
-},{}],33:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2754,7 +3303,7 @@ function getDropFiles(event) {
   return event.dataTransfer && event.dataTransfer.files ? event.dataTransfer.files : null;
 }
 
-},{}],34:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2769,7 +3318,7 @@ function getPasteFiles(event) {
   return event.clipboardData && event.clipboardData.files ? event.clipboardData.files : null;
 }
 
-},{}],35:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2789,7 +3338,7 @@ exports.default = function () {
     }
 };
 
-},{}],36:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2821,7 +3370,7 @@ function getSize(elem) {
         }
 }
 
-},{"./getWindowsSize":37}],37:[function(require,module,exports){
+},{"./getWindowsSize":43}],43:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2848,7 +3397,7 @@ function getWindowsSize() {
     };
 }
 
-},{}],38:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2863,7 +3412,7 @@ function isArray(obj) {
   return obj instanceof Array;
 }
 
-},{}],39:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2882,7 +3431,7 @@ function isChildOf(elem, parent) {
     return elem === parent;
 }
 
-},{}],40:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2929,7 +3478,7 @@ function onMouseHover(target, hover, outer, time) {
     });
 }
 
-},{"./getSize":36,"./pointInBox":41}],41:[function(require,module,exports){
+},{"./getSize":42,"./pointInBox":47}],47:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2950,7 +3499,7 @@ function pointInBox(point, box) {
     return false;
 }
 
-},{}],42:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2985,7 +3534,7 @@ function printf(format) {
     });
 }
 
-},{}],43:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3016,4 +3565,4 @@ function timeLimitCallback(callback, target, time) {
     };
 }
 
-},{}]},{},[1]);
+},{}]},{},[27]);
