@@ -464,7 +464,7 @@ var SnowEditor = function () {
         value: function getCurrentRange() {
             var selection = window.getSelection();
             if (selection.rangeCount > 0) {
-                console.log(selection.rangeCount);
+                // console.log(selection.rangeCount);
                 var range = selection.getRangeAt(0);
                 if ((0, _isChildOf3.default)(range.commonAncestorContainer, this.$element)) {
                     return range;

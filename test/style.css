@@ -3,3 +3,12 @@
     margin-top: 10rem;
     margin: auto;
 }
+
+.title {
+    font-size: 3em;
+    font-weight: 400;
+    padding: 1.5em 2em;
+    text-align: center;
+    user-select: none;
+    cursor: pointer;
+}

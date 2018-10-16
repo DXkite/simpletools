@@ -188,7 +188,7 @@ class SnowEditor {
     getCurrentRange() {
         const selection = window.getSelection();
         if (selection.rangeCount > 0) {
-            console.log(selection.rangeCount);
+            // console.log(selection.rangeCount);
             const range = selection.getRangeAt(0);
             if (_isChildOf(range.commonAncestorContainer, this.$element)) {
                 return range;
