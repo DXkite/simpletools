@@ -8,9 +8,18 @@ import config from '../../../config'
 export default function uploadToServer(editor, file) {
     return new Promise((resolve, reject) => {
         const hasAdapter = config.upload && config.upload.adapter && config.upload.adapter.server;
-        const hasUploader = config.upload && config.upload.uploader;
-        if (hasUploader) {
-
+        const uploader = config.upload && config.upload.uploader;
+        if (uploader) {
+            if (hasAdapter) {
+                uploader(file, (data) => {
+                    resolve(config.upload.adapter.server.resolve(data));
+                }, (data) => {
+                    reject(config.upload.adapter.server.reject(data));
+                });
+            }
+            else {
+                uploader(file, resolve, reject);
+            }
         } else {
             editor.alert('未定义文件上传函数');
         }

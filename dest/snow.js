@@ -1899,8 +1899,18 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function uploadToServer(editor, file) {
     return new Promise(function (resolve, reject) {
         var hasAdapter = _config2.default.upload && _config2.default.upload.adapter && _config2.default.upload.adapter.server;
-        var hasUploader = _config2.default.upload && _config2.default.upload.uploader;
-        if (hasUploader) {} else {
+        var uploader = _config2.default.upload && _config2.default.upload.uploader;
+        if (uploader) {
+            if (hasAdapter) {
+                uploader(file, function (data) {
+                    resolve(_config2.default.upload.adapter.server.resolve(data));
+                }, function (data) {
+                    reject(_config2.default.upload.adapter.server.reject(data));
+                });
+            } else {
+                uploader(file, resolve, reject);
+            }
+        } else {
             editor.alert('未定义文件上传函数');
         }
     });
