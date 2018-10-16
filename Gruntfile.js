@@ -2,7 +2,7 @@ module.exports = function (grunt) {
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
-        meta:{
+        meta: {
             banner: '/*! <%= pkg.name %> by <%= pkg.author %> <%= grunt.template.today("yyyy-mm-dd") %> */',
             sortName: 'snow',
         },
@@ -13,7 +13,7 @@ module.exports = function (grunt) {
             },
             js: {
                 files: 'src/**/*.js',
-                tasks: ['babel', 'browserify', 'uglify', 'clean:tmp', 'copy:test']
+                tasks: ['babel', 'browserify', 'uglify', 'clean:tmp', 'copy:config', 'copy:test']
             }
         },
         clean: {
@@ -29,13 +29,17 @@ module.exports = function (grunt) {
                 dest: 'dest/font',
                 filter: 'isFile'
             },
+            config: {
+                src: 'src/config.js',
+                dest: 'dest/<%= meta.sortName %>.config.js',
+            },
             test: {
                 expand: true,
                 cwd: 'dest',
                 src: '**',
                 dest: 'test/<%= meta.sortName %>',
                 filter: 'isFile'
-            },
+            }
         },
         autoprefixer: {
             dist: {

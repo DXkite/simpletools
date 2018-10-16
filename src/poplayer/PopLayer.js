@@ -1,12 +1,14 @@
-import config from '../config'
 import getSize from '../util/getSize'
 import $ from '../dom/DomElement'
 import getPlatform from '../util/getPlatform'
 import pointInBox from '../util/pointInBox'
 import hover from '../util/onMouseHover'
 import timeLimit from '../util/timeLimitCallback'
+import getConfig from '../util/getConfig';
 
-const defaultZIndexLevel = config.popLayerLevel || 9000;
+const config = getConfig('poplayer');
+const defaultZIndexLevel = config.layerLevel || 9000;
+
 const n = $.element;
 const STR = {
     layerId: 'snow-layer-shade',

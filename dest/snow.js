@@ -1,18 +1,5 @@
 /*! snow by dxkite 2018-10-16 */
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-var config = {
-    popLayerLevel: 9000,
-    toastLayerLevel: 10000
-};
-
-exports.default = config;
-
-},{}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -207,7 +194,7 @@ DomElement.method.extend({
 
 exports.default = DomElement;
 
-},{"../util/fixCssPrefix":38,"../util/isArray":44}],3:[function(require,module,exports){
+},{"../util/fixCssPrefix":37,"../util/isArray":45}],2:[function(require,module,exports){
 'use strict';
 
 var _DomElement = require('./DomElement');
@@ -219,7 +206,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 window.snow = window.snow || {};
 window.snow.DomElement = _DomElement2.default;
 
-},{"./DomElement":2}],4:[function(require,module,exports){
+},{"./DomElement":1}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -547,7 +534,7 @@ var SnowEditor = function () {
 
 exports.default = SnowEditor;
 
-},{"../dom/DomElement":2,"../toast/Toast":34,"../util/isChildOf":45,"../util/printf":48,"./config":25}],5:[function(require,module,exports){
+},{"../dom/DomElement":1,"../toast/Toast":33,"../util/isChildOf":46,"../util/printf":49,"./config":24}],4:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -598,7 +585,7 @@ var Attachment = function () {
 
 exports.default = Attachment;
 
-},{}],6:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -650,7 +637,7 @@ var Component = function () {
 
 exports.default = Component;
 
-},{}],7:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -706,7 +693,7 @@ var RangeComponent = function (_Component) {
 
 exports.default = RangeComponent;
 
-},{"./Component":6}],8:[function(require,module,exports){
+},{"./Component":5}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -758,7 +745,7 @@ var RedoCommandComponent = function (_Component) {
 
 exports.default = RedoCommandComponent;
 
-},{"../Component":6}],9:[function(require,module,exports){
+},{"../Component":5}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -810,7 +797,7 @@ var UndoCommandComponent = function (_Component) {
 
 exports.default = UndoCommandComponent;
 
-},{"../Component":6}],10:[function(require,module,exports){
+},{"../Component":5}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -873,7 +860,7 @@ var CenterLayoutComponent = function (_RangeComponent) {
 
 exports.default = CenterLayoutComponent;
 
-},{"../Range":7}],11:[function(require,module,exports){
+},{"../Range":6}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -936,7 +923,7 @@ var LeftLayoutComponent = function (_RangeComponent) {
 
 exports.default = LeftLayoutComponent;
 
-},{"../Range":7}],12:[function(require,module,exports){
+},{"../Range":6}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -999,7 +986,7 @@ var RightLayoutComponent = function (_RangeComponent) {
 
 exports.default = RightLayoutComponent;
 
-},{"../Range":7}],13:[function(require,module,exports){
+},{"../Range":6}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1062,7 +1049,7 @@ var BoldStyleComponent = function (_RangeComponent) {
 
 exports.default = BoldStyleComponent;
 
-},{"../Range":7}],14:[function(require,module,exports){
+},{"../Range":6}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1125,7 +1112,7 @@ var ItalicStyleComponent = function (_RangeComponent) {
 
 exports.default = ItalicStyleComponent;
 
-},{"../Range":7}],15:[function(require,module,exports){
+},{"../Range":6}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1188,7 +1175,7 @@ var UnderlineStyleComponent = function (_RangeComponent) {
 
 exports.default = UnderlineStyleComponent;
 
-},{"../Range":7}],16:[function(require,module,exports){
+},{"../Range":6}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1435,7 +1422,7 @@ var AttachmentManager = function (_Component) {
 
 exports.default = AttachmentManager;
 
-},{"../../../dom/DomElement":2,"../../../editor/SnowEditor":4,"../../../poplayer/PopLayer":28,"../../../tab/Tab":30,"../../../upload/UploadButton":36,"../../../util/getDropFiles":39,"../../../util/getPasteFiles":40,"../../../util/getSize":42,"../Attahment":5,"../Component":6,"./uploader":22}],17:[function(require,module,exports){
+},{"../../../dom/DomElement":1,"../../../editor/SnowEditor":3,"../../../poplayer/PopLayer":27,"../../../tab/Tab":29,"../../../upload/UploadButton":35,"../../../util/getDropFiles":39,"../../../util/getPasteFiles":40,"../../../util/getSize":43,"../Attahment":4,"../Component":5,"./uploader":21}],16:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1545,7 +1532,7 @@ var EmotionComponent = function (_Component) {
 
 exports.default = EmotionComponent;
 
-},{"../../../dom/DomElement":2,"../../../poplayer/PopLayer":28,"../../../tab/Tab":30,"../Component":6,"./emotion/Text":21}],18:[function(require,module,exports){
+},{"../../../dom/DomElement":1,"../../../poplayer/PopLayer":27,"../../../tab/Tab":29,"../Component":5,"./emotion/Text":20}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1673,7 +1660,7 @@ var ImageComponent = function (_Component) {
 
 exports.default = ImageComponent;
 
-},{"../../../dom/DomElement":2,"../../../poplayer/PopLayer":28,"../../../tab/Tab":30,"../../../upload/UploadButton":36,"../Attahment":5,"../Component":6,"./uploader":22}],19:[function(require,module,exports){
+},{"../../../dom/DomElement":1,"../../../poplayer/PopLayer":27,"../../../tab/Tab":29,"../../../upload/UploadButton":35,"../Attahment":4,"../Component":5,"./uploader":21}],18:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1759,7 +1746,7 @@ var LinkComponent = function (_Component) {
 
 exports.default = LinkComponent;
 
-},{"../../../dom/DomElement":2,"../../../poplayer/PopLayer":28,"../Component":6}],20:[function(require,module,exports){
+},{"../../../dom/DomElement":1,"../../../poplayer/PopLayer":27,"../Component":5}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1778,7 +1765,7 @@ var EmotionObj = function EmotionObj(title, html, view) {
 
 exports.default = EmotionObj;
 
-},{}],21:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1818,7 +1805,7 @@ var TextEmotions = function () {
 
 exports.default = TextEmotions;
 
-},{"./Object":20}],22:[function(require,module,exports){
+},{"./Object":19}],21:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1855,7 +1842,7 @@ function uploader(editor, file) {
     }
 }
 
-},{"../../../config":25,"./uploadToLocal":23,"./uploadToServer":24}],23:[function(require,module,exports){
+},{"../../../config":24,"./uploadToLocal":22,"./uploadToServer":23}],22:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1890,7 +1877,7 @@ function uploadToLocal(editor, file) {
     });
 }
 
-},{"../../../config":25}],24:[function(require,module,exports){
+},{"../../../config":24}],23:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1919,65 +1906,26 @@ function uploadToServer(editor, file) {
     });
 }
 
-},{"../../../config":25}],25:[function(require,module,exports){
-'use strict';
+},{"../../../config":24}],24:[function(require,module,exports){
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
+
+var _getConfig = require("../util/getConfig");
+
+var _getConfig2 = _interopRequireDefault(_getConfig);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 /**
  * 基础默认配置
  */
-var config = {
-    height: '10rem',
-    editable: true,
-    toolbar: [
-    // 基本控制
-    'bold', 'italic', 'underline',
-    // 布局控制
-    'align-left', 'align-center', 'align-right',
-    // 表情
-    'emotion', 'image', 'link', 'attachment',
-    // 撤销与重做
-    'undo', 'redo'],
-    emotions: [{
-        name: 'Emoji',
-        type: 'text',
-        content: '😀 😃 😄 😁 😆 😅 😂 😊 😇 🙂 🙃 😉 😓 😪 😴 🙄 🤔 😬 🤐 😭'.split(/\s/)
-    }],
-
-    upload: {
-        // 适配器
-        adapter: {
-            // base64 适配器
-            local: {
-                resovle: function resovle(uploaded) {
-                    return uploaded;
-                },
-                reject: function reject(error) {
-                    return error;
-                }
-            },
-            // ajax 适配器
-            server: {
-                resovle: function resovle(uploaded) {
-                    return uploaded;
-                },
-                reject: function reject(error) {
-                    return error;
-                }
-            }
-        },
-        // 使用默认 (base64)
-        uploader: null,
-        // 上传配置
-        config: null
-    }
-};
-
+var config = (0, _getConfig2.default)('editor');
 exports.default = config;
 
-},{}],26:[function(require,module,exports){
+},{"../util/getConfig":38}],25:[function(require,module,exports){
 'use strict';
 
 require('../tab/index');
@@ -2063,7 +2011,7 @@ _SnowEditor2.default.registerComponent(_AttachmentManager2.default);
 window.snow = window.snow || {};
 window.snow.Editor = _SnowEditor2.default;
 
-},{"../tab/index":31,"../upload/index":37,"./SnowEditor":4,"./component/command/Redo":8,"./component/command/Undo":9,"./component/layout/Center":10,"./component/layout/Left":11,"./component/layout/Right":12,"./component/style/Bold":13,"./component/style/Italic":14,"./component/style/Underline":15,"./component/tool/AttachmentManager":16,"./component/tool/Emotion":17,"./component/tool/Image":18,"./component/tool/Link":19,"./config":25}],27:[function(require,module,exports){
+},{"../tab/index":30,"../upload/index":36,"./SnowEditor":3,"./component/command/Redo":7,"./component/command/Undo":8,"./component/layout/Center":9,"./component/layout/Left":10,"./component/layout/Right":11,"./component/style/Bold":12,"./component/style/Italic":13,"./component/style/Underline":14,"./component/tool/AttachmentManager":15,"./component/tool/Emotion":16,"./component/tool/Image":17,"./component/tool/Link":18,"./config":24}],26:[function(require,module,exports){
 'use strict';
 
 require('./dom/index');
@@ -2080,7 +2028,7 @@ require('./toast/index');
 
 require('./upload/index');
 
-},{"./dom/index":3,"./editor/index":26,"./poplayer/index":29,"./tab/index":31,"./template/index":33,"./toast/index":35,"./upload/index":37}],28:[function(require,module,exports){
+},{"./dom/index":2,"./editor/index":25,"./poplayer/index":28,"./tab/index":30,"./template/index":32,"./toast/index":34,"./upload/index":36}],27:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2088,10 +2036,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _config = require('../config');
-
-var _config2 = _interopRequireDefault(_config);
 
 var _getSize = require('../util/getSize');
 
@@ -2117,11 +2061,17 @@ var _timeLimitCallback = require('../util/timeLimitCallback');
 
 var _timeLimitCallback2 = _interopRequireDefault(_timeLimitCallback);
 
+var _getConfig = require('../util/getConfig');
+
+var _getConfig2 = _interopRequireDefault(_getConfig);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var defaultZIndexLevel = _config2.default.popLayerLevel || 9000;
+var config = (0, _getConfig2.default)('poplayer');
+var defaultZIndexLevel = config.layerLevel || 9000;
+
 var n = _DomElement2.default.element;
 var STR = {
     layerId: 'snow-layer-shade',
@@ -2407,7 +2357,7 @@ var PopLayer = function () {
 
 exports.default = PopLayer;
 
-},{"../config":1,"../dom/DomElement":2,"../util/getPlatform":41,"../util/getSize":42,"../util/onMouseHover":46,"../util/pointInBox":47,"../util/timeLimitCallback":49}],29:[function(require,module,exports){
+},{"../dom/DomElement":1,"../util/getConfig":38,"../util/getPlatform":41,"../util/getSize":43,"../util/onMouseHover":47,"../util/pointInBox":48,"../util/timeLimitCallback":50}],28:[function(require,module,exports){
 'use strict';
 
 var _PopLayer = require('./PopLayer');
@@ -2419,7 +2369,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 window.snow = window.snow || {};
 window.snow.PopLayer = _PopLayer2.default;
 
-},{"./PopLayer":28}],30:[function(require,module,exports){
+},{"./PopLayer":27}],29:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2555,7 +2505,7 @@ function Tab(config) {
 
 exports.default = Tab;
 
-},{"../dom/DomElement":2}],31:[function(require,module,exports){
+},{"../dom/DomElement":1}],30:[function(require,module,exports){
 'use strict';
 
 var _Tab = require('./Tab');
@@ -2567,7 +2517,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 window.snow = window.snow || {};
 window.snow.Tab = _Tab2.default;
 
-},{"./Tab":30}],32:[function(require,module,exports){
+},{"./Tab":29}],31:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3049,7 +2999,7 @@ var Template = function () {
 
 exports.default = Template;
 
-},{}],33:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 'use strict';
 
 var _Template = require('./Template');
@@ -3061,7 +3011,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 window.snow = window.snow || {};
 window.snow.Template = _Template2.default;
 
-},{"./Template":32}],34:[function(require,module,exports){
+},{"./Template":31}],33:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3072,17 +3022,19 @@ var _DomElement = require('../dom/DomElement');
 
 var _DomElement2 = _interopRequireDefault(_DomElement);
 
-var _config = require('../config');
+var _getConfig = require('../util/getConfig');
 
-var _config2 = _interopRequireDefault(_config);
+var _getConfig2 = _interopRequireDefault(_getConfig);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var config = (0, _getConfig2.default)('toast');
 
 // 常量
 var TOAST_PARENT_ID = 'Toast-Parent';
 var TOAST_SHOW_ID = 'Toast-Show';
 var TOAST_DEFAULT_STYLE = 'toast';
-var TOAST_POP_LEVEL = _config2.default.toastLayerLevel || 10000;
+var TOAST_POP_LEVEL = config.layerLevel || 10000;
 
 var Toast = function Toast(text, time, style) {
     return new Toast.create(text, time, style);
@@ -3148,7 +3100,7 @@ Toast.show = function () {
 
 exports.default = Toast;
 
-},{"../config":1,"../dom/DomElement":2}],35:[function(require,module,exports){
+},{"../dom/DomElement":1,"../util/getConfig":38}],34:[function(require,module,exports){
 'use strict';
 
 var _Toast = require('./Toast');
@@ -3161,7 +3113,7 @@ window.snow = window.snow || {};
 window.snow.Toast = _Toast2.default;
 window.toast = _Toast2.default;
 
-},{"./Toast":34}],36:[function(require,module,exports){
+},{"./Toast":33}],35:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3253,7 +3205,7 @@ function UploadButton(config) {
 
 exports.default = UploadButton;
 
-},{"../dom/DomElement":2}],37:[function(require,module,exports){
+},{"../dom/DomElement":1}],36:[function(require,module,exports){
 'use strict';
 
 var _UploadButton = require('./UploadButton');
@@ -3265,7 +3217,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 window.snow = window.snow || {};
 window.snow.UploadButton = _UploadButton2.default;
 
-},{"./UploadButton":36}],38:[function(require,module,exports){
+},{"./UploadButton":35}],37:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3288,7 +3240,28 @@ function fixCssPrefix(name) {
     return name;
 }
 
-},{}],39:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = getConfig;
+
+var _getRootPath = require('./getRootPath');
+
+var _getRootPath2 = _interopRequireDefault(_getRootPath);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function getConfig(name) {
+    if (name) {
+        return window.SNOW_CONFIG[name];
+    }
+    return window.SNOW_CONFIG;
+}
+
+},{"./getRootPath":42}],39:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3339,6 +3312,19 @@ exports.default = function () {
 };
 
 },{}],42:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = getRootPath;
+function getRootPath() {
+    var scripts = document.getElementsByTagName("script");
+    var _self_path = scripts[scripts.length - 1].getAttribute("src");
+    return _self_path.substring(0, _self_path.lastIndexOf("/"));
+}
+
+},{}],43:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3370,7 +3356,7 @@ function getSize(elem) {
         }
 }
 
-},{"./getWindowsSize":43}],43:[function(require,module,exports){
+},{"./getWindowsSize":44}],44:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3397,7 +3383,7 @@ function getWindowsSize() {
     };
 }
 
-},{}],44:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3412,7 +3398,7 @@ function isArray(obj) {
   return obj instanceof Array;
 }
 
-},{}],45:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3431,7 +3417,7 @@ function isChildOf(elem, parent) {
     return elem === parent;
 }
 
-},{}],46:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3478,7 +3464,7 @@ function onMouseHover(target, hover, outer, time) {
     });
 }
 
-},{"./getSize":42,"./pointInBox":47}],47:[function(require,module,exports){
+},{"./getSize":43,"./pointInBox":48}],48:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3499,7 +3485,7 @@ function pointInBox(point, box) {
     return false;
 }
 
-},{}],48:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3534,7 +3520,7 @@ function printf(format) {
     });
 }
 
-},{}],49:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3565,4 +3551,4 @@ function timeLimitCallback(callback, target, time) {
     };
 }
 
-},{}]},{},[27]);
+},{}]},{},[26]);

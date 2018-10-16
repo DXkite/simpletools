@@ -1,11 +1,13 @@
 import Dom from '../dom/DomElement'
-import config from '../config'
+import getConfig from '../util/getConfig';
+
+const config = getConfig('toast');
 
 // 常量
 const TOAST_PARENT_ID = 'Toast-Parent';
 const TOAST_SHOW_ID = 'Toast-Show';
 const TOAST_DEFAULT_STYLE = 'toast';
-const TOAST_POP_LEVEL = config.toastLayerLevel || 10000;
+const TOAST_POP_LEVEL = config.layerLevel || 10000;
 
 var Toast = function (text, time, style) {
     return new Toast.create(text, time, style);
