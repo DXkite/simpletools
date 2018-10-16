@@ -1441,8 +1441,8 @@ var AttachmentManager = function (_Component) {
     _createClass(AttachmentManager, [{
         key: 'init',
         value: function init(node) {
-            var btn = n('div', null, null, '文件列表');
-            this.tab = new _Tab2.default({ target: { btns: [btn], views: [getAttachmentList.call(this, this.editor)] }, current: 0, small: true });
+
+            this.tab = new _Tab2.default({ target: { btns: ['文件列表'], views: [getAttachmentList.call(this, this.editor)] }, current: 0, small: true });
             var ele = _DomElement2.default.element('div', { class: 'snow-attachment-menu' }, null, this.tab.target);
             this.layer = new _PopLayer2.default(ele, node);
         }
@@ -1452,8 +1452,7 @@ var AttachmentManager = function (_Component) {
     }, {
         key: 'onClick',
         value: function onClick(event) {
-            var btn = n('div', null, null, '文件列表');
-            this.tab = new _Tab2.default({ target: { btns: [btn], views: [getAttachmentList.call(this, this.editor)] }, current: 0, small: true });
+            this.tab = new _Tab2.default({ target: { btns: ['文件列表'], views: [getAttachmentList.call(this, this.editor)] }, current: 0, small: true });
             this.layer.content = _DomElement2.default.element('div', { class: 'snow-attachment-menu' }, null, this.tab.target);
             this.layer.show();
         }
@@ -1551,7 +1550,7 @@ var EmotionComponent = function (_Component) {
                     });
                 }
                 var view = n('div', { class: 'snow-emotions-tab-view' }, {}, childs);
-                buttons.push(n('div', {}, {}, element.name));
+                buttons.push(element.name);
                 views.push(view);
             });
 
@@ -1613,6 +1612,10 @@ var _DomElement = require('../../../dom/DomElement');
 
 var _DomElement2 = _interopRequireDefault(_DomElement);
 
+var _Tab = require('../../../tab/Tab');
+
+var _Tab2 = _interopRequireDefault(_Tab);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1639,7 +1642,9 @@ var ImageComponent = function (_Component) {
     _createClass(ImageComponent, [{
         key: 'init',
         value: function init(node) {
-            this.content = n('div', { class: 'snow-emotions-menu' }, {});
+
+            this.tab = new _Tab2.default({ target: { btns: ['上传图片', '网络图片'], views: ['上传一张图片', '使用网络图片'] }, current: 0, small: true });
+            this.content = n('div', { class: 'snow-image-menu' }, {}, this.tab.target);
             this.layer = new _PopLayer2.default(this.content, node);
         }
     }, {
@@ -1667,7 +1672,7 @@ var ImageComponent = function (_Component) {
 
 exports.default = ImageComponent;
 
-},{"../../../dom/DomElement":3,"../../../poplayer/PopLayer":25,"../Component":6}],19:[function(require,module,exports){
+},{"../../../dom/DomElement":3,"../../../poplayer/PopLayer":25,"../../../tab/Tab":26,"../Component":6}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2144,7 +2149,7 @@ var PopLayer = function () {
                     _this3.clickOutListener = function (event) {
                         var x = event.pageX || event.clientX || event.x;
                         var y = event.pageY || event.clientY || event.y;
-                        var box = (0, _getSize2.default)(showElement);
+                        var box = (0, _getSize2.default)(_this3.showElement);
                         var point = { x: x, y: y };
                         if (!(0, _pointInBox2.default)(point, box) && _this3.showed) {
                             _this3.hide();
@@ -2299,11 +2304,17 @@ function buildTabViews() {
     var sm = config.small || false;
 
     btns.forEach(function (ele) {
+        if (ele instanceof String) {
+            ele = document.createTextNode(ele);
+        }
         var btn = n('li', { class: config.class.titleItem }, {}, ele);
         vBtns.push(btn);
     });
 
     views.forEach(function (ele) {
+        if (ele instanceof String) {
+            ele = document.createTextNode(ele);
+        }
         var view = n('div', { class: config.class.contentItem }, {}, ele);
         vViews.push(view);
     });

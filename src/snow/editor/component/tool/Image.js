@@ -1,6 +1,8 @@
 import Component from '../Component'
 import Layer from '../../../poplayer/PopLayer'
 import $ from '../../../dom/DomElement'
+import Tab from '../../../tab/Tab'
+
 const n = $.element;
 
 /**
@@ -11,11 +13,13 @@ class ImageComponent extends Component {
     constructor(editor) {
         super(editor);
 
-      
+
     }
 
     init(node) {
-        this.content = n('div', { class: 'snow-emotions-menu' }, {});
+
+        this.tab = new Tab({ target: { btns: ['上传图片', '网络图片'], views: ['上传一张图片','使用网络图片'] }, current: 0, small: true });
+        this.content = n('div', { class: 'snow-image-menu' }, {}, this.tab.target);
         this.layer = new Layer(this.content, node);
     }
 

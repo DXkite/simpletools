@@ -142,8 +142,8 @@ class AttachmentManager extends Component {
     }
 
     init(node) {
-        const btn = n('div', null, null, '文件列表');
-        this.tab = new Tab({ target: { btns: [btn], views: [getAttachmentList.call(this, this.editor)] }, current: 0, small: true });
+
+        this.tab = new Tab({ target: { btns: ['文件列表'], views: [getAttachmentList.call(this, this.editor)] }, current: 0, small: true });
         const ele = $.element('div', { class: 'snow-attachment-menu' }, null, this.tab.target);
         this.layer = new Layer(ele, node);
     }
@@ -161,8 +161,7 @@ class AttachmentManager extends Component {
     }
 
     onClick(event) {
-        const btn = n('div', null, null, '文件列表');
-        this.tab = new Tab({ target: { btns: [btn], views: [getAttachmentList.call(this, this.editor)] }, current: 0, small: true });
+        this.tab = new Tab({ target: { btns: ['文件列表'], views: [getAttachmentList.call(this, this.editor)] }, current: 0, small: true });
         this.layer.content = $.element('div', { class: 'snow-attachment-menu' }, null, this.tab.target);
         this.layer.show();
     }

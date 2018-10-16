@@ -175,7 +175,7 @@
   opacity: 0.8;
   pointer-events: none; }
 
-.snow-pop-menu, .snow-emotions-menu, .snow-attachment-menu {
+.snow-pop-menu, .snow-emotions-menu, .snow-attachment-menu, .snow-image-menu {
   border: 0;
   box-shadow: 2px 2px 5px #adb5bd;
   background-color: #fff; }
@@ -282,3 +282,7 @@
 .snow-attachment-item:hover {
   cursor: pointer;
   background-color: #dee2e6; }
+
+.snow-image-menu {
+  max-width: 15em;
+  width: 15em; }

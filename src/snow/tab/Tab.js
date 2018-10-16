@@ -74,11 +74,17 @@ function buildTabViews() {
     const sm = config.small || false;
 
     btns.forEach(ele => {
+        if (ele instanceof String) {
+            ele = document.createTextNode(ele);
+        }
         const btn = n('li', { class: config.class.titleItem }, {}, ele);
         vBtns.push(btn);
     });
 
     views.forEach(ele => {
+        if (ele instanceof String) {
+            ele = document.createTextNode(ele);
+        }
         const view = n('div', { class: config.class.contentItem }, {}, ele);
         vViews.push(view);
     });

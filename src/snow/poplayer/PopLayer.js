@@ -218,14 +218,13 @@ class PopLayer {
             $(window).off('click', this.clickOutListener);
             this.clickOutListener = null;
         }
-
-
+        
         hover(this.showElement, null, () => {
             if (this.clickOutListener == null) {
                 this.clickOutListener = (event) => {
                     const x = event.pageX || event.clientX || event.x;
                     const y = event.pageY || event.clientY || event.y;
-                    var box = getSize(showElement);
+                    const box = getSize(this.showElement);
                     const point = { x: x, y: y };
                     if (!pointInBox(point, box) && this.showed) {
                         this.hide();

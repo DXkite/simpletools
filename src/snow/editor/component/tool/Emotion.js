@@ -33,7 +33,7 @@ class EmotionComponent extends Component {
                 });
             }
             const view = n('div', { class: 'snow-emotions-tab-view' }, {}, childs);
-            buttons.push(n('div', {}, {}, element.name));
+            buttons.push(element.name);
             views.push(view);
         });
 
