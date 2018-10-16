@@ -12,6 +12,7 @@ const defaultConfig = {
     },
     class: {
         title: 'snow-tab-title',
+        titleSmall: 'snow-tab-sm',
         titleItem: null,
         content: 'snow-tab-content',
         contentItem: 'snow-tab-item',
@@ -70,6 +71,7 @@ function buildTabViews() {
     const views = config.target.views;
     const vBtns = new Array;
     const vViews = new Array;
+    const sm = config.small || false;
 
     btns.forEach(ele => {
         const btn = n('li', { class: config.class.titleItem }, {}, ele);
@@ -81,14 +83,13 @@ function buildTabViews() {
         vViews.push(view);
     });
 
-    const btnsParent = n('ul', { class: config.class.title }, {}, vBtns);
+    const btnsParent = n('ul', { class: sm ? config.class.title + ' ' + config.class.titleSmall : config.class.title }, {}, vBtns);
     const viewsParent = n('div', { class: config.class.content }, {}, vViews);
 
     this.target = n('div', {}, {}, [btnsParent, viewsParent]);
     this.$btns = $(vBtns);
     this.$views = $(vViews);
 }
-
 
 /**
  *  Tab 控制器

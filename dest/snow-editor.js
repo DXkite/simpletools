@@ -112,7 +112,7 @@ var DomElement = function DomElement(selecter, context) {
 };
 
 DomElement.constructor = function (selecter, context) {
-    if (typeof selecter === 'string') {
+    if (selecter instanceof String) {
         this.elements = (context || document).querySelectorAll(selecter);
     } else if (selecter instanceof DomElement) {
         return selecter;
@@ -120,7 +120,10 @@ DomElement.constructor = function (selecter, context) {
         this.elements = [selecter];
     } else if (selecter instanceof Array) {
         this.elements = selecter;
+    } else if (selecter instanceof Object) {
+        this.elements = [selecter];
     } else {
+        console.error('DomElement:selector is invalid value', selecter);
         return this;
     }
     this.context = context;
@@ -1291,6 +1294,10 @@ var _SnowEditor = require('../../../editor/SnowEditor');
 
 var _SnowEditor2 = _interopRequireDefault(_SnowEditor);
 
+var _Tab = require('../../../tab/Tab');
+
+var _Tab2 = _interopRequireDefault(_Tab);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1356,8 +1363,10 @@ function getAttachmentList(editor) {
     attahments.forEach(function (attach) {
         childs.push(menuElement.call(_this, editor, attach));
     });
-    var ele = _DomElement2.default.element('div', { class: 'snow-attachment-menu' }, null, childs.length <= 0 ? '<div class="snow-attachment-item">' + _('没有附件') + '</div>' : childs);
-    return ele;
+    if (childs.length <= 0) {
+        childs.push(n('div', { class: 'snow-attachment-item' }, null, '无文件'));
+    }
+    return childs;
 }
 
 /**
@@ -1432,7 +1441,10 @@ var AttachmentManager = function (_Component) {
     _createClass(AttachmentManager, [{
         key: 'init',
         value: function init(node) {
-            this.layer = new _PopLayer2.default(getAttachmentList.call(this, this.editor), node);
+            var btn = n('div', null, null, '文件列表');
+            this.tab = new _Tab2.default({ target: { btns: [btn], views: [getAttachmentList.call(this, this.editor)] }, current: 0, small: true });
+            var ele = _DomElement2.default.element('div', { class: 'snow-attachment-menu' }, null, this.tab.target);
+            this.layer = new _PopLayer2.default(ele, node);
         }
     }, {
         key: 'onStatusChange',
@@ -1440,7 +1452,9 @@ var AttachmentManager = function (_Component) {
     }, {
         key: 'onClick',
         value: function onClick(event) {
-            this.layer.content = getAttachmentList.call(this, this.editor);
+            var btn = n('div', null, null, '文件列表');
+            this.tab = new _Tab2.default({ target: { btns: [btn], views: [getAttachmentList.call(this, this.editor)] }, current: 0, small: true });
+            this.layer.content = _DomElement2.default.element('div', { class: 'snow-attachment-menu' }, null, this.tab.target);
             this.layer.show();
         }
     }, {
@@ -1460,7 +1474,7 @@ var AttachmentManager = function (_Component) {
 
 exports.default = AttachmentManager;
 
-},{"../../../dom/DomElement":3,"../../../editor/SnowEditor":4,"../../../poplayer/PopLayer":25,"../../../util/getDropFiles":30,"../../../util/getPasteFiles":31,"../../../util/getSize":33,"../Attahment":5,"../Component":6,"./uploader":21}],17:[function(require,module,exports){
+},{"../../../dom/DomElement":3,"../../../editor/SnowEditor":4,"../../../poplayer/PopLayer":25,"../../../tab/Tab":26,"../../../util/getDropFiles":30,"../../../util/getPasteFiles":31,"../../../util/getSize":33,"../Attahment":5,"../Component":6,"./uploader":21}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1541,7 +1555,7 @@ var EmotionComponent = function (_Component) {
                 views.push(view);
             });
 
-            this.tab = new _Tab2.default({ target: { btns: buttons, views: views }, current: 0 });
+            this.tab = new _Tab2.default({ target: { btns: buttons, views: views }, current: 0, small: true });
             this.content = n('div', { class: 'snow-emotions-menu' }, {}, this.tab.target);
             this.layer = new _PopLayer2.default(this.content, node);
         }
@@ -1607,9 +1621,12 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var n = _DomElement2.default.element;
+
 /**
  * 图片处理
  */
+
 var ImageComponent = function (_Component) {
     _inherits(ImageComponent, _Component);
 
@@ -1621,13 +1638,18 @@ var ImageComponent = function (_Component) {
 
     _createClass(ImageComponent, [{
         key: 'init',
-        value: function init(node) {}
+        value: function init(node) {
+            this.content = n('div', { class: 'snow-emotions-menu' }, {});
+            this.layer = new _PopLayer2.default(this.content, node);
+        }
     }, {
         key: 'onStatusChange',
         value: function onStatusChange() {}
     }, {
         key: 'onClick',
-        value: function onClick(event) {}
+        value: function onClick(event) {
+            this.layer.show();
+        }
     }, {
         key: 'name',
         get: function get() {
@@ -2087,6 +2109,7 @@ var PopLayer = function () {
         this.showElement = null;
         this.showShade = null;
         this.showed = false;
+        this.clickOutListener = null;
     }
 
     _createClass(PopLayer, [{
@@ -2110,12 +2133,14 @@ var PopLayer = function () {
             showController[this.position].call(this, elemSize, size, windowSize);
             (0, _DomElement2.default)(this.showElement).css({ 'display': 'block' });
             this.showed = true;
+
             if (this.clickOutListener) {
                 (0, _DomElement2.default)(window).off('click', this.clickOutListener);
                 this.clickOutListener = null;
             }
+
             (0, _onMouseHover2.default)(this.showElement, null, function () {
-                if (!_this3.clickOutListener) {
+                if (_this3.clickOutListener == null) {
                     _this3.clickOutListener = function (event) {
                         var x = event.pageX || event.clientX || event.x;
                         var y = event.pageY || event.clientY || event.y;
@@ -2213,6 +2238,7 @@ var defaultConfig = {
     },
     class: {
         title: 'snow-tab-title',
+        titleSmall: 'snow-tab-sm',
         titleItem: null,
         content: 'snow-tab-content',
         contentItem: 'snow-tab-item'
@@ -2270,6 +2296,7 @@ function buildTabViews() {
     var views = config.target.views;
     var vBtns = new Array();
     var vViews = new Array();
+    var sm = config.small || false;
 
     btns.forEach(function (ele) {
         var btn = n('li', { class: config.class.titleItem }, {}, ele);
@@ -2281,7 +2308,7 @@ function buildTabViews() {
         vViews.push(view);
     });
 
-    var btnsParent = n('ul', { class: config.class.title }, {}, vBtns);
+    var btnsParent = n('ul', { class: sm ? config.class.title + ' ' + config.class.titleSmall : config.class.title }, {}, vBtns);
     var viewsParent = n('div', { class: config.class.content }, {}, vViews);
 
     this.target = n('div', {}, {}, [btnsParent, viewsParent]);

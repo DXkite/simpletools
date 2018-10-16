@@ -1,5 +1,7 @@
 .snow-attachment-menu {
     @extend .snow-pop-menu;
+    max-width: 15em;
+    width: 15em;
 }
 
 .snow-attachment-item {

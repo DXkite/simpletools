@@ -6,7 +6,7 @@ var DomElement = function (selecter, context) {
 }
 
 DomElement.constructor = function (selecter, context) {
-    if (typeof selecter === 'string') {
+    if (selecter instanceof String) {
         this.elements = (context || document).querySelectorAll(selecter);
     } else if (selecter instanceof DomElement) {
         return selecter;
@@ -14,7 +14,10 @@ DomElement.constructor = function (selecter, context) {
         this.elements = [selecter];
     } else if (selecter instanceof Array) {
         this.elements = selecter;
+    } else if (selecter instanceof Object) {
+        this.elements = [selecter];
     } else {
+        console.error('DomElement:selector is invalid value', selecter);
         return this;
     }
     this.context = context;

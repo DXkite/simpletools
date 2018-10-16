@@ -187,6 +187,7 @@ class PopLayer {
         this.showElement = null;
         this.showShade = null;
         this.showed = false;
+        this.clickOutListener = null;
     }
 
     set content(element) {
@@ -212,12 +213,15 @@ class PopLayer {
         showController[this.position].call(this, elemSize, size, windowSize);
         $(this.showElement).css({ 'display': 'block' });
         this.showed = true;
+
         if (this.clickOutListener) {
             $(window).off('click', this.clickOutListener);
             this.clickOutListener = null;
         }
+
+
         hover(this.showElement, null, () => {
-            if (!this.clickOutListener) {
+            if (this.clickOutListener == null) {
                 this.clickOutListener = (event) => {
                     const x = event.pageX || event.clientX || event.x;
                     const y = event.pageY || event.clientY || event.y;

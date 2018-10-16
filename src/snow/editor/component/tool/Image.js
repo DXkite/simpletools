@@ -1,6 +1,8 @@
 import Component from '../Component'
 import Layer from '../../../poplayer/PopLayer'
 import $ from '../../../dom/DomElement'
+const n = $.element;
+
 /**
  * 图片处理
  */
@@ -13,7 +15,8 @@ class ImageComponent extends Component {
     }
 
     init(node) {
-       
+        this.content = n('div', { class: 'snow-emotions-menu' }, {});
+        this.layer = new Layer(this.content, node);
     }
 
     get name() {
@@ -29,7 +32,7 @@ class ImageComponent extends Component {
     }
 
     onClick(event) {
-    
+        this.layer.show();
     }
 }
 

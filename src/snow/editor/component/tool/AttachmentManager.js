@@ -7,6 +7,7 @@ import Attachment from '../Attahment'
 import upload from './uploader'
 import getSize from '../../../util/getSize'
 import SnowEditor from '../../../editor/SnowEditor'
+import Tab from '../../../tab/Tab'
 
 const n = $.element;
 const _ = SnowEditor._;
@@ -70,8 +71,10 @@ function getAttachmentList(editor) {
     attahments.forEach(attach => {
         childs.push(menuElement.call(this, editor, attach));
     })
-    const ele = $.element('div', { class: 'snow-attachment-menu' }, null, childs.length <= 0 ? '<div class="snow-attachment-item">' + _('没有附件') + '</div>' : childs);
-    return ele;
+    if (childs.length <= 0) {
+        childs.push(n('div', { class: 'snow-attachment-item' }, null, '无文件'));
+    }
+    return childs;
 }
 
 /**
@@ -85,7 +88,7 @@ class AttachmentManager extends Component {
         editor.dropEnter = false;
 
         $(editor.$content).on('paste', event => {
-            editor.fire('paste',event);
+            editor.fire('paste', event);
             getPasteImage(event).forEach(attachment => {
                 attachmentHandler(editor, attachment);
             })
@@ -98,7 +101,7 @@ class AttachmentManager extends Component {
             console.log(event.type);
             if (editor.dropEnter === false) {
                 editor.dropEnter = true;
-                editor.fire('dragenter',event);
+                editor.fire('dragenter', event);
             }
         });
 
@@ -122,7 +125,7 @@ class AttachmentManager extends Component {
             event.dataTransfer.dropEffect = 'copy';
             if (editor.dropEnter === false) {
                 editor.dropEnter = true;
-                editor.fire('dragenter',event);
+                editor.fire('dragenter', event);
             }
         });
 
@@ -133,13 +136,16 @@ class AttachmentManager extends Component {
             // console.log(event.type);
             if (event.screenX === 0 && event.screenY === 0) {
                 editor.dropEnter = false;
-                editor.fire('dragleave',event);
+                editor.fire('dragleave', event);
             }
         });
     }
 
     init(node) {
-        this.layer = new Layer(getAttachmentList.call(this, this.editor), node);
+        const btn = n('div', null, null, '文件列表');
+        this.tab = new Tab({ target: { btns: [btn], views: [getAttachmentList.call(this, this.editor)] }, current: 0, small: true });
+        const ele = $.element('div', { class: 'snow-attachment-menu' }, null, this.tab.target);
+        this.layer = new Layer(ele, node);
     }
 
     get name() {
@@ -155,7 +161,9 @@ class AttachmentManager extends Component {
     }
 
     onClick(event) {
-        this.layer.content = getAttachmentList.call(this, this.editor);
+        const btn = n('div', null, null, '文件列表');
+        this.tab = new Tab({ target: { btns: [btn], views: [getAttachmentList.call(this, this.editor)] }, current: 0, small: true });
+        this.layer.content = $.element('div', { class: 'snow-attachment-menu' }, null, this.tab.target);
         this.layer.show();
     }
 }

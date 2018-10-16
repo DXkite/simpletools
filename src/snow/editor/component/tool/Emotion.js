@@ -9,6 +9,7 @@ const n = $.element;
  * 表情处理
  */
 class EmotionComponent extends Component {
+
     init(node) {
         const buttons = new Array;
         const views = new Array;
@@ -36,7 +37,7 @@ class EmotionComponent extends Component {
             views.push(view);
         });
 
-        this.tab = new Tab({ target: { btns: buttons, views: views }, current: 0 });
+        this.tab = new Tab({ target: { btns: buttons, views: views }, current: 0, small: true });
         this.content = n('div', { class: 'snow-emotions-menu' }, {}, this.tab.target);
         this.layer = new Layer(this.content, node);
     }
