@@ -52,7 +52,7 @@ class ImageComponent extends Component {
     }
 
     init(node) {
-        this.tab = new Tab({ target: { btns: ['插入图片', '网络图片'], views: [this.upload.target, this.input] }, current: 0, small: true });
+        this.tab = new Tab({ target: { btns: ['插入图片', '网络图片'], views: [ n('div', { class: 'snow-image-inputs' }, {}, this.upload.target ), this.input] }, current: 0, small: true });
         this.content = n('div', { class: 'snow-image-menu' }, {}, this.tab.target);
         this.layer = new Layer(this.content, node);
     }

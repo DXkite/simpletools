@@ -1,7 +1,7 @@
 .snow-editor-container {
     position: relative;
     border: 1px solid $toolbar-color;
-    box-shadow: 0 0 .25em 0 $toolbar-color;
+    // box-shadow: 0 0 .25em 0 $toolbar-color;
     background-color: $white;
     border-radius: .25em;
     padding: .25em .125em;
@@ -38,6 +38,7 @@
     user-select: none;
     padding: .2em .3em;
     background-color: $white;
+    border-radius: .125em;
     transition: .1s;
 }
 

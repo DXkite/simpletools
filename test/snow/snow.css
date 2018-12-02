@@ -268,7 +268,6 @@
 .snow-editor-container {
   position: relative;
   border: 1px solid #dee2e6;
-  box-shadow: 0 0 0.25em 0 #dee2e6;
   background-color: #fff;
   border-radius: .25em;
   padding: .25em .125em; }
@@ -306,6 +305,7 @@
           user-select: none;
   padding: .2em .3em;
   background-color: #fff;
+  border-radius: .125em;
   transition: .1s; }
 
 .snow-tool-item:hover, .snow-tool-emotions-item:hover,
@@ -429,7 +429,8 @@
   background-color: #dee2e6; }
 
 .snow-image-menu {
-  max-width: 20em; }
+  max-width: 20em;
+  min-width: 15em; }
 
 .snow-image-inputs {
   padding: .5em; }

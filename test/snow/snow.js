@@ -1,4 +1,4 @@
-/*! snow by dxkite 2018-11-30 */
+/*! snow by dxkite 2018-12-02 */
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 'use strict';
 
@@ -1631,7 +1631,7 @@ var ImageComponent = function (_Component) {
     _createClass(ImageComponent, [{
         key: 'init',
         value: function init(node) {
-            this.tab = new _Tab2.default({ target: { btns: ['插入图片', '网络图片'], views: [this.upload.target, this.input] }, current: 0, small: true });
+            this.tab = new _Tab2.default({ target: { btns: ['插入图片', '网络图片'], views: [n('div', { class: 'snow-image-inputs' }, {}, this.upload.target), this.input] }, current: 0, small: true });
             this.content = n('div', { class: 'snow-image-menu' }, {}, this.tab.target);
             this.layer = new _PopLayer2.default(this.content, node);
         }
