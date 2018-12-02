@@ -2,7 +2,7 @@ import getBox from './getSize'
 import pointInBox from './pointInBox'
 
 /**
-检测鼠标是否覆盖某对象（含子元素）
+ * 检测鼠标是否覆盖某对象（含子元素）
  * @param {Element} target 目标
  * @param {Function} hover 覆盖回调
  * @param {Function} outer 未覆盖回调

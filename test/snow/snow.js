@@ -1,4 +1,4 @@
-/*! snow by dxkite 2018-10-16 */
+/*! snow by dxkite 2018-11-30 */
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 'use strict';
 
@@ -3446,7 +3446,7 @@ var _pointInBox2 = _interopRequireDefault(_pointInBox);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
-检测鼠标是否覆盖某对象（含子元素）
+ * 检测鼠标是否覆盖某对象（含子元素）
  * @param {Element} target 目标
  * @param {Function} hover 覆盖回调
  * @param {Function} outer 未覆盖回调

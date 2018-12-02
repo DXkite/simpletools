@@ -1,7 +1,10 @@
 .snow-editor-container {
     position: relative;
     border: 1px solid $toolbar-color;
+    box-shadow: 0 0 .25em 0 $toolbar-color;
     background-color: $white;
+    border-radius: .25em;
+    padding: .25em .125em;
 }
 
 .snow-toolbar {
@@ -9,13 +12,13 @@
     display: flex;
     align-content: center;
     border-bottom: none;
-    padding: 0 .2em;
-    box-shadow: 0 2px 5px $toolbar-color-shadow;
+    padding: 0 .125em;
     flex-wrap: wrap;
 }
 
 .snow-content {
-    padding: .5em;
+    padding: .125em;
+    padding-top: .25em;
     word-break: break-all;
     outline: none;
     overflow: auto;
@@ -51,6 +54,8 @@
 
 .snow-pop-menu {
     border: 0;
-    box-shadow: 2px 2px 5px $toolbar-color-shadow;
+    box-shadow: 0 0 10px 0 $toolbar-color-shadow;
     background-color: $white;
+    padding: .25em;
+    border-radius: .25em;
 }

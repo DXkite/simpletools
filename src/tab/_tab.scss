@@ -9,13 +9,13 @@
 .snow-tab-title>li {
     padding: .5em 1em;
     background-color: #fff;
-    color: $indigo;
+    color: $primary;
     cursor: pointer;
 }
 
 .snow-tab-title>li.snow-tab-current,
 .snow-tab-title>li:hover {
-    border-bottom: .2em solid $indigo;
+    border-bottom: .2em solid $primary;
     background-color: $light;
     user-select: none;
 }
@@ -34,5 +34,5 @@
 
 .snow-tab-sm>li.snow-tab-current,
 .snow-tab-sm>li:hover {
-    border-bottom: .1em solid $indigo;
+    border-bottom: .1em solid $primary;
 }
