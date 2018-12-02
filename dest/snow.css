@@ -411,7 +411,8 @@
       flex-wrap: wrap; }
 
 .snow-attachment-menu {
-  max-width: 15em; }
+  max-width: 20em;
+  min-width: 15em; }
 
 .snow-attachment-item {
   cursor: pointer;
@@ -439,7 +440,8 @@
   margin-top: .5em; }
 
 .snow-link-menu {
-  max-width: 20em; }
+  max-width: 20em;
+  min-width: 15em; }
 
 .snow-link-inputs {
   padding: .5em; }

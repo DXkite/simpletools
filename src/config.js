@@ -3,7 +3,7 @@
      * UI相配置
      */
     var config = {
-        poplayer: { level: 9000 },
+        poplayer: { level: 9000, shade: true, display: 'auto', forceSize: false },
         toast: { layerLevel: 10000 },
         editor: {
             height: '10rem',

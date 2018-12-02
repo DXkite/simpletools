@@ -6,8 +6,8 @@ import hover from '../util/onMouseHover'
 import timeLimit from '../util/timeLimitCallback'
 import getConfig from '../util/getConfig';
 
-const config = getConfig('poplayer');
-const defaultZIndexLevel = config.layerLevel || 9000;
+const defaultConfig = getConfig('poplayer');
+const defaultZIndexLevel = defaultConfig.layerLevel || 9000;
 
 const n = $.element;
 const STR = {
@@ -115,10 +115,16 @@ function showElement(defaultDirection, posOfParent, posOfWindow, posOfPop, calcP
     const size = getSize(this.$parent);
     const elemSize = getSize(showElem);
     const windowSize = getSize(null);
-    if (size.left + elemSize.width > windowSize.width) {
+    if (this.config.display == 'parent') {
+        initDisplayAfterParent.call(this, showElem, size);
+    } else if (this.config.display == 'window') {
         initDisplayInWindow.call(this, showElem, windowSize, elemSize);
     } else {
-        initDisplayAfterParent.call(this, showElem, size);
+        if (size.left + elemSize.width > windowSize.width) {
+            initDisplayInWindow.call(this, showElem, windowSize, elemSize);
+        } else {
+            initDisplayAfterParent.call(this, showElem, size);
+        }
     }
 }
 
@@ -182,7 +188,7 @@ class PopLayer {
     constructor(element, parent, config) {
         this.$parent = parent || window;
         this.$element = element;
-        this.config = config || { shade: true };
+        this.config = Object.assign(config || {}, defaultConfig);
         this.id = layerCounter++;
         this.direction = this.config.direction;
         this.position = 'outerBottom';

@@ -2079,8 +2079,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var config = (0, _getConfig2.default)('poplayer');
-var defaultZIndexLevel = config.layerLevel || 9000;
+var defaultConfig = (0, _getConfig2.default)('poplayer');
+var defaultZIndexLevel = defaultConfig.layerLevel || 9000;
 
 var n = _DomElement2.default.element;
 var STR = {
@@ -2186,10 +2186,16 @@ function showElement(defaultDirection, posOfParent, posOfWindow, posOfPop, calcP
     var size = (0, _getSize2.default)(this.$parent);
     var elemSize = (0, _getSize2.default)(showElem);
     var windowSize = (0, _getSize2.default)(null);
-    if (size.left + elemSize.width > windowSize.width) {
+    if (this.config.display == 'parent') {
+        initDisplayAfterParent.call(this, showElem, size);
+    } else if (this.config.display == 'window') {
         initDisplayInWindow.call(this, showElem, windowSize, elemSize);
     } else {
-        initDisplayAfterParent.call(this, showElem, size);
+        if (size.left + elemSize.width > windowSize.width) {
+            initDisplayInWindow.call(this, showElem, windowSize, elemSize);
+        } else {
+            initDisplayAfterParent.call(this, showElem, size);
+        }
     }
 }
 
@@ -2257,7 +2263,7 @@ var PopLayer = function () {
 
         this.$parent = parent || window;
         this.$element = element;
-        this.config = config || { shade: true };
+        this.config = Object.assign(config || {}, defaultConfig);
         this.id = layerCounter++;
         this.direction = this.config.direction;
         this.position = 'outerBottom';
